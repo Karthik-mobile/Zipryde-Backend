@@ -3,6 +3,8 @@ package com.trivecta.zipryde.view.data.transformer;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -94,6 +96,18 @@ public class VehicleTransformer {
 		}
 	}
 	
+	public List<CabResponse> getAllVehicle() {
+		 List<CabResponse> cabList = new ArrayList<CabResponse>();
+		 
+		 List<VehicleDetail> vehicleList = vehicleService.getAllVehicles();
+		 
+		 if(vehicleList != null && vehicleList.size() > 0) {
+			 for(VehicleDetail vehicleDetail : vehicleList) {
+				 cabList.add(setCabResponseFromVehicleDetail(vehicleDetail));
+			 }
+		 }
+		 return cabList;
+	}
 	
 	private CabResponse setCabResponseFromVehicleDetail(VehicleDetail vehicleDetail) {
 		CabResponse cabResponse = new CabResponse();

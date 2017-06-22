@@ -1,7 +1,9 @@
 
 package com.trivecta.zipryde.model.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 
@@ -49,7 +51,8 @@ public class VehicleDAOImpl implements VehicleDAO{
 		
 		VehicleDetail vehicleDetail = null;
 		try {
-			vehicleDetail = (VehicleDetail) session.getNamedQuery("").setParameter("vin", vin).getSingleResult();
+			vehicleDetail = (VehicleDetail) session.getNamedQuery("VehicleDetail.findByVIN").
+					setParameter("vin", vin).getSingleResult();
 		}
 		catch(NoResultException e){
 			//No VIN Exists
@@ -61,7 +64,7 @@ public class VehicleDAOImpl implements VehicleDAO{
 		
 		VehicleDetail vinVehicle = getVehicleDetailByVIN(vehicleDetail.getVin());
 		
-		if(vinVehicle != null) {
+		if(vinVehicle == null) {
 			Session session = this.sessionFactory.getCurrentSession();
 			
 			
@@ -154,6 +157,22 @@ public class VehicleDAOImpl implements VehicleDAO{
 		
 	}
 	
+	public List<VehicleDetail> getAllVehicles() {
+		Session session = this.sessionFactory.getCurrentSession();
+		
+		List<VehicleDetail>  vehicleDetailsList = session.getNamedQuery("VehicleDetail.findAll").getResultList();
+		
+		for(VehicleDetail vehicleDetail : vehicleDetailsList) {
+			vehicleDetail.getCabType();
+			vehicleDetail.getModel();
+			
+			if(vehicleDetail.getCabPermits() != null)
+				vehicleDetail.getCabPermits().size();
+		}
+		
+		return vehicleDetailsList;
+		
+	}
 	
 	
 	

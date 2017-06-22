@@ -89,8 +89,13 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/getAllNYOPList")
-	public  List<NYOPResponse> getAllNYOPList() {
+	public @ResponseBody List<NYOPResponse> getAllNYOPList() {
 		return adminTransformer.getAllNYOPList();
+	}
+	
+	@RequestMapping(value = "/getAllVehicle")
+	public @ResponseBody List<CabResponse> getAllVehicle() {
+		return vehicleTransformer.getAllVehicle();
 	}
 	
 	@RequestMapping(value = "/getAllNYOPByCabTypeAndDistance")

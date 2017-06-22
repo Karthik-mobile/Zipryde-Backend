@@ -1,5 +1,7 @@
 package com.trivecta.zipryde.model.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,11 @@ public class VehicleServiceImpl implements VehicleService{
 		else {
 			return vehicleDAO.updateVehicle(vehicleDetail, cabPermit);
 		}		
+	}
+	
+	@Transactional
+	public List<VehicleDetail> getAllVehicles(){
+		return vehicleDAO.getAllVehicles();
 	}
 
 }
