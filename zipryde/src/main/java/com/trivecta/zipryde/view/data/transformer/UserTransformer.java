@@ -228,6 +228,15 @@ public class UserTransformer {
 		return userResponseList;
 	}
 	
+	public UserResponse getUserByUserId(CommonRequest commonRequest) throws MandatoryValidationException {
+		if(commonRequest.getUserId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
+		}
+		User user = userService.getUserByUserId(commonRequest.getUserId().intValue());
+		return setUserResponse(user);
+	}
+	
+	
 	public UserResponse verifyLogInUser(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException {
 		
 		StringBuffer errorMsg = new StringBuffer("");

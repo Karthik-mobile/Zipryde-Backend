@@ -15,9 +15,11 @@ public interface UserDAO {
 	
 	public User createUser(User user) throws UserValidationException;
 	
-	public User updateUser(User user) throws NoResultEntityException;
+	public User updateUser(User user) throws NoResultEntityException,UserValidationException;
 	
 	public List<User> getAllUserByUserType(String userType);
 	
 	public User verifyLogInUser(User user) throws NoResultEntityException;
+	
+	public User getUserByUserId(int userId);
 }

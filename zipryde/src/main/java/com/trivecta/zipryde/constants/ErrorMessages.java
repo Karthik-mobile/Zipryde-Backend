@@ -2,6 +2,10 @@ package com.trivecta.zipryde.constants;
 
 public interface ErrorMessages {
 
+	static String USER_ID_REQUIRED = "User Id Required";
+	
+	static String VEHICLE_ID_REQUIRED = "Vehicle Id Required";
+	
 	static String NO_USER_FOUND = " NO User found";
 	
 	static String MOBILE_MANDATORY = "Mobile No is Mandatory ";
@@ -13,6 +17,8 @@ public interface ErrorMessages {
 	static String PASSWORD_MANDATORY = "Password is Mandatory";
 	
 	static String MOBILE_NO_EXISTS_ALREADY = "Mobile Number exists already" ;
+	
+	static String MOBILE_NO_CANNOT_UPDATE = "Mobile No cannot be Updated";
 	
 	static String EMAIL_MANDATORY = "Email is Mandatory" ;
 	
@@ -31,6 +37,8 @@ public interface ErrorMessages {
 	static String LOGGIN_FAILED = "Mobile Number or  Password does not match";
 	
 	static String VIN_EXISTS_ALREADY = "Vehicle with VIN Exists already";
+	
+	static String NO_CAB_FOUND = "NO Cab found";
 	
 	
 }

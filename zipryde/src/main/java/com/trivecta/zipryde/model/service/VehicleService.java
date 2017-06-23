@@ -12,5 +12,5 @@ public interface VehicleService {
 	
 	public List<VehicleDetail> getAllVehicles();
 	
-	
+	public VehicleDetail getVehicleDetailById(int vehicleId) throws UserValidationException;	
 }

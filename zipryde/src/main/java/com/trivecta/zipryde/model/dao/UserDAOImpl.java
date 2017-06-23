@@ -195,10 +195,17 @@ public class UserDAOImpl implements UserDAO {
 		}		
 	}
 	
-	public User updateUser(User user) throws NoResultEntityException {
+	public User updateUser(User user) throws NoResultEntityException, UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		try {
+			
 			User origUser = session.find(User.class, user.getId());
+			
+			if(!USERTYPE.WEB_ADMIN.equalsIgnoreCase(origUser.getUserType().getType()) && 
+					!origUser.getMobileNumber().equalsIgnoreCase(user.getMobileNumber())) {
+				throw new UserValidationException(ErrorMessages.MOBILE_NO_CANNOT_UPDATE);
+			}
+			
 			origUser.setModifiedDate(new Date());
 			
 			DriverProfile origDriverProfile = null;
@@ -246,7 +253,40 @@ public class UserDAOImpl implements UserDAO {
 		Session session = this.sessionFactory.getCurrentSession();
 		List<User> userList = session.getNamedQuery("User.findByUserType").
 				setParameter("userType", userType).getResultList();
+		for(User user : userList) {
+			fetchLazyInitialisation(user);
+		}
 		return userList;
+	}
+	
+	public User getUserByUserId(int userId){
+		Session session = this.sessionFactory.getCurrentSession();
+		User user = session.find(User.class, userId);
+		fetchLazyInitialisation(user);
+		return user;
+	}
+
+	private void fetchLazyInitialisation(User user){
+		user.getBookingHistories1();
+		user.getCommissions();
+		
+		if(USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())){
+			if(user.getUserPreferedLocations() != null && user.getUserPreferedLocations().size() > 0) {
+				user.getUserPreferedLocations().size();
+			}
+		}
+		else if(USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())){
+			user.getDriverProfile();
+			
+			if(user.getDriverVehicleAssociations() != null && 
+					user.getDriverVehicleAssociations().size() > 0){
+				user.getDriverVehicleAssociations().size();
+			}
+			
+			if(user.getCommissions() != null && user.getCommissions().size() > 0) {
+				user.getCommissions().size();
+			}
+		}		
 	}
 	
 

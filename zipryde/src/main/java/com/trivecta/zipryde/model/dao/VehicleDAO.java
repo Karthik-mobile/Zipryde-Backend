@@ -10,7 +10,9 @@ public interface VehicleDAO {
 
 	public VehicleDetail createVehicle(VehicleDetail vehicleDetail,CabPermit cabPermit) throws UserValidationException;
 	
-	public VehicleDetail updateVehicle(VehicleDetail vehicleDetail,CabPermit cabPermit);
+	public VehicleDetail updateVehicle(VehicleDetail vehicleDetail,CabPermit cabPermit) throws UserValidationException;
 	
 	public List<VehicleDetail> getAllVehicles();
+	
+	public VehicleDetail getVehicleDetailById(int vehicleId) throws UserValidationException;
 }

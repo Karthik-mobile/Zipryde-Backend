@@ -49,4 +49,9 @@ public class UserServiceImpl implements UserService{
 	public User verifyLogInUser(User user) throws NoResultEntityException {
 		return userDAO.verifyLogInUser(user);
 	}
+	
+	@Transactional
+	public User getUserByUserId(int userId){
+		return userDAO.getUserByUserId(userId);
+	}
 }

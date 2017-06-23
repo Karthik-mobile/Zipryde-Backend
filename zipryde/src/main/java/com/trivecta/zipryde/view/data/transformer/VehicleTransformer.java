@@ -21,6 +21,7 @@ import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
 import com.trivecta.zipryde.model.service.VehicleService;
 import com.trivecta.zipryde.view.request.CabRequest;
+import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.response.CabPermitResponse;
 import com.trivecta.zipryde.view.response.CabResponse;
 
@@ -107,6 +108,16 @@ public class VehicleTransformer {
 			 }
 		 }
 		 return cabList;
+	}
+	
+	public CabResponse getVehicleByVehicleId(CommonRequest commonRequest) throws UserValidationException, MandatoryValidationException {
+		if(commonRequest.getCabId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.VEHICLE_ID_REQUIRED);
+		}
+		else {
+			VehicleDetail vehicleDetail = vehicleService.getVehicleDetailById(commonRequest.getCabId().intValue());
+			return setCabResponseFromVehicleDetail(vehicleDetail);
+		}	
 	}
 	
 	private CabResponse setCabResponseFromVehicleDetail(VehicleDetail vehicleDetail) {

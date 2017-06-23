@@ -73,6 +73,16 @@ public class ZiprydeController {
 		return userTransformer.getAllUserByUserType(commonRequest);
 	}
 	
+	@RequestMapping(value = "/getUserByUserId")
+	public @ResponseBody UserResponse getUserByUserId(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
+		return userTransformer.getUserByUserId(commonRequest);
+	}
+	
+	@RequestMapping(value = "/getVehicleByVehicleId")
+	public @ResponseBody CabResponse getVehicleByVehicleId(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, UserValidationException {
+		return vehicleTransformer.getVehicleByVehicleId(commonRequest);
+	}
+	
 	@RequestMapping(value = "/getAllCabTypes")
 	public @ResponseBody List<CabTypeResponse> getAllCabTypes() {
 		return adminTransformer.getAllCabTypes();

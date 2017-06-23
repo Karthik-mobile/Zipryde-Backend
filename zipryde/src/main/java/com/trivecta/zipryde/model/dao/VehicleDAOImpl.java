@@ -1,7 +1,6 @@
 
 package com.trivecta.zipryde.model.dao;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,11 +13,9 @@ import org.springframework.stereotype.Repository;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
-import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.CabPermit;
 import com.trivecta.zipryde.model.entity.CabType;
-import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
@@ -31,19 +28,6 @@ public class VehicleDAOImpl implements VehicleDAO{
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-	}
-	
-	private VehicleDetail getVehicleDetailById(int vehicleId) {
-		Session session = this.sessionFactory.getCurrentSession();
-		VehicleDetail vehicleDetail = session.find(VehicleDetail.class, vehicleId);
-		
-		vehicleDetail.getCabType();
-		vehicleDetail.getModel();
-		
-		if(vehicleDetail.getCabPermits() != null)
-			vehicleDetail.getCabPermits().size();
-		
-		return vehicleDetail;
 	}
 	
 	private VehicleDetail getVehicleDetailByVIN(String vin) {
@@ -107,7 +91,7 @@ public class VehicleDAOImpl implements VehicleDAO{
 		
 	}
 	
-	public VehicleDetail updateVehicle(VehicleDetail vehicleDetail,CabPermit cabPermit) {
+	public VehicleDetail updateVehicle(VehicleDetail vehicleDetail,CabPermit cabPermit) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		
 		VehicleDetail origVehicle = session.find(VehicleDetail.class, vehicleDetail.getId());
@@ -137,43 +121,48 @@ public class VehicleDAOImpl implements VehicleDAO{
 					session.getNamedQuery("Status.findByStatus").
 					setParameter("status", STATUS.REQUESTED).getSingleResult();		
 			origVehicle.setIsEnable(0);
-			
-			
 		}
-		origVehicle.setStatus(status);
-	
-		
+		origVehicle.setStatus(status);		
 		origVehicle.setModifiedDate(new Date());
 		session.merge(origVehicle);
 		
 		if(cabPermit.getId() != null) {
 			CabPermit origCabPermit = session.find(CabPermit.class,cabPermit.getId());
 			origCabPermit.setVehicleDetail(vehicleDetail);
-			session.merge(origCabPermit);
-			
-		}
-		
+			session.merge(origCabPermit);			
+		}		
 		return getVehicleDetailById(origVehicle.getId());	
 		
 	}
 	
 	public List<VehicleDetail> getAllVehicles() {
-		Session session = this.sessionFactory.getCurrentSession();
-		
-		List<VehicleDetail>  vehicleDetailsList = session.getNamedQuery("VehicleDetail.findAll").getResultList();
-		
+		Session session = this.sessionFactory.getCurrentSession();		
+		List<VehicleDetail>  vehicleDetailsList =				
+				session.getNamedQuery("VehicleDetail.findAll").getResultList();		
 		for(VehicleDetail vehicleDetail : vehicleDetailsList) {
-			vehicleDetail.getCabType();
-			vehicleDetail.getModel();
-			
-			if(vehicleDetail.getCabPermits() != null)
-				vehicleDetail.getCabPermits().size();
+			fetchLazyInitialisation(vehicleDetail);
+		}		
+		return vehicleDetailsList;		
+	}
+	
+	public VehicleDetail getVehicleDetailById(int vehicleId) throws UserValidationException {
+		Session session = this.sessionFactory.getCurrentSession();
+		VehicleDetail vehicleDetail = null;
+		try {
+			vehicleDetail = session.find(VehicleDetail.class, vehicleId);
+			fetchLazyInitialisation(vehicleDetail);
+			return vehicleDetail;
 		}
-		
-		return vehicleDetailsList;
+		catch(NoResultException e) {
+			throw new UserValidationException(ErrorMessages.NO_CAB_FOUND);
+		}
 		
 	}
 	
-	
-	
+	private void fetchLazyInitialisation(VehicleDetail vehicleDetail) {
+		vehicleDetail.getCabType();
+		vehicleDetail.getModel();		
+		if(vehicleDetail.getCabPermits() != null)
+			vehicleDetail.getCabPermits().size();
+	}
 }

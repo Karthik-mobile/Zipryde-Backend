@@ -18,4 +18,7 @@ public interface UserService {
 	public List<User> getAllUserByUserType(String userType);
 	
 	public User verifyLogInUser(User user) throws NoResultEntityException;
+	
+	public User getUserByUserId(int userId);
+
 }
