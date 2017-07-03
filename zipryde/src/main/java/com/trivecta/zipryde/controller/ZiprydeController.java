@@ -17,16 +17,19 @@ import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.view.data.transformer.AdminTransformer;
 import com.trivecta.zipryde.view.data.transformer.BookingTransformer;
+import com.trivecta.zipryde.view.data.transformer.MongoTransformer;
 import com.trivecta.zipryde.view.data.transformer.UserTransformer;
 import com.trivecta.zipryde.view.data.transformer.VehicleTransformer;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.CabRequest;
 import com.trivecta.zipryde.view.request.CommonRequest;
+import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CabResponse;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
+import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
 import com.trivecta.zipryde.view.response.OTPResponse;
@@ -46,6 +49,9 @@ public class ZiprydeController {
 	
 	@Autowired
 	VehicleTransformer vehicleTransformer;
+	
+	@Autowired
+	MongoTransformer mongoTransfomer;
 	
 	@RequestMapping(value="/getOTPByMobile")
 	public @ResponseBody OTPResponse getOTPByMobile(@RequestBody OTPRequest otpRequest) throws MandatoryValidationException{
@@ -108,9 +114,9 @@ public class ZiprydeController {
 		return vehicleTransformer.getAllVehicle();
 	}
 	
-	@RequestMapping(value = "/getAllNYOPByCabTypeAndDistance")
-	public @ResponseBody List<NYOPResponse> getAllNYOPByCabTypeAndDistance(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
-		return adminTransformer.getAllNYOPByCabTypeAndDistance(commonRequest);
+	@RequestMapping(value = "/getAllNYOPByCabTypeDistAndNoOfPassenger")
+	public @ResponseBody List<NYOPResponse> getAllNYOPByCabTypeDistAndNoOfPassenger(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
+		return adminTransformer.getAllNYOPByCabTypeDistAndNoOfPassenger(commonRequest);
 	}
 	
 	@RequestMapping(value = "/verifyLogInUser")
@@ -123,10 +129,20 @@ public class ZiprydeController {
 		return bookingTranssformer.createBooking(bookingRequest);
 	}
 
-	//1. get Pricing and NYOP Pricing - done
-	//2. Driver Geo Location Update in MongoDB
+	@RequestMapping(value = "/insertDriverSession")
+	public void insertDriverSession(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+		mongoTransfomer.insertDriverSession(geoLocationRequest);
+	}
 	
+	@RequestMapping(value = "/updateDriverSession")
+	public void updateDriverSession(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+		mongoTransfomer.updateDriverSession(geoLocationRequest);
+	}
 	
-	
+	@RequestMapping(value = "/updateDriverStatus")
+	public void updateDriverStatus(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+		mongoTransfomer.updateDriverStatus(geoLocationRequest);
+	}
+
 	
 }

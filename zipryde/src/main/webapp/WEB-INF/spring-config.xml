@@ -27,7 +27,7 @@
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://localhost:3306/ZIPRYDE" />
 		<property name="username" value="root" />
- 		<!-- <property name="password" value="Welcome$123" />  -->  
+ 		<!-- <property name="password" value="Welcome$123" /> -->  
 	</bean>
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
@@ -49,6 +49,7 @@
 				<value>com.trivecta.zipryde.model.entity.OtpVerification</value>
 				<value>com.trivecta.zipryde.model.entity.Payment</value>
 				<value>com.trivecta.zipryde.model.entity.PricingMstr</value>
+				<value>com.trivecta.zipryde.model.entity.PricingType</value>
 				<value>com.trivecta.zipryde.model.entity.Status</value>
 				<value>com.trivecta.zipryde.model.entity.User</value>
 				<value>com.trivecta.zipryde.model.entity.UserPreferedLocation</value>

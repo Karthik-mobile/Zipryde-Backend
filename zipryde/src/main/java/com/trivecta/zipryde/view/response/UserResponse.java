@@ -1,3 +1,4 @@
+
 package com.trivecta.zipryde.view.response;
 
 import org.springframework.web.multipart.MultipartFile;

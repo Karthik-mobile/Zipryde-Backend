@@ -14,7 +14,8 @@ import java.math.BigDecimal;
 @NamedQueries ({
 	@NamedQuery(name="PricingMstr.findAll", query="SELECT p FROM PricingMstr p"),
 	@NamedQuery(name="PricingMstr.findByCabType", query="SELECT p FROM PricingMstr p where p.cabType.type = :cabType"),
-	@NamedQuery(name="PricingMstr.findByCabTypeId", query="SELECT p FROM PricingMstr p where p.cabType.id = :cabTypeId")
+	@NamedQuery(name="PricingMstr.findByCabTypeIdAndIsEnable", query="SELECT p FROM PricingMstr p where p.cabType.id = :cabTypeId and "
+			+ "p.isEnable = :isEnable")
 })
 
 public class PricingMstr implements Serializable {
@@ -38,6 +39,13 @@ public class PricingMstr implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="cabTypeId")
 	private CabType cabType;
+	
+	//bi-directional many-to-one association to PricingType
+	@ManyToOne
+	@JoinColumn(name="pricingTypeId")
+	private PricingType pricingType;
+	
+	private Integer isEnable;
 
 	public PricingMstr() {
 	}
@@ -96,6 +104,22 @@ public class PricingMstr implements Serializable {
 
 	public void setCabType(CabType cabType) {
 		this.cabType = cabType;
+	}
+
+	public PricingType getPricingType() {
+		return pricingType;
+	}
+
+	public void setPricingType(PricingType pricingType) {
+		this.pricingType = pricingType;
+	}
+
+	public Integer getIsEnable() {
+		return isEnable;
+	}
+
+	public void setIsEnable(Integer isEnable) {
+		this.isEnable = isEnable;
 	}
 
 }

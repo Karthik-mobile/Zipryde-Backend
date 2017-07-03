@@ -25,5 +25,11 @@ public class ZipRydeConstants {
 		static String CANCELLED = "CANCELLED";
 	}
 	
+	public interface PRICINGTYPE {
+		static String STANDARD = "STANDARD";
+		static String PERSON = "PERSON";
+		static String DISTANCE = "DISTANCE";
+	}
+	
 	
 }

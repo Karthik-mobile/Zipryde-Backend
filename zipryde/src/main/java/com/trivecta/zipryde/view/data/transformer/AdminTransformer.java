@@ -44,6 +44,8 @@ public class AdminTransformer {
 				cabTypeResponse.setLevel(cabType.getLevel());
 				cabTypeResponse.setType(cabType.getType());
 				
+				cabTypeResponse.setSeatingCapacity(cabType.getSeatingCapacity());
+				
 				if(cabType.getPricingMstrs() != null && cabType.getPricingMstrs().size() > 0 ) {
 					if(cabType.getPricingMstrs().get(0).getPricePerUnit()  != null) {
 						Double pricePerUnit = 
@@ -111,16 +113,19 @@ public class AdminTransformer {
 		return nyopRespList;
 	}
 	
-	public List<NYOPResponse> getAllNYOPByCabTypeAndDistance(CommonRequest commonRequest) throws MandatoryValidationException{
+	public List<NYOPResponse> getAllNYOPByCabTypeDistAndNoOfPassenger(CommonRequest commonRequest) throws MandatoryValidationException{
 		
-		if(commonRequest.getDistanceInMiles() != null && commonRequest.getCabTypeId() != null) {
+		if(commonRequest.getDistanceInMiles() != null && commonRequest.getCabTypeId() != null && 
+				commonRequest.getNoOfPassengers() != null) {
 			List<NYOPResponse> nyopResponseList = 
 					new ArrayList<NYOPResponse>();
 			
 			
 			Map<Integer,BigDecimal> nyopPricingList =
-					adminService.getAllNYOPByCabTypeAndDistance(
-							commonRequest.getDistanceInMiles().intValue(), commonRequest.getCabTypeId().intValue());
+					adminService.getAllNYOPByCabTypeDistanceAndPerson(
+							commonRequest.getDistanceInMiles().intValue(), 
+							commonRequest.getCabTypeId().intValue() ,
+							commonRequest.getNoOfPassengers().intValue());
 			
 			
 			Iterator<Map.Entry<Integer, BigDecimal>> entries = nyopPricingList.entrySet().iterator();
@@ -137,9 +142,7 @@ public class AdminTransformer {
 			return nyopResponseList;
 		}
 		else {
-			throw new MandatoryValidationException(ErrorMessages.DISTANCE_CAB_TYPE_MANDATORY);
-		}
-		
-		
+			throw new MandatoryValidationException(ErrorMessages.DISTANCE_CAB_TYPE_PERSON_MANDATORY);
+		}	
 	}
 }

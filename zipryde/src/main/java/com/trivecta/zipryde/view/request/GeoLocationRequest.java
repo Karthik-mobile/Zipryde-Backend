@@ -12,6 +12,10 @@ public class GeoLocationRequest {
 		
 	private Number distanceInMiles;
 
+	private Number userId;
+	
+	private Number isOnline;
+	
 	public String getFromLatitude() {
 		return fromLatitude;
 	}
@@ -50,5 +54,21 @@ public class GeoLocationRequest {
 
 	public void setDistanceInMiles(Number distanceInMiles) {
 		this.distanceInMiles = distanceInMiles;
+	}
+
+	public Number getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(Number isOnline) {
+		this.isOnline = isOnline;
+	}
+
+	public Number getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Number userId) {
+		this.userId = userId;
 	}	
 }

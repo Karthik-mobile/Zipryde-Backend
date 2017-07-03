@@ -107,9 +107,13 @@ public class UserDAOImpl implements UserDAO {
 		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
 			return getUserByEmailIdPsswdAndUserType(user.getEmailId(),user.getUserType().getType(),user.getPassword());
 		}
-		else {
+		else if (USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())){
 			return getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
 		}
+		else if (USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())){
+			return getUserByMobileNoPsswdAndUSerTypeIsEnable(user.getMobileNumber(),user.getUserType().getType(),user.getPassword(),1);
+		}
+		return null;
 	}
 	
 	private User getUserByEmailIdPsswdAndUserType(String emailId,String userType,String password) throws NoResultEntityException {
@@ -117,6 +121,20 @@ public class UserDAOImpl implements UserDAO {
 		try {
 			User user = (User) session.getNamedQuery("User.findByEmailIdPsswdAndUserType").
 					setParameter("emailId", emailId).setParameter("userType", userType).setParameter("password", password).getSingleResult();
+					
+			return user;
+		}
+		catch(NoResultException e) {
+			throw new NoResultEntityException(ErrorMessages.LOGGIN_FAILED);
+		}
+	}
+	
+	private User getUserByMobileNoPsswdAndUSerTypeIsEnable(String mobileNumber,String userType,String password,int isEnable) throws NoResultEntityException {
+		Session session = this.sessionFactory.getCurrentSession();
+		try {
+			User user = (User) session.getNamedQuery("User.findByMobileNoPsswdUserTypeIsEnable").
+					setParameter("mobileNumber", mobileNumber).setParameter("userType", userType).
+					setParameter("password", password).setParameter("isEnable", isEnable).getSingleResult();
 					
 			return user;
 		}
@@ -156,7 +174,7 @@ public class UserDAOImpl implements UserDAO {
 						STATUS.APPROVED.equalsIgnoreCase(user.getDriverProfile().getStatus().getStatus())) {
 					user.setIsEnable(1);	
 				}	
-				else {
+				else{
 					user.setIsEnable(0);
 				}
 			}
@@ -219,9 +237,9 @@ public class UserDAOImpl implements UserDAO {
 				
 				if(user.getDriverProfile() != null && user.getDriverProfile().getStatus() != null)
 				{					
-					if(STATUS.APPROVED.equalsIgnoreCase(user.getDriverProfile().getStatus().getStatus())) {
+					/*if(STATUS.APPROVED.equalsIgnoreCase(user.getDriverProfile().getStatus().getStatus())) {
 						user.setIsEnable(1);	
-					}
+					}*/
 					
 					if(user.getDriverProfile().getStatus() != null) {
 						status = (Status)

@@ -9,6 +9,7 @@ import com.trivecta.zipryde.model.entity.PricingMstr;
 public interface PricingDAO {
 
 	public List<PricingMstr> getAllPricingMstr() ;
-	public BigDecimal calculatePricingByTypeAndDistance(int NoOfMiles, int cabTypeId);
-	public Map<Integer,BigDecimal> getAllNYOPByCabTypeAndDistance(int NoOfMiles, int cabTypeId);
+	//public BigDecimal calculatePricingByTypeAndDistance(int NoOfMiles, int cabTypeId);
+	public BigDecimal calculatePricingByTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) ;
+	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson);
 }

@@ -9,6 +9,8 @@ public class UserGeoSpatialResponse {
 	private BigDecimal latitude;
 	
 	private BigDecimal longitude;
+	
+	private Number isOnline;
 
 	public int getUserId() {
 		return userId;
@@ -32,5 +34,13 @@ public class UserGeoSpatialResponse {
 
 	public void setLongitude(BigDecimal longitude) {
 		this.longitude = longitude;
+	}
+
+	public Number getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(Number isOnline) {
+		this.isOnline = isOnline;
 	}
 }

@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Transactional
-	public Map<Integer,BigDecimal> getAllNYOPByCabTypeAndDistance(int NoOfMiles, int cabTypeId) {
-		return pricingDAO.getAllNYOPByCabTypeAndDistance(NoOfMiles, cabTypeId);
+	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) {
+		return pricingDAO.getAllNYOPByCabTypeDistanceAndPerson(NoOfMiles, cabTypeId,noOfPerson);
 	}
 }

@@ -14,6 +14,8 @@ public class CabTypeResponse {
 
 	private Double pricePerUnit;
 	
+	private Number seatingCapacity;
+	
 	public Number getCabTypeId() {
 		return cabTypeId;
 	}
@@ -60,6 +62,14 @@ public class CabTypeResponse {
 
 	public void setPricePerUnit(Double pricePerUnit) {
 		this.pricePerUnit = pricePerUnit;
+	}
+
+	public Number getSeatingCapacity() {
+		return seatingCapacity;
+	}
+
+	public void setSeatingCapacity(Number seatingCapacity) {
+		this.seatingCapacity = seatingCapacity;
 	}
 	
 }

@@ -32,7 +32,7 @@ public interface ErrorMessages {
 	
 	static String USER_TYPE_MANDATORY = "User Type is Mandatory ";
 	
-	static String DISTANCE_CAB_TYPE_MANDATORY = "Distance and Cab Type is Mandatory for Price Calculation";
+	static String DISTANCE_CAB_TYPE_PERSON_MANDATORY = "Distance,Cab Type,No Of Passengers are Mandatory for Price Calculation";
 	
 	static String LOGGIN_FAILED = "Mobile Number or  Password does not match";
 	

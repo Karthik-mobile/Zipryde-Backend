@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"distanceInMiles",
 	"cabTypeId",
 	"userId",
-	"cabId"
+	"cabId",
+	"noOfPassengers"
 })
 public class CommonRequest {
 
@@ -25,6 +26,8 @@ public class CommonRequest {
 	private Number userId;
 	
 	private Number cabId;
+	
+	private Number noOfPassengers;
 
 	public Number getMakeId() {
 		return makeId;
@@ -72,5 +75,13 @@ public class CommonRequest {
 
 	public void setCabId(Number cabId) {
 		this.cabId = cabId;
+	}
+
+	public Number getNoOfPassengers() {
+		return noOfPassengers;
+	}
+
+	public void setNoOfPassengers(Number noOfPassengers) {
+		this.noOfPassengers = noOfPassengers;
 	}
 }

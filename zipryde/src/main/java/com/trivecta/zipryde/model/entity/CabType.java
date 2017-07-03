@@ -26,6 +26,8 @@ public class CabType implements Serializable {
 	private Integer level;
 
 	private String type;
+	
+	private Integer  seatingCapacity;
 
 	//bi-directional many-to-one association to Booking
 	@OneToMany(mappedBy="cabType")
@@ -172,6 +174,14 @@ public class CabType implements Serializable {
 		vehicleDetail.setCabType(null);
 
 		return vehicleDetail;
+	}
+
+	public Integer getSeatingCapacity() {
+		return seatingCapacity;
+	}
+
+	public void setSeatingCapacity(Integer seatingCapacity) {
+		this.seatingCapacity = seatingCapacity;
 	}
 
 }

@@ -64,7 +64,9 @@ public class BookingDAOImpl implements BookingDAO{
 	
 		//booking.setCrnNumber(generateUniqueCRN());
 		
-		BigDecimal suggestedPrice = pricingDAO.calculatePricingByTypeAndDistance(booking.getDistanceInMiles(),booking.getCabType().getId());
+		BigDecimal suggestedPrice = 
+				pricingDAO.calculatePricingByTypeDistanceAndPerson(
+						booking.getDistanceInMiles(),booking.getCabType().getId(),booking.getNoOfPassengers());
 		booking.setSuggestedPrice(suggestedPrice);
 		
 		session.save(booking);

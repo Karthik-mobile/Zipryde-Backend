@@ -22,5 +22,5 @@ public interface AdminService {
 	
 	public List<Nyop> getAllNyopList();
 	
-	public Map<Integer,BigDecimal> getAllNYOPByCabTypeAndDistance(int NoOfMiles, int cabTypeId);
+	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson);
 }
