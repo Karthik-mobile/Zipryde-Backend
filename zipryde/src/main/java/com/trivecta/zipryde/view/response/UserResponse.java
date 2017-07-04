@@ -27,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"isLoggedIn",	
 	"isEnable",
 	"status",
-	"comments"
+	"comments",
+	"restriction"
 })
 
 public class UserResponse {
@@ -83,6 +84,9 @@ public class UserResponse {
 
 	@JsonProperty("comments")
 	private String comments;
+	
+	@JsonProperty("restriction")
+	private String restriction;
 
 	public Number getUserId() {
 		return userId;
@@ -218,5 +222,13 @@ public class UserResponse {
 
 	public void setIsEnable(Number isEnable) {
 		this.isEnable = isEnable;
+	}
+
+	public String getRestriction() {
+		return restriction;
+	}
+
+	public void setRestriction(String restriction) {
+		this.restriction = restriction;
 	}	
 }

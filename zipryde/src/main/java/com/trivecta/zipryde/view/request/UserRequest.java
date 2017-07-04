@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"defaultPercentageAccepted" ,
 	"isEnable",
 	"status",
-	"comments"
+	"comments",
+	"restriction"
 	//"licenseImages"
 })
 public class UserRequest {
@@ -80,7 +81,10 @@ public class UserRequest {
 	private String status;
 
 	@JsonProperty("comments")
-	private String comments;
+	private String comments;	
+	
+	@JsonProperty("restriction")
+	private String restriction;
 
 	/*@JsonProperty("licenseImages")
 	//List<MultipartFile> licenseImages;
@@ -220,6 +224,14 @@ public class UserRequest {
 
 	public void setIsEnable(Number isEnable) {
 		this.isEnable = isEnable;
+	}
+
+	public String getRestriction() {
+		return restriction;
+	}
+
+	public void setRestriction(String restriction) {
+		this.restriction = restriction;
 	}
 
 	

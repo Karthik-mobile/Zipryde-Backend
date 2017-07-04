@@ -195,6 +195,7 @@ public class UserTransformer {
 				driverProfile.setLicenseNo(userRequest.getLicenseNo());	
 				driverProfile.setLicenseIssuedOn(licenseIssuedOn);
 				driverProfile.setLicenseValidUntil(licenseValidUntil);	
+				driverProfile.setRestrictions(userRequest.getRestriction());
 				
 				if(userRequest.getDefaultPercentageAccepted() != null) {
 					driverProfile.setDefaultPercentage(
@@ -331,12 +332,14 @@ public class UserTransformer {
 						dateFormat.format(user.getDriverProfile().getLicenseValidUntil());
 				
 				userResponse.setLicenseValidUntil(licenseValidUntil);
-				
+				userResponse.setRestriction(user.getDriverProfile().getRestrictions());
+
 				// Need to get From User Session
 				userResponse.setIsLoggedIn(0);
 				userResponse.setDefaultPercentageAccepted(user.getDriverProfile().getDefaultPercentage());
 				
 				userResponse.setStatus(user.getDriverProfile().getStatus().getStatus());
+				userResponse.setComments(user.getDriverProfile().getComments());
 			}			
 		}
 		return userResponse;

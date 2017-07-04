@@ -235,7 +235,13 @@ public class UserDAOImpl implements UserDAO {
 			origUser.setAlternateNumber(user.getAlternateNumber());
 			origUser.setMobileNumber(user.getMobileNumber());
 			origUser.setEmailId(user.getEmailId());
-			origUser.setIsEnable(user.getIsEnable());
+			
+			if(user.getIsEnable() == null) {
+				origUser.setIsEnable(0);
+			}
+			else {
+				origUser.setIsEnable(user.getIsEnable());
+			}
 			
 			origUser.setModifiedDate(new Date());
 			
@@ -250,31 +256,24 @@ public class UserDAOImpl implements UserDAO {
 				origDriverProfile.setLicenseNo(user.getDriverProfile().getLicenseNo());
 				origDriverProfile.setLicenseIssuedOn(user.getDriverProfile().getLicenseIssuedOn());
 				origDriverProfile.setLicenseValidUntil(user.getDriverProfile().getLicenseValidUntil());
+				origDriverProfile.setRestrictions(user.getDriverProfile().getRestrictions());
 				
 				if(user.getDriverProfile() != null && user.getDriverProfile().getStatus() != null)
 				{					
-					if(user.getDriverProfile().getStatus() != null) {
-						if(!user.getDriverProfile().getStatus().getStatus().
-								equalsIgnoreCase(origUser.getDriverProfile().getStatus().getStatus())) {
+					if(!user.getDriverProfile().getStatus().getStatus().
+						equalsIgnoreCase(origUser.getDriverProfile().getStatus().getStatus())) {
+							String statusStr = user.getDriverProfile().getStatus().getStatus().toUpperCase();
 							status = (Status)
-									session.getNamedQuery("Status.findByStatus").
-									setParameter("status", user.getDriverProfile().getStatus().getStatus()).getSingleResult();
-							origDriverProfile.setStatus(status);	
-						}
-					}
-					/*else {
-						status = (Status)
 								session.getNamedQuery("Status.findByStatus").
-								setParameter("status", STATUS.REQUESTED).getSingleResult();		
+								setParameter("status", statusStr).getSingleResult();
 						origDriverProfile.setStatus(status);	
-					}	*/				
-				}
-			}
-			User newUser = (User)session.merge(origUser);
-			
-			if(origDriverProfile != null) {
+					}
+				}	
 				session.merge(origDriverProfile);
 			}
+			
+			User newUser = (User)session.merge(origUser);
+		
 			return newUser;
 		}
 		catch(NoResultException e) {
