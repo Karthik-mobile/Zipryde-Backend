@@ -40,5 +40,12 @@ public interface ErrorMessages {
 	
 	static String NO_CAB_FOUND = "NO Cab found";
 	
+	static String DIVER_NOT_APPROVED = "Driver Request is Pending for Approval";
+	
+	static String ACCOUNT_DEACTIVATED = "Account Deactivated";
+	
+	static String LAT_LON_REQUIRED = "Latitude and Longitude Required";
+	
+	static String ONLINE_STATUS_REQUIRED = "Online Status Required";
 	
 }

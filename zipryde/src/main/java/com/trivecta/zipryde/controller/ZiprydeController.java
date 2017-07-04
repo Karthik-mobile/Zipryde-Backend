@@ -29,10 +29,12 @@ import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CabResponse;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
+import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
 import com.trivecta.zipryde.view.response.OTPResponse;
+import com.trivecta.zipryde.view.response.UserGeoSpatialResponse;
 import com.trivecta.zipryde.view.response.UserResponse;
 
 @RestController
@@ -120,7 +122,7 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/verifyLogInUser")
-	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException {
+	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException {
 		return userTransformer.verifyLogInUser(userRequest);
 	}
 	
@@ -128,7 +130,24 @@ public class ZiprydeController {
 	public @ResponseBody BookingResponse requestBooking(@RequestBody BookingRequest bookingRequest) throws ParseException {
 		return bookingTranssformer.createBooking(bookingRequest);
 	}
+	
+	@RequestMapping(value = "/getDriverCountBySatus")
+	public CommonResponse getDriverCountBySatus(@RequestBody CommonRequest commonRequest) {
+		return userTransformer.getDriverCountBySatus(commonRequest);
+	}
+	
 
+	//TODO
+	//1. DRIVER APPROVE / REJECT BOOKING
+	//2. GET BOOKINGS BY USER TYPE AND USER ID
+	
+	/** --------- MONGO DB SERVICE -------------------- **/
+	
+	@RequestMapping(value = "/getNearByActiveDrivers")
+	public List<UserGeoSpatialResponse> getNearByActiveDrivers(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+		return mongoTransfomer.getNearByActiveDrivers(geoLocationRequest);
+	}
+	
 	@RequestMapping(value = "/insertDriverSession")
 	public void insertDriverSession(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
 		mongoTransfomer.insertDriverSession(geoLocationRequest);

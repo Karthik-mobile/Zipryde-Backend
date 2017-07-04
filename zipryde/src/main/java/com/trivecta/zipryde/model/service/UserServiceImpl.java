@@ -46,12 +46,17 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Transactional
-	public User verifyLogInUser(User user) throws NoResultEntityException {
+	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException {
 		return userDAO.verifyLogInUser(user);
 	}
 	
 	@Transactional
 	public User getUserByUserId(int userId){
 		return userDAO.getUserByUserId(userId);
+	}
+
+	@Transactional
+	public Integer getUserCountByTypeAndStatus(String userType, String status) {
+		return userDAO.getUserCountByTypeAndStatus(userType, status);
 	}
 }

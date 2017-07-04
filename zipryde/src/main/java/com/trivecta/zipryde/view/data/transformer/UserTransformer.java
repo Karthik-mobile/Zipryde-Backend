@@ -28,6 +28,7 @@ import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.UserRequest;
+import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.OTPResponse;
 import com.trivecta.zipryde.view.response.UserResponse;
 
@@ -161,21 +162,35 @@ public class UserTransformer {
 			User user = new User();
 			
 			if(userRequest.getUserId() == null || userRequest.getUserId().intValue() == 0) {
-				user.setPassword(Utility.encryptWithMD5(userRequest.getPassword()));
-				user.setMobileNumber(userRequest.getMobileNumber());
-				UserType userType = new UserType();
-				userType.setType(userRequest.getUserType());
-				user.setUserType(userType);
+				user.setPassword(Utility.encryptWithMD5(userRequest.getPassword()));				
 			}
-					
+			else {
+				user.setId(userRequest.getUserId().intValue());
+			}
+			
+			user.setMobileNumber(userRequest.getMobileNumber());
+			UserType userType = new UserType();
+			userType.setType(userRequest.getUserType());
+			user.setUserType(userType);
+			
 			user.setFirstName(userRequest.getFirstName());
 			user.setLastName(userRequest.getLastName());
 			user.setEmailId(userRequest.getEmailId());
 			user.setAlternateNumber(userRequest.getAlternateNumber());
-						
-			if(USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())) {
+				
+			if(userRequest.getIsEnable() != null) {
+				if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(userRequest.getUserType())) {
+						user.setIsEnable(userRequest.getIsEnable().intValue());
+				}
+			}				
+				
+			else if(USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())) {
 				
 				DriverProfile driverProfile = new DriverProfile();
+				
+				if(userRequest.getDriverProfileId() != null) {
+					driverProfile.setId(userRequest.getDriverProfileId().intValue());
+				}
 				driverProfile.setVehicleNumber(userRequest.getVehicleNumber());
 				driverProfile.setLicenseNo(userRequest.getLicenseNo());	
 				driverProfile.setLicenseIssuedOn(licenseIssuedOn);
@@ -237,15 +252,14 @@ public class UserTransformer {
 	}
 	
 	
-	public UserResponse verifyLogInUser(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException {
+	public UserResponse verifyLogInUser(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException, UserValidationException {
 		
 		StringBuffer errorMsg = new StringBuffer("");
 		
 		if(!ValidationUtil.isValidString(userRequest.getUserType())) {
 			errorMsg = errorMsg.append(ErrorMessages.USER_TYPE_MANDATORY);
 		}
-		
-		
+				
 		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(userRequest.getUserType())){ 
 			if(!ValidationUtil.isValidString(userRequest.getEmailId())) {
 				errorMsg = errorMsg.append(ErrorMessages.EMAIL_MANDATORY);
@@ -276,6 +290,14 @@ public class UserTransformer {
 		}		
 	}
 	
+	public CommonResponse getDriverCountBySatus(CommonRequest commonRequest) {
+		Integer driverCount = userService.getUserCountByTypeAndStatus(USERTYPE.DRIVER, commonRequest.getStatus());
+		
+		CommonResponse commonResponse = new CommonResponse();
+		commonResponse.setCount(driverCount);
+		return commonResponse;
+	}
+	
 	private UserResponse setUserResponse(User user) {
 		UserResponse userResponse = new UserResponse();
 		
@@ -284,6 +306,7 @@ public class UserTransformer {
 		userResponse.setLastName(user.getLastName());
 		userResponse.setEmailId(user.getEmailId());
 		userResponse.setMobileNumber(String.valueOf(user.getMobileNumber()));
+		userResponse.setIsEnable(user.getIsEnable());
 		
 		if(user.getUserType() != null) {
 			userResponse.setUserType(user.getUserType().getType());

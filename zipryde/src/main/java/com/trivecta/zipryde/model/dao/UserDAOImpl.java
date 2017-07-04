@@ -103,16 +103,22 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}	
 	
-	public User verifyLogInUser(User user) throws NoResultEntityException {
+	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException {
 		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
 			return getUserByEmailIdPsswdAndUserType(user.getEmailId(),user.getUserType().getType(),user.getPassword());
 		}
-		else if (USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())){
-			return getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
+		else {			
+			User newUser =  getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
+			if(newUser.getIsEnable() == 0 ) {
+				throw new UserValidationException(ErrorMessages.ACCOUNT_DEACTIVATED);				
+			}
+			if (USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())){  
+				if(STATUS.REQUESTED.equalsIgnoreCase(newUser.getDriverProfile().getStatus().getStatus())){
+					throw new UserValidationException(ErrorMessages.DIVER_NOT_APPROVED);
+				}				
+			}
 		}
-		else if (USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())){
-			return getUserByMobileNoPsswdAndUSerTypeIsEnable(user.getMobileNumber(),user.getUserType().getType(),user.getPassword(),1);
-		}
+		
 		return null;
 	}
 	
@@ -224,6 +230,13 @@ public class UserDAOImpl implements UserDAO {
 				throw new UserValidationException(ErrorMessages.MOBILE_NO_CANNOT_UPDATE);
 			}
 			
+			origUser.setFirstName(user.getFirstName());
+			origUser.setLastName(user.getLastName());
+			origUser.setAlternateNumber(user.getAlternateNumber());
+			origUser.setMobileNumber(user.getMobileNumber());
+			origUser.setEmailId(user.getEmailId());
+			origUser.setIsEnable(user.getIsEnable());
+			
 			origUser.setModifiedDate(new Date());
 			
 			DriverProfile origDriverProfile = null;
@@ -234,25 +247,27 @@ public class UserDAOImpl implements UserDAO {
 				origDriverProfile = session.find(DriverProfile.class, origUser.getDriverProfile().getId());
 				
 				origDriverProfile.setComments(user.getDriverProfile().getComments());
+				origDriverProfile.setLicenseNo(user.getDriverProfile().getLicenseNo());
+				origDriverProfile.setLicenseIssuedOn(user.getDriverProfile().getLicenseIssuedOn());
+				origDriverProfile.setLicenseValidUntil(user.getDriverProfile().getLicenseValidUntil());
 				
 				if(user.getDriverProfile() != null && user.getDriverProfile().getStatus() != null)
 				{					
-					/*if(STATUS.APPROVED.equalsIgnoreCase(user.getDriverProfile().getStatus().getStatus())) {
-						user.setIsEnable(1);	
-					}*/
-					
 					if(user.getDriverProfile().getStatus() != null) {
+						if(!user.getDriverProfile().getStatus().getStatus().
+								equalsIgnoreCase(origUser.getDriverProfile().getStatus().getStatus())) {
+							status = (Status)
+									session.getNamedQuery("Status.findByStatus").
+									setParameter("status", user.getDriverProfile().getStatus().getStatus()).getSingleResult();
+							origDriverProfile.setStatus(status);	
+						}
+					}
+					/*else {
 						status = (Status)
 								session.getNamedQuery("Status.findByStatus").
-								setParameter("status", user.getDriverProfile().getStatus().getStatus()).getSingleResult();			
-					}
-					else {
-						status = (Status)
-								session.getNamedQuery("Status.findByStatus").
-								setParameter("status", STATUS.REQUESTED).getSingleResult();			
-					}
-					
-					origDriverProfile.setStatus(status);	
+								setParameter("status", STATUS.REQUESTED).getSingleResult();		
+						origDriverProfile.setStatus(status);	
+					}	*/				
 				}
 			}
 			User newUser = (User)session.merge(origUser);
@@ -284,6 +299,18 @@ public class UserDAOImpl implements UserDAO {
 		return user;
 	}
 
+	public Integer getUserCountByTypeAndStatus(String userType,String status) {
+		int userCount = 0;
+		Session session = this.sessionFactory.getCurrentSession();
+		List<User> userList = session.createNamedQuery("User.findByTypeAndStatus").
+				setParameter("userType",userType).setParameter("status", status).getResultList();
+		if (userList != null && userList.size() > 0) {
+			userCount = userList.size();
+		}
+		return userCount;
+	}
+	
+	
 	private void fetchLazyInitialisation(User user){
 		user.getBookingHistories1();
 		user.getCommissions();
@@ -308,4 +335,5 @@ public class UserDAOImpl implements UserDAO {
 	}
 	
 
+	
 }

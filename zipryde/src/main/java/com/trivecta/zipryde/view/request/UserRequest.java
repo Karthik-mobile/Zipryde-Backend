@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"licenseIssuedOn",
 	"licenseValidUntil", 
 	"defaultPercentageAccepted" ,
+	"isEnable",
 	"status",
 	"comments"
 	//"licenseImages"
@@ -72,6 +73,9 @@ public class UserRequest {
 	@JsonProperty("defaultPercentageAccepted")
 	private Number defaultPercentageAccepted;
 
+	@JsonProperty("isEnable")
+	private Number isEnable;
+	
 	@JsonProperty("status")
 	private String status;
 
@@ -208,6 +212,14 @@ public class UserRequest {
 
 	public void setLicenseIssuedOn(String licenseIssuedOn) {
 		this.licenseIssuedOn = licenseIssuedOn;
+	}
+
+	public Number getIsEnable() {
+		return isEnable;
+	}
+
+	public void setIsEnable(Number isEnable) {
+		this.isEnable = isEnable;
 	}
 
 	

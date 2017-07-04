@@ -17,13 +17,16 @@ import java.util.List;
 	@NamedQuery(name="User.findByUserType", query="SELECT u FROM User u where u.userType.type = :userType order by u.id desc"),
 	@NamedQuery(name="User.findByMobileNo", query="SELECT u FROM User u where u.mobileNumber = :mobileNumber"),
 	@NamedQuery(name="User.findByMobileNoAndUserType", 
-		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.userType.type = :userType"),
+		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.userType.type = :userType "),
 	@NamedQuery(name="User.findByMobileNoPsswdAndUserType", 
-	query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType"),
+		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType"),
 	@NamedQuery(name="User.findByEmailIdPsswdAndUserType", 
-	query="SELECT u FROM User u where u.emailId = :emailId and u.password = :password and u.userType.type = :userType"),
+		query="SELECT u FROM User u where u.emailId = :emailId and u.password = :password and u.userType.type = :userType"),
 	@NamedQuery(name="User.findByMobileNoPsswdUserTypeIsEnable", 
-	query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType and u.isEnable = :isEnable")
+		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType and u.isEnable = :isEnable"),
+	@NamedQuery(name="User.findByTypeAndStatus", 
+		query="SELECT u FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status order by u.id desc"),
+
 })
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;

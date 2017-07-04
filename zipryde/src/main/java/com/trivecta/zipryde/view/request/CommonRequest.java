@@ -11,7 +11,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"cabTypeId",
 	"userId",
 	"cabId",
-	"noOfPassengers"
+	"noOfPassengers",
+	"status"
 })
 public class CommonRequest {
 
@@ -29,6 +30,8 @@ public class CommonRequest {
 	
 	private Number noOfPassengers;
 
+	private String status;
+	
 	public Number getMakeId() {
 		return makeId;
 	}
@@ -83,5 +86,13 @@ public class CommonRequest {
 
 	public void setNoOfPassengers(Number noOfPassengers) {
 		this.noOfPassengers = noOfPassengers;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

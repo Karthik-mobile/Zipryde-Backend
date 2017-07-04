@@ -1,28 +1,20 @@
-package com.trivecta.zipryde.view.response;
+package com.trivecta.zipryde.mongodb;
 
 import java.math.BigDecimal;
 
 public class UserGeoSpatialResponse {
-	
-	private Number userId;
+
+	private String userId;
 	
 	private BigDecimal latitude;
 	
 	private BigDecimal longitude;
-	
-	private Number isOnline;
 
-	public UserGeoSpatialResponse(Integer userId,BigDecimal longitude,BigDecimal latitude) {
-		this.userId = userId;
-		this.latitude = latitude;
-		this.longitude = longitude;
-	}
-	
-	public Number getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Number userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
@@ -40,13 +32,5 @@ public class UserGeoSpatialResponse {
 
 	public void setLongitude(BigDecimal longitude) {
 		this.longitude = longitude;
-	}
-
-	public Number getIsOnline() {
-		return isOnline;
-	}
-
-	public void setIsOnline(Number isOnline) {
-		this.isOnline = isOnline;
 	}
 }
