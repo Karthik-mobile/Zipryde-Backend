@@ -26,7 +26,8 @@ import java.util.List;
 		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType and u.isEnable = :isEnable"),
 	@NamedQuery(name="User.findByTypeAndStatus", 
 		query="SELECT u FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status order by u.id desc"),
-
+	@NamedQuery(name="User.findByApprovedAndEnabled", 
+		query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = :isEnable and u.driverProfile.status.status = :status order by u.id desc")
 })
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;

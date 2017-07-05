@@ -8,8 +8,13 @@ import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.trivecta.zipryde.constants.ErrorMessages;
+import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
+import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
+import com.trivecta.zipryde.framework.helper.ValidationUtil;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.CabType;
+import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.service.BookingService;
 import com.trivecta.zipryde.view.request.BookingRequest;
@@ -38,42 +43,84 @@ public class BookingTransformer {
 	 * Step3 - Send Notification
 	 */
 	
-	public BookingResponse createBooking(BookingRequest bookingRequest) throws ParseException {
+	public BookingResponse createBooking(BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
 		
-		Booking booking = new Booking();
+		StringBuffer errorMsg = new StringBuffer();
 		
-		booking.setFrom(bookingRequest.getFrom());
-		booking.setTo(bookingRequest.getTo());
-		
-		CabType cabType = new  CabType();
-		cabType.setId(bookingRequest.getCabTypeId().intValue());
-		booking.setCabType(cabType);
-		
-		GeoLocationRequest geoLocationRequest = bookingRequest.getGeoLocationRequest(); 
-		
-		booking.setFromLatitude(new BigDecimal(geoLocationRequest.getFromLatitude()));
-		booking.setFromLongitude(new BigDecimal(geoLocationRequest.getFromLongitude()));
-		booking.setToLatitude(new BigDecimal(geoLocationRequest.getToLatitude()));
-		booking.setToLongitude(new BigDecimal(geoLocationRequest.getToLongitude()));
-		booking.setDistanceInMiles(geoLocationRequest.getDistanceInMiles().intValue());
-		
-		User customer  = new User();
-		customer.setId(bookingRequest.getCustomerId().intValue());
-		booking.setRider(customer);
-		
-		if(bookingRequest.getStartDateTime() != null) {
-			DateFormat startDate = new SimpleDateFormat("MM-dd-YYYY HH:mm:ss");
-			booking.setStartDateTime(startDate.parse(bookingRequest.getStartDateTime()));
+		if(!ValidationUtil.isValidString(bookingRequest.getFrom())) {
+			errorMsg = errorMsg.append(ErrorMessages.PICKUP_LOC_REQUIRED);
 		}
-				
-		booking.setOfferedPrice(new BigDecimal(bookingRequest.getOfferedPrice()));
-		booking.setOfferedPricePercentage(bookingRequest.getOfferedPricePercentage().intValue());
+		if(!ValidationUtil.isValidString(bookingRequest.getTo())) {
+			errorMsg = errorMsg.append(ErrorMessages.DROP_LOC_REQUIRED);
+		}
+		if( bookingRequest.getGeoLocationRequest() == null) {
+			errorMsg = errorMsg.append(ErrorMessages.LAT_LON_REQUIRED);
+		}
+		else {
+			
+		}
+		if(bookingRequest.getCabTypeId() == null) {
+			errorMsg = errorMsg.append(ErrorMessages.CAB_REQUIRED);
+		}
+		if(bookingRequest.getCustomerId() == null) {
+			errorMsg = errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
+		}
+		if(bookingRequest.getSuggestedPrice() == null) {
+			errorMsg = errorMsg.append(ErrorMessages.SUGGESTED_PRICE_REQUIRED);
+		}
+		if(bookingRequest.getOfferedPrice() == null) {
+			errorMsg = errorMsg.append(ErrorMessages.OFFERED_PRICE_REQUIRED);
+		}
 		
-		Booking newBooking = bookingService.createBooking(booking);		
-		BookingResponse bookingResponse = setBookingResponseFromBooking(newBooking);		
-		return bookingResponse;
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			Booking booking = new Booking();
+			
+			booking.setFrom(bookingRequest.getFrom());
+			booking.setTo(bookingRequest.getTo());
+			
+			CabType cabType = new  CabType();
+			cabType.setId(bookingRequest.getCabTypeId().intValue());
+			booking.setCabType(cabType);
+			
+			GeoLocationRequest geoLocationRequest = bookingRequest.getGeoLocationRequest(); 
+			
+			booking.setFromLatitude(new BigDecimal(geoLocationRequest.getFromLatitude()));
+			booking.setFromLongitude(new BigDecimal(geoLocationRequest.getFromLongitude()));
+			booking.setToLatitude(new BigDecimal(geoLocationRequest.getToLatitude()));
+			booking.setToLongitude(new BigDecimal(geoLocationRequest.getToLongitude()));
+			booking.setDistanceInMiles(geoLocationRequest.getDistanceInMiles().intValue());
+			
+			User customer  = new User();
+			customer.setId(bookingRequest.getCustomerId().intValue());
+			booking.setRider(customer);
+			
+			if(bookingRequest.getStartDateTime() != null) {
+				DateFormat startDate = new SimpleDateFormat("MM-dd-YYYY HH:mm:ss");
+				booking.setStartDateTime(startDate.parse(bookingRequest.getStartDateTime()));
+			}
+				
+			booking.setSuggestedPrice(new BigDecimal(bookingRequest.getSuggestedPrice()));
+			booking.setOfferedPrice(new BigDecimal(bookingRequest.getOfferedPrice()));
+			booking.setOfferedPricePercentage(bookingRequest.getOfferedPricePercentage().intValue());
+			
+			Status status = new Status();
+			status.setStatus(STATUS.REQUESTED);
+			booking.setBookingStatus(status);
+			
+			Booking newBooking = bookingService.createBooking(booking);		
+			BookingResponse bookingResponse = setBookingResponseFromBooking(newBooking);		
+			return bookingResponse;
+		}	
 	}
 	
+	public BookingResponse bookingResponseByDriver(BookingRequest bookingRequest) {
+		BookingResponse bookingResponse = new BookingResponse();
+		
+		return bookingResponse;
+	}
 	
 	public BookingResponse updateBooking(BookingRequest bookingRequest) throws ParseException {
 		

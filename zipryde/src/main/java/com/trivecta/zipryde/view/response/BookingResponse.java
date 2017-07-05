@@ -9,10 +9,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"bookingId",
 	"cabTypeId",
 	"cabType",
+	"vin",
 	"customerId",
 	"customerName",
+	"customerMobileNumber",
 	"driverId",
 	"driverName",
+	"driverMobileNumber",
 	"from", 
 	"to", 
 	"geoLocationResponse",
@@ -75,17 +78,26 @@ public class BookingResponse {
 	@JsonProperty("customerName")
 	private String customerName;
 	
+	@JsonProperty("customerMobileNumber")
+	private String customerMobileNumber;
+	
 	@JsonProperty("driverId")
 	private Number driverId;
 	
 	@JsonProperty("driverName")
 	private String driverName;
+	
+	@JsonProperty("driverMobileNumber")
+	private String driverMobileNumber;
 
 	@JsonProperty("cabTypeId")
 	private Number cabTypeId;
 	
 	@JsonProperty("cabType")
 	private String cabType;
+	
+	@JsonProperty("vin")
+	private String vin;
 	
 	public Number getBookingId() {
 		return bookingId;
@@ -237,5 +249,29 @@ public class BookingResponse {
 
 	public void setCabType(String cabType) {
 		this.cabType = cabType;
+	}
+
+	public String getCustomerMobileNumber() {
+		return customerMobileNumber;
+	}
+
+	public void setCustomerMobileNumber(String customerMobileNumber) {
+		this.customerMobileNumber = customerMobileNumber;
+	}
+
+	public String getDriverMobileNumber() {
+		return driverMobileNumber;
+	}
+
+	public void setDriverMobileNumber(String driverMobileNumber) {
+		this.driverMobileNumber = driverMobileNumber;
+	}
+
+	public String getVin() {
+		return vin;
+	}
+
+	public void setVin(String vin) {
+		this.vin = vin;
 	}
 }

@@ -39,12 +39,19 @@ public class VehicleTransformer {
 		
 		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 		
+		if(cabRequest.getLicensePlateNo() == null) {
+			errorMsg.append(ErrorMessages.LICENSE_PLATE_REQUIRED);
+		}		
+		if(cabRequest.getVin() == null) {
+			errorMsg.append(ErrorMessages.VIN_REQUIRED);
+		}
+		
 		if(cabRequest.getCabId() != null && cabRequest.getCabId().intValue() != 0) {
 			
 		}
 		else {
 			if(cabRequest.getSeatingCapacity() == null || cabRequest.getSeatingCapacity().intValue() == 0) {
-				errorMsg.append(ErrorMessages.SEATING_CAPACITY_MAANDATORY);
+				errorMsg.append(ErrorMessages.SEATING_CAPACITY_MANDATORY);
 			}
 		}
 		
@@ -101,6 +108,19 @@ public class VehicleTransformer {
 		 List<CabResponse> cabList = new ArrayList<CabResponse>();
 		 
 		 List<VehicleDetail> vehicleList = vehicleService.getAllVehicles();
+		 
+		 if(vehicleList != null && vehicleList.size() > 0) {
+			 for(VehicleDetail vehicleDetail : vehicleList) {
+				 cabList.add(setCabResponseFromVehicleDetail(vehicleDetail));
+			 }
+		 }
+		 return cabList;
+	}
+	
+	public List<CabResponse> getAllAvailableVehicles() {
+		 List<CabResponse> cabList = new ArrayList<CabResponse>();
+		 
+		 List<VehicleDetail> vehicleList = vehicleService.getAllAvailableVehicles();
 		 
 		 if(vehicleList != null && vehicleList.size() > 0) {
 			 for(VehicleDetail vehicleDetail : vehicleList) {

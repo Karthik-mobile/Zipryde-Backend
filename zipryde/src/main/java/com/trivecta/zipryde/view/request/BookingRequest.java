@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"bookingId",
 	"cabTypeId",
 	"customerId",	
+	"driverId",
 	"from", 
 	"to", 
 	"geoLocationRequest",
@@ -55,8 +56,7 @@ public class BookingRequest {
 	
 	@JsonProperty("offeredPricePercentage")
 	private Number offeredPricePercentage;
-	
-	
+		
 	@JsonProperty("acceptedPrice")
 	private Double acceptedPrice;
 	
@@ -74,6 +74,9 @@ public class BookingRequest {
 
 	@JsonProperty("cabTypeId")
 	private Number cabTypeId;
+	
+	@JsonProperty("driverId")
+	private Number driverId;
 	
 	public Number getBookingId() {
 		return bookingId;
@@ -201,6 +204,14 @@ public class BookingRequest {
 
 	public void setOfferedPricePercentage(Number offeredPricePercentage) {
 		this.offeredPricePercentage = offeredPricePercentage;
+	}
+
+	public Number getDriverId() {
+		return driverId;
+	}
+
+	public void setDriverId(Number driverId) {
+		this.driverId = driverId;
 	}
 	
 	

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
+import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.User;
 
@@ -24,4 +25,8 @@ public interface UserDAO {
 	public User getUserByUserId(int userId);
 	
 	public Integer getUserCountByTypeAndStatus(String userType,String status);
+	
+	public List<User> getAllApprovedEnabledDrivers();
+	
+	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle);
 }

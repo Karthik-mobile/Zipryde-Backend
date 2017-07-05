@@ -19,10 +19,12 @@ import com.trivecta.zipryde.constants.ZipRydeConstants.USERTYPE;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.DriverProfile;
+import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.entity.UserType;
+import com.trivecta.zipryde.model.entity.VehicleDetail;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -117,9 +119,8 @@ public class UserDAOImpl implements UserDAO {
 					throw new UserValidationException(ErrorMessages.DIVER_NOT_APPROVED);
 				}				
 			}
-		}
-		
-		return null;
+			return newUser;
+		}		
 	}
 	
 	private User getUserByEmailIdPsswdAndUserType(String emailId,String userType,String password) throws NoResultEntityException {
@@ -127,20 +128,6 @@ public class UserDAOImpl implements UserDAO {
 		try {
 			User user = (User) session.getNamedQuery("User.findByEmailIdPsswdAndUserType").
 					setParameter("emailId", emailId).setParameter("userType", userType).setParameter("password", password).getSingleResult();
-					
-			return user;
-		}
-		catch(NoResultException e) {
-			throw new NoResultEntityException(ErrorMessages.LOGGIN_FAILED);
-		}
-	}
-	
-	private User getUserByMobileNoPsswdAndUSerTypeIsEnable(String mobileNumber,String userType,String password,int isEnable) throws NoResultEntityException {
-		Session session = this.sessionFactory.getCurrentSession();
-		try {
-			User user = (User) session.getNamedQuery("User.findByMobileNoPsswdUserTypeIsEnable").
-					setParameter("mobileNumber", mobileNumber).setParameter("userType", userType).
-					setParameter("password", password).setParameter("isEnable", isEnable).getSingleResult();
 					
 			return user;
 		}
@@ -209,11 +196,9 @@ public class UserDAOImpl implements UserDAO {
 							session.getNamedQuery("Status.findByStatus").
 							setParameter("status", STATUS.REQUESTED).getSingleResult();			
 				}
-				user.getDriverProfile().setStatus(status);
-				
+				user.getDriverProfile().setStatus(status);				
 				session.save(user.getDriverProfile());
-			}
-			
+			}			
 			user.getDriverProfile();
 			return user;
 		}		
@@ -244,9 +229,9 @@ public class UserDAOImpl implements UserDAO {
 			}
 			
 			origUser.setModifiedDate(new Date());
+			origUser.setModifiedBy(user.getModifiedBy());
 			
-			DriverProfile origDriverProfile = null;
-			
+			DriverProfile origDriverProfile = null;			
 			Status status = null;
 			
 			if(USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())){
@@ -308,7 +293,44 @@ public class UserDAOImpl implements UserDAO {
 		}
 		return userCount;
 	}
+		
+	public List<User> getAllApprovedEnabledDrivers() {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<User> userList = session.getNamedQuery("User.findByApprovedAndEnabled").
+				setParameter("userType", USERTYPE.DRIVER).
+				setParameter("status", STATUS.APPROVED).
+				setParameter("isEnable", 1).getResultList();
+		for(User user : userList) {
+			fetchLazyInitialisation(user);
+		}
+		return userList;
+	}
 	
+	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) {
+		Session session = this.sessionFactory.getCurrentSession();
+		if(driverVehicle.getId() == null) {
+			driverVehicle.setCreationDate(new Date());
+			
+			User user = session.find(User.class, driverVehicle.getUser().getId());
+			driverVehicle.setUser(user);
+			
+			VehicleDetail vehicle = session.find(VehicleDetail.class, driverVehicle.getVehicleDetail().getId());
+			driverVehicle.setVehicleDetail(vehicle);
+			
+			session.save(driverVehicle);
+			return driverVehicle;
+		}
+		else {
+			DriverVehicleAssociation origDriverVehicle =
+					session.find(DriverVehicleAssociation.class, driverVehicle.getId());
+			origDriverVehicle.setToDate(driverVehicle.getToDate());
+			origDriverVehicle.setModifiedDate(new Date());
+			origDriverVehicle.setModifiedBy(driverVehicle.getModifiedBy());
+			
+			session.merge(origDriverVehicle);
+			return origDriverVehicle;
+		}
+	}
 	
 	private void fetchLazyInitialisation(User user){
 		user.getBookingHistories1();

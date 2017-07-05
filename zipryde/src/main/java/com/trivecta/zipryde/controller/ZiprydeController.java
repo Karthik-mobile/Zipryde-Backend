@@ -23,6 +23,7 @@ import com.trivecta.zipryde.view.data.transformer.VehicleTransformer;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.CabRequest;
 import com.trivecta.zipryde.view.request.CommonRequest;
+import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.UserRequest;
@@ -30,6 +31,7 @@ import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CabResponse;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
 import com.trivecta.zipryde.view.response.CommonResponse;
+import com.trivecta.zipryde.view.response.DriverVehicleAssociationResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
@@ -55,6 +57,8 @@ public class ZiprydeController {
 	@Autowired
 	MongoTransformer mongoTransfomer;
 	
+	/** ------------ MOBILE REGISTRATION ------------- */
+	
 	@RequestMapping(value="/getOTPByMobile")
 	public @ResponseBody OTPResponse getOTPByMobile(@RequestBody OTPRequest otpRequest) throws MandatoryValidationException{
 		return userTransformer.getOTPByMobile(otpRequest);
@@ -65,15 +69,12 @@ public class ZiprydeController {
 		return userTransformer.verifyOTPByMobile(otpRequest);
 	}
 	
+	/** ------------------- USER ------------------------ */
+	
 	@RequestMapping(value = "/saveUser")
 	public @ResponseBody UserResponse saveUser(@RequestBody UserRequest user) 
 			throws ParseException, NoResultEntityException, MandatoryValidationException, UserValidationException {
 		return userTransformer.saveUser(user);		
-	}
-	
-	@RequestMapping(value = "/saveVehicle")
-	public @ResponseBody CabResponse saveVehicle(@RequestBody CabRequest cabRequest) throws ParseException, MandatoryValidationException, UserValidationException{
-		return vehicleTransformer.saveVehicle(cabRequest);
 	}
 	
 	@RequestMapping(value = "/getAllUserByUserType")
@@ -86,6 +87,51 @@ public class ZiprydeController {
 		return userTransformer.getUserByUserId(commonRequest);
 	}
 	
+	@RequestMapping(value = "/verifyLogInUser")
+	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException {
+		return userTransformer.verifyLogInUser(userRequest);
+	}
+	
+	@RequestMapping(value = "/getAllApprovedEnabledDrivers")
+	public @ResponseBody List<UserResponse> getAllApprovedEnabledDrivers() {
+		return userTransformer.getAllApprovedEnabledDrivers();
+	}
+	
+	@RequestMapping(value = "/saveDriverVehicleAssociation")
+	public DriverVehicleAssociationResponse saveDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
+			throws MandatoryValidationException, ParseException {
+		return userTransformer.saveDriverVehicleAssociation(driverVehicleRequest);
+	}
+	
+	
+	
+	
+	
+	/** --------------- DASHBOARD API ----------------- */
+	@RequestMapping(value = "/getDriverCountBySatus")
+	public CommonResponse getDriverCountBySatus(@RequestBody CommonRequest commonRequest) {
+		return userTransformer.getDriverCountBySatus(commonRequest);
+	}
+	
+	
+	
+	/** ----------------- VEHICLE  --------------------- */
+	
+	@RequestMapping(value = "/saveVehicle")
+	public @ResponseBody CabResponse saveVehicle(@RequestBody CabRequest cabRequest) throws ParseException, MandatoryValidationException, UserValidationException{
+		return vehicleTransformer.saveVehicle(cabRequest);
+	}
+	
+	@RequestMapping(value = "/getAllVehicle")
+	public @ResponseBody List<CabResponse> getAllVehicle() {
+		return vehicleTransformer.getAllVehicle();
+	}
+	
+	@RequestMapping(value = "/getAllAvailableVehicles")
+	public @ResponseBody List<CabResponse> getAllAvailableVehicles() {
+		return vehicleTransformer.getAllAvailableVehicles();
+	}
+		
 	@RequestMapping(value = "/getVehicleByVehicleId")
 	public @ResponseBody CabResponse getVehicleByVehicleId(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, UserValidationException {
 		return vehicleTransformer.getVehicleByVehicleId(commonRequest);
@@ -106,14 +152,10 @@ public class ZiprydeController {
 		return adminTransformer.getAllModelByMakeId(commonRequest);
 	}
 	
+	/** ------------------- NYOP & PRICING  ------------------------ */
 	@RequestMapping(value = "/getAllNYOPList")
 	public @ResponseBody List<NYOPResponse> getAllNYOPList() {
 		return adminTransformer.getAllNYOPList();
-	}
-	
-	@RequestMapping(value = "/getAllVehicle")
-	public @ResponseBody List<CabResponse> getAllVehicle() {
-		return vehicleTransformer.getAllVehicle();
 	}
 	
 	@RequestMapping(value = "/getAllNYOPByCabTypeDistAndNoOfPassenger")
@@ -121,27 +163,26 @@ public class ZiprydeController {
 		return adminTransformer.getAllNYOPByCabTypeDistAndNoOfPassenger(commonRequest);
 	}
 	
-	@RequestMapping(value = "/verifyLogInUser")
-	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException {
-		return userTransformer.verifyLogInUser(userRequest);
-	}
 	
+	/** ------------------- BOOKING  ------------------------ */
 	@RequestMapping(value = "/requestBooking")
-	public @ResponseBody BookingResponse requestBooking(@RequestBody BookingRequest bookingRequest) throws ParseException {
+	public @ResponseBody BookingResponse requestBooking(@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
 		return bookingTranssformer.createBooking(bookingRequest);
 	}
 	
-	@RequestMapping(value = "/getDriverCountBySatus")
-	public CommonResponse getDriverCountBySatus(@RequestBody CommonRequest commonRequest) {
-		return userTransformer.getDriverCountBySatus(commonRequest);
+	@RequestMapping(value = "/bookingResponseByDriver")
+	public @ResponseBody BookingResponse acceptBookingByDriver(@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
+		return bookingTranssformer.createBooking(bookingRequest);
 	}
+	
+	
 	
 
 	//TODO
 	//1. DRIVER APPROVE / REJECT BOOKING
 	//2. GET BOOKINGS BY USER TYPE AND USER ID
 	
-	/** --------- MONGO DB SERVICE -------------------- **/
+	/** --------- MONGO DB SERVICE -------------------- */
 	
 	@RequestMapping(value = "/getNearByActiveDrivers")
 	public List<UserGeoSpatialResponse> getNearByActiveDrivers(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {

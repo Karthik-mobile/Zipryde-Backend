@@ -15,4 +15,6 @@ public interface VehicleDAO {
 	public List<VehicleDetail> getAllVehicles();
 	
 	public VehicleDetail getVehicleDetailById(int vehicleId) throws UserValidationException;
+	
+	public List<VehicleDetail> getAllAvailableVehicles();
 }

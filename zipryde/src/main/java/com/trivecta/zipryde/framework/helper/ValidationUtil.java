@@ -10,4 +10,15 @@ public class ValidationUtil {
 			return false;
 		}
 	}
+	
+	public static String getFullName(String firstName,String lastName) {
+		String name = "";
+		if(isValidString(firstName)) {
+			name =  name + firstName +" ";
+		}
+		if(isValidString(lastName)) {
+			name =  name + lastName;
+		}
+		return name;
+	}
 }

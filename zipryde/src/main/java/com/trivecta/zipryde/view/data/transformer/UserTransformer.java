@@ -19,16 +19,20 @@ import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
 import com.trivecta.zipryde.model.entity.DriverProfile;
+import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.entity.UserType;
+import com.trivecta.zipryde.model.entity.VehicleDetail;
 import com.trivecta.zipryde.model.service.UserService;
 import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.CommonRequest;
+import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.CommonResponse;
+import com.trivecta.zipryde.view.response.DriverVehicleAssociationResponse;
 import com.trivecta.zipryde.view.response.OTPResponse;
 import com.trivecta.zipryde.view.response.UserResponse;
 
@@ -179,12 +183,13 @@ public class UserTransformer {
 			user.setAlternateNumber(userRequest.getAlternateNumber());
 				
 			if(userRequest.getIsEnable() != null) {
-				if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(userRequest.getUserType())) {
-						user.setIsEnable(userRequest.getIsEnable().intValue());
-				}
-			}				
-				
-			else if(USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())) {
+				user.setIsEnable(userRequest.getIsEnable().intValue());
+			}	
+			else if(!USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())){
+				user.setIsEnable(1);
+			}
+			
+			if(USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())) {
 				
 				DriverProfile driverProfile = new DriverProfile();
 				
@@ -235,6 +240,18 @@ public class UserTransformer {
 	public List<UserResponse> getAllUserByUserType(CommonRequest commonRequest) {
 		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
 		List<User> userList = userService.getAllUserByUserType(commonRequest.getUserType());
+		
+		if(userList != null && userList.size() > 0) {
+			for(User user : userList) {
+				userResponseList.add(setUserResponse(user));
+			}
+		}
+		return userResponseList;
+	}
+	
+	public List<UserResponse> getAllApprovedEnabledDrivers() {
+		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
+		List<User> userList = userService.getAllApprovedEnabledDrivers();
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
@@ -298,6 +315,63 @@ public class UserTransformer {
 		commonResponse.setCount(driverCount);
 		return commonResponse;
 	}
+	
+	public DriverVehicleAssociationResponse saveDriverVehicleAssociation(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, ParseException {
+		StringBuffer errorMsg = new StringBuffer();		
+		
+		if(driverVehicleRequest.getDriverId() == null) {
+			errorMsg.append(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		if(driverVehicleRequest.getCabId() == null) {
+			errorMsg.append(ErrorMessages.VEHICLE_ID_REQUIRED);			
+		}
+		if(driverVehicleRequest.getFromDate() == null) {
+			errorMsg.append(ErrorMessages.FROM_DATE_REQUIRED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			DriverVehicleAssociationResponse driverVehicleResp = new DriverVehicleAssociationResponse();
+			DriverVehicleAssociation driverVehicle = new DriverVehicleAssociation();
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			
+			if(driverVehicleRequest.getDriverVehicleId() != null) {
+				driverVehicle.setId(driverVehicleRequest.getDriverVehicleId().intValue());
+			}
+			driverVehicle.setFromDate(dateFormat.parse(driverVehicleRequest.getFromDate()));
+			if(driverVehicleRequest.getToDate() != null) {
+				driverVehicle.setToDate(dateFormat.parse(driverVehicleRequest.getToDate()));
+			}
+			User user = new User();
+			user.setId(driverVehicleRequest.getDriverId().intValue());
+			driverVehicle.setUser(user);
+			
+			VehicleDetail vehicleDetail = new VehicleDetail();
+			vehicleDetail.setId(driverVehicleRequest.getCabId().intValue());
+			driverVehicle.setVehicleDetail(vehicleDetail);
+			
+			DriverVehicleAssociation newAssociation = 
+					userService.saveDriverVehicleAssociation(driverVehicle);
+		
+			driverVehicleResp.setDriverVehicleId(newAssociation.getId());
+			driverVehicleResp.setCabId(newAssociation.getVehicleDetail().getId());
+			driverVehicleResp.setVin(newAssociation.getVehicleDetail().getVin());
+			driverVehicleResp.setLicensePlateNumber(newAssociation.getVehicleDetail().getLicensePlateNo());
+			driverVehicleResp.setDriverId(newAssociation.getUser().getId());
+			driverVehicleResp.setDriverName(
+					ValidationUtil.getFullName(newAssociation.getUser().getFirstName(),newAssociation.getUser().getLastName()));
+			
+			driverVehicleResp.setFromDate(dateFormat.format(newAssociation.getFromDate()));
+			
+			if(newAssociation.getToDate() != null) {
+				driverVehicleResp.setToDate(dateFormat.format(newAssociation.getToDate()));
+			}
+			return driverVehicleResp;			
+		}		
+	}
+
 	
 	private UserResponse setUserResponse(User user) {
 		UserResponse userResponse = new UserResponse();

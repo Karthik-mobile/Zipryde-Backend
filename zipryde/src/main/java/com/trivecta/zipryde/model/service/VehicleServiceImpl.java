@@ -37,6 +37,11 @@ public class VehicleServiceImpl implements VehicleService{
 	public VehicleDetail getVehicleDetailById(int vehicleId) throws UserValidationException {
 		return vehicleDAO.getVehicleDetailById(vehicleId);
 	}
+	
+	@Transactional
+	public List<VehicleDetail> getAllAvailableVehicles() {
+		return vehicleDAO.getAllAvailableVehicles();
+	}
 
 
 }

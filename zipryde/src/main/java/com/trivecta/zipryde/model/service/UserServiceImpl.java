@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.dao.UserDAO;
+import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.User;
 
@@ -59,4 +60,15 @@ public class UserServiceImpl implements UserService{
 	public Integer getUserCountByTypeAndStatus(String userType, String status) {
 		return userDAO.getUserCountByTypeAndStatus(userType, status);
 	}
+	
+	@Transactional
+	public List<User> getAllApprovedEnabledDrivers() {
+		return userDAO.getAllApprovedEnabledDrivers();
+	}
+	
+	@Transactional
+	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) {
+		return userDAO.saveDriverVehicleAssociation(driverVehicle);
+	}
+
 }
