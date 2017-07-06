@@ -59,7 +59,6 @@ public class CabRequest {
 	private String status;
 
 	private String comments;
-
 	
 	private CabPermitRequest  cabPermitRequest;
 

@@ -12,6 +12,7 @@ import com.trivecta.zipryde.model.dao.UserDAO;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.User;
+import com.trivecta.zipryde.model.entity.UserSession;
 
 @Service("userService")
 public class UserServiceImpl implements UserService{
@@ -69,6 +70,11 @@ public class UserServiceImpl implements UserService{
 	@Transactional
 	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) {
 		return userDAO.saveDriverVehicleAssociation(driverVehicle);
+	}
+	
+	@Transactional
+	public UserSession saveUserSession(UserSession userSession) {
+		return userDAO.saveUserSession(userSession);
 	}
 
 }

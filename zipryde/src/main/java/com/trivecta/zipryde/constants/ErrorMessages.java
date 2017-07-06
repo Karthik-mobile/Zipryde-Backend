@@ -62,7 +62,7 @@ public interface ErrorMessages {
 	
 	static String LICENSE_PLATE_EXISTS_ALREADY = "Vehicle with License Plate Exists already";
 	
-	static String NO_CAB_FOUND = "NO Cab found";
+	static String NO_CAB_FOUND_BY_ID = "NO Cab found for the given Cab Id";
 	
 	static String DIVER_NOT_APPROVED = "Driver Request is Pending for Approval";
 	

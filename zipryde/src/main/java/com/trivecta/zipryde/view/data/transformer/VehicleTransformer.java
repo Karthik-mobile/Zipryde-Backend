@@ -46,15 +46,10 @@ public class VehicleTransformer {
 			errorMsg.append(ErrorMessages.VIN_REQUIRED);
 		}
 		
-		if(cabRequest.getCabId() != null && cabRequest.getCabId().intValue() != 0) {
-			
+		if(cabRequest.getSeatingCapacity() == null || cabRequest.getSeatingCapacity().intValue() == 0) {
+			errorMsg.append(ErrorMessages.SEATING_CAPACITY_MANDATORY);
 		}
-		else {
-			if(cabRequest.getSeatingCapacity() == null || cabRequest.getSeatingCapacity().intValue() == 0) {
-				errorMsg.append(ErrorMessages.SEATING_CAPACITY_MANDATORY);
-			}
-		}
-		
+				
 		if(ValidationUtil.isValidString(errorMsg.toString())){
 			// Throw error
 			throw new MandatoryValidationException(errorMsg.toString());
@@ -76,18 +71,26 @@ public class VehicleTransformer {
 			model.setId(cabRequest.getModelId().intValue());
 			vehicleDetail.setModel(model);
 			
-			Status status = new Status();
-			status.setStatus(cabRequest.getStatus());
-			vehicleDetail.setStatus(status);
+			if(cabRequest.getStatus() != null) {
+				Status status = new Status();
+				status.setStatus(cabRequest.getStatus());
+				vehicleDetail.setStatus(status);
+			}
+			
+			if(cabRequest.getEnableCab() != null) {
+				vehicleDetail.setIsEnable(cabRequest.getEnableCab().intValue());
+			}
+			else {
+				vehicleDetail.setIsEnable(0);
+			}
 			
 			vehicleDetail.setSeatingCapacity(cabRequest.getSeatingCapacity().intValue());
-			vehicleDetail.setYear(dateFormat.parse(cabRequest.getYearOfManufactured()));
+			vehicleDetail.setManufacturedYear(dateFormat.parse(cabRequest.getYearOfManufactured()));
 			vehicleDetail.setLicensePlateNo(cabRequest.getLicensePlateNo());
 			vehicleDetail.setColor(cabRequest.getColor());
 			vehicleDetail.setAccessories(cabRequest.getAccessories());
 			vehicleDetail.setInsuranceCompany(cabRequest.getInsuranceCompanyName());
-			vehicleDetail.setInsuranceNo(cabRequest.getInsuranceNumber());
-			
+			vehicleDetail.setInsuranceNo(cabRequest.getInsuranceNumber());			
 			vehicleDetail.setInsuranceValidUntil(dateFormat.parse(cabRequest.getInsuranceValidUntil()));
 					
 			CabPermit cabPermit = new CabPermit();
@@ -177,7 +180,7 @@ public class VehicleTransformer {
 		
 		cabResponse.setSeatingCapacity(vehicleDetail.getSeatingCapacity());
 		cabResponse.setVin(vehicleDetail.getVin());
-		cabResponse.setYearOfManufactured(dateFormat.format(vehicleDetail.getYear()));
+		cabResponse.setYearOfManufactured(dateFormat.format(vehicleDetail.getManufacturedYear()));
 		cabResponse.setStatus(vehicleDetail.getStatus().getStatus());
 		cabResponse.setComments(vehicleDetail.getComments());
 		return cabResponse;

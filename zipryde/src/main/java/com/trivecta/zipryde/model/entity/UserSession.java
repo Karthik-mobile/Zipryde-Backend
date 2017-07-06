@@ -11,7 +11,10 @@ import java.util.Date;
  */
 @Entity
 @Table(name="USER_SESSSION")
-@NamedQuery(name="UserSession.findAll", query="SELECT u FROM UserSession u")
+@NamedQueries({
+	@NamedQuery(name="UserSession.findAll", query="SELECT u FROM UserSession u"),
+	@NamedQuery(name="UserSession.findByUserId", query="SELECT u FROM UserSession u where u.userId = :userId")
+})
 public class UserSession implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -23,6 +23,7 @@ import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
+import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.model.entity.UserType;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
 
@@ -330,6 +331,34 @@ public class UserDAOImpl implements UserDAO {
 			session.merge(origDriverVehicle);
 			return origDriverVehicle;
 		}
+	}
+	
+	public UserSession saveUserSession(UserSession userSession) {
+		Session session = this.sessionFactory.getCurrentSession();
+		UserSession origUserSession = getUserSessionByUserId(userSession.getUserId());
+		
+		if(origUserSession != null) {
+			origUserSession.setIsActive(userSession.getIsActive());			
+			session.merge(origUserSession);
+			return origUserSession;
+		}
+		else {
+			session.save(userSession);
+			return userSession;
+		}
+	}
+	
+	private UserSession getUserSessionByUserId(int userId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		try{
+			UserSession userSession = (UserSession) 
+					session.getNamedQuery("UserSession.findByUserId").setParameter("userId", userId).getSingleResult();
+			return userSession;
+		}
+		catch(Exception e){
+			//No Result
+		}
+		return null;
 	}
 	
 	private void fetchLazyInitialisation(User user){

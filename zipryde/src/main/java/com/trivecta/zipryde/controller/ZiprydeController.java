@@ -199,9 +199,9 @@ public class ZiprydeController {
 		mongoTransfomer.updateDriverSession(geoLocationRequest);
 	}
 	
-	@RequestMapping(value = "/updateDriverStatus")
-	public void updateDriverStatus(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
-		mongoTransfomer.updateDriverStatus(geoLocationRequest);
+	@RequestMapping(value = "/updateDriverOnlineStatus")
+	public void updateDriverOnlineStatus(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+		mongoTransfomer.updateDriverOnlineStatus(geoLocationRequest);
 	}
 
 	

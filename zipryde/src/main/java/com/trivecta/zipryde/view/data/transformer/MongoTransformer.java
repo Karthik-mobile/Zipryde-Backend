@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
+import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
@@ -20,6 +21,9 @@ public class MongoTransformer {
 
 	@Autowired
 	MongoDbClient mongoDbClient;
+	
+	@Autowired
+	UserTransformer userTransformer;
 	
 	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
 		StringBuffer errorMsg = new StringBuffer();
@@ -61,7 +65,7 @@ public class MongoTransformer {
 		}
 	}
 	
-	public void updateDriverStatus(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+	public void updateDriverOnlineStatus(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		if(geoLocationRequest.getUserId() == null) {
 			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
@@ -74,8 +78,14 @@ public class MongoTransformer {
 			throw new MandatoryValidationException(errorMsg.toString());
 		}
 		else {			
-			mongoDbClient.updateDriverStatus(String.valueOf(geoLocationRequest.getUserId()), 
+			mongoDbClient.updateDriverOnlineStatus(String.valueOf(geoLocationRequest.getUserId()), 
 					geoLocationRequest.getIsOnline().intValue());
+			
+			//Mysql change online Status
+			UserSession userSession = new UserSession();
+			userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
+			userSession.setUserId(geoLocationRequest.getUserId().intValue());
+			userTransformer.saveUserSession(userSession);
 		}
 	}
 	

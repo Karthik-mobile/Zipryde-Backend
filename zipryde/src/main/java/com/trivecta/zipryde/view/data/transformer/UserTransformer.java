@@ -23,6 +23,7 @@ import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
+import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.model.entity.UserType;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
 import com.trivecta.zipryde.model.service.UserService;
@@ -372,6 +373,9 @@ public class UserTransformer {
 		}		
 	}
 
+	public void saveUserSession(UserSession userSession) {
+		userService.saveUserSession(userSession);
+	}
 	
 	private UserResponse setUserResponse(User user) {
 		UserResponse userResponse = new UserResponse();
@@ -387,35 +391,33 @@ public class UserTransformer {
 			userResponse.setUserType(user.getUserType().getType());
 		}
 			
-		if(USERTYPE.DRIVER.equalsIgnoreCase(userResponse.getUserType())) {
-			if(user.getDriverProfile() != null) {
-				userResponse.setDriverProfileId(user.getDriverProfile().getId());
-				userResponse.setVehicleNumber(user.getDriverProfile().getVehicleNumber());
-				userResponse.setLicenseNo(user.getDriverProfile().getLicenseNo());
+		if(USERTYPE.DRIVER.equalsIgnoreCase(userResponse.getUserType()) && user.getDriverProfile() != null ) {
+			userResponse.setDriverProfileId(user.getDriverProfile().getId());
+			userResponse.setVehicleNumber(user.getDriverProfile().getVehicleNumber());
+			userResponse.setLicenseNo(user.getDriverProfile().getLicenseNo());
 				
-				DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 				
-				if(user.getDriverProfile().getLicenseIssuedOn() != null) {
-					String licenseIssuedOn = 
-							dateFormat.format(user.getDriverProfile().getLicenseIssuedOn());
+			if(user.getDriverProfile().getLicenseIssuedOn() != null) {
+				String licenseIssuedOn = 
+						dateFormat.format(user.getDriverProfile().getLicenseIssuedOn());
 					
-					userResponse.setLicenseIssuedOn(licenseIssuedOn);
-				}
+				userResponse.setLicenseIssuedOn(licenseIssuedOn);
+			}
 				
-				String licenseValidUntil = 
-						dateFormat.format(user.getDriverProfile().getLicenseValidUntil());
-				
-				userResponse.setLicenseValidUntil(licenseValidUntil);
-				userResponse.setRestriction(user.getDriverProfile().getRestrictions());
+			String licenseValidUntil = 
+				dateFormat.format(user.getDriverProfile().getLicenseValidUntil());
+					
+			userResponse.setLicenseValidUntil(licenseValidUntil);
+			userResponse.setRestriction(user.getDriverProfile().getRestrictions());
 
-				// Need to get From User Session
-				userResponse.setIsLoggedIn(0);
-				userResponse.setDefaultPercentageAccepted(user.getDriverProfile().getDefaultPercentage());
+			// Need to get From User Session
+			userResponse.setIsLoggedIn(0);
+			userResponse.setDefaultPercentageAccepted(user.getDriverProfile().getDefaultPercentage());
 				
-				userResponse.setStatus(user.getDriverProfile().getStatus().getStatus());
-				userResponse.setComments(user.getDriverProfile().getComments());
-			}			
-		}
+			userResponse.setStatus(user.getDriverProfile().getStatus().getStatus());
+			userResponse.setComments(user.getDriverProfile().getComments());
+		}			
 		return userResponse;
 	}
 }

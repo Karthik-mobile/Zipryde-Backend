@@ -10,6 +10,10 @@ public class DriverVehicleAssociationResponse {
 	
 	private  Number cabId;
 	
+	private String cabType;
+	
+	private Number cabSeatingCapacity;
+	
 	private String  vin;
 	
 	private String licensePlateNumber;
@@ -84,6 +88,22 @@ public class DriverVehicleAssociationResponse {
 
 	public void setLicensePlateNumber(String licensePlateNumber) {
 		this.licensePlateNumber = licensePlateNumber;
+	}
+
+	public String getCabType() {
+		return cabType;
+	}
+
+	public void setCabType(String cabType) {
+		this.cabType = cabType;
+	}
+
+	public Number getCabSeatingCapacity() {
+		return cabSeatingCapacity;
+	}
+
+	public void setCabSeatingCapacity(Number cabSeatingCapacity) {
+		this.cabSeatingCapacity = cabSeatingCapacity;
 	}
 
 }

@@ -7,6 +7,7 @@ import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.User;
+import com.trivecta.zipryde.model.entity.UserSession;
 
 public interface UserService {
 
@@ -27,4 +28,6 @@ public interface UserService {
 	public List<User> getAllApprovedEnabledDrivers();
 	
 	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle);
+	
+	public UserSession saveUserSession(UserSession userSession);
 }

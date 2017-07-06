@@ -63,7 +63,7 @@ public class MongoDbClient {
 	}
 	
 	@Async
-	public void updateDriverStatus(String userId,int isActive) {
+	public void updateDriverOnlineStatus(String userId,int isActive) {
 		Bson filter = Filters.eq("userId", userId);
 		mongoCollection.updateOne(filter, new Document("$set", new Document("isActive", isActive)));
 	}

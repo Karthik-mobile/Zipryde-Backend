@@ -116,7 +116,14 @@ public class VehicleDAOImpl implements VehicleDAO{
 	public VehicleDetail updateVehicle(VehicleDetail vehicleDetail,CabPermit cabPermit) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		
-		VehicleDetail origVehicle = session.find(VehicleDetail.class, vehicleDetail.getId());
+		VehicleDetail origVehicle = null;
+		
+		try {
+			origVehicle = session.find(VehicleDetail.class, vehicleDetail.getId());
+		}
+		catch(NoResultException e) {
+			throw new UserValidationException(ErrorMessages.NO_CAB_FOUND_BY_ID);
+		}
 		
 		VehicleDetail vinVehicle = getVehicleDetailByVIN(vehicleDetail.getVin());
 		
@@ -124,10 +131,10 @@ public class VehicleDAOImpl implements VehicleDAO{
 		
 		StringBuffer errorMsg = new StringBuffer();
 				
-		if(origVehicle.getId() != vinVehicle.getId()) {
+		if(vinVehicle!=null && origVehicle.getId() != vinVehicle.getId()) {
 			errorMsg.append(ErrorMessages.VIN_EXISTS_ALREADY);
 		}
-		if(origVehicle.getId() != licenSePlateVehicle.getId()) {
+		if(licenSePlateVehicle != null && origVehicle.getId() != licenSePlateVehicle.getId()) {
 			errorMsg.append(ErrorMessages.LICENSE_PLATE_EXISTS_ALREADY);
 		}
 		
@@ -141,9 +148,8 @@ public class VehicleDAOImpl implements VehicleDAO{
 			Model model = session.find(Model.class, vehicleDetail.getModel().getId());
 			origVehicle.setModel(model);
 			
-			Status status = null;
-			
 			if(vehicleDetail.getStatus() != null) {
+				Status status = null;
 				status = (Status)
 						session.getNamedQuery("Status.findByStatus").
 						setParameter("status", vehicleDetail.getStatus().getStatus()).getSingleResult();	
@@ -153,15 +159,22 @@ public class VehicleDAOImpl implements VehicleDAO{
 				}	
 				else {
 					origVehicle.setIsEnable(0);
-				}			
+				}	
+				origVehicle.setStatus(status);		
 			}
-			else {
-				status = (Status)
-						session.getNamedQuery("Status.findByStatus").
-						setParameter("status", STATUS.REQUESTED).getSingleResult();		
-				origVehicle.setIsEnable(0);
-			}
-			origVehicle.setStatus(status);		
+			
+			origVehicle.setAccessories(vehicleDetail.getAccessories());
+			origVehicle.setColor(vehicleDetail.getColor());
+			origVehicle.setComments(vehicleDetail.getComments());
+			origVehicle.setInsuranceCompany(vehicleDetail.getInsuranceCompany());
+			origVehicle.setInsuranceNo(vehicleDetail.getInsuranceNo());
+			origVehicle.setInsuranceValidUntil(vehicleDetail.getInsuranceValidUntil());
+			origVehicle.setIsEnable(vehicleDetail.getIsEnable());
+			origVehicle.setSeatingCapacity(vehicleDetail.getSeatingCapacity());
+			origVehicle.setVin(vehicleDetail.getVin());
+			origVehicle.setManufacturedYear(vehicleDetail.getManufacturedYear());
+			origVehicle.setLicensePlateNo(vehicleDetail.getLicensePlateNo());
+			
 			origVehicle.setModifiedDate(new Date());
 			session.merge(origVehicle);
 			
@@ -193,7 +206,7 @@ public class VehicleDAOImpl implements VehicleDAO{
 			return vehicleDetail;
 		}
 		catch(NoResultException e) {
-			throw new UserValidationException(ErrorMessages.NO_CAB_FOUND);
+			throw new UserValidationException(ErrorMessages.NO_CAB_FOUND_BY_ID);
 		}
 		
 	}

@@ -16,7 +16,7 @@ import java.util.List;
 	@NamedQuery(name="VehicleDetail.findAll", query="SELECT v FROM VehicleDetail v"),
 	@NamedQuery(name="VehicleDetail.findByVIN", query="SELECT v FROM VehicleDetail v where v.vin = :vin"),
 	@NamedQuery(name="VehicleDetail.findByLicensePlateNumber", query="SELECT v FROM VehicleDetail v where v.licensePlateNo = :licensePlateNo"),
-	@NamedQuery(name="VehicleDetail.findAvailableVehicle", query="SELECT v FROM VehicleDetail v where v.id not in "
+	@NamedQuery(name="VehicleDetail.findAvailableVehicle", query="SELECT v FROM VehicleDetail v where v.isEnable = 1 and v.id not in "
 			+ "(SELECT d.vehicleDetail.id FROM DriverVehicleAssociation d where toDate is null or DATE(d.toDate) > DATE(NOW()))")
 })
 public class VehicleDetail implements Serializable {
@@ -59,7 +59,7 @@ public class VehicleDetail implements Serializable {
 	private Integer seatingCapacity;
 
 	@Temporal(TemporalType.DATE)
-	private Date year;
+	private Date manufacturedYear;
 
 	//bi-directional many-to-one association to CabPermit
 	@OneToMany(mappedBy="vehicleDetail")
@@ -214,12 +214,12 @@ public class VehicleDetail implements Serializable {
 		this.seatingCapacity = seatingCapacity;
 	}
 
-	public Date getYear() {
-		return this.year;
+	public Date getManufacturedYear() {
+		return this.manufacturedYear;
 	}
 
-	public void setYear(Date year) {
-		this.year = year;
+	public void setManufacturedYear(Date manufacturedYear) {
+		this.manufacturedYear = manufacturedYear;
 	}
 
 	public List<CabPermit> getCabPermits() {
@@ -305,5 +305,4 @@ public class VehicleDetail implements Serializable {
 	public void setVin(String vin) {
 		this.vin = vin;
 	}
-
 }
