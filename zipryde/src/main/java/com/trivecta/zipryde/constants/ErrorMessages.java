@@ -68,4 +68,6 @@ public interface ErrorMessages {
 	
 	static String ACCOUNT_DEACTIVATED = "Account Deactivated";
 	
+	static String USER_NOT_DRIVER = " Given User for Vehicle Association is not a Driver";
+	
 }

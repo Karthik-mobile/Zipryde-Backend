@@ -4,13 +4,12 @@ import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 
-
 /**
  * The persistent class for the user_session database table.
  * 
  */
 @Entity
-@Table(name="USER_SESSSION")
+@Table(name="USER_SESSION")
 @NamedQueries({
 	@NamedQuery(name="UserSession.findAll", query="SELECT u FROM UserSession u"),
 	@NamedQuery(name="UserSession.findByUserId", query="SELECT u FROM UserSession u where u.userId = :userId")

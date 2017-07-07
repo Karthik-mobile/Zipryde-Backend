@@ -1,5 +1,6 @@
 package com.trivecta.zipryde.model.dao;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -307,14 +308,18 @@ public class UserDAOImpl implements UserDAO {
 		return userList;
 	}
 	
-	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) {
+	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		if(driverVehicle.getId() == null) {
 			driverVehicle.setCreationDate(new Date());
 			
-			User user = session.find(User.class, driverVehicle.getUser().getId());
-			driverVehicle.setUser(user);
-			
+			User user = getUserByUserId(driverVehicle.getUser().getId());
+			if(USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())) {
+				driverVehicle.setUser(user);
+			}
+			else {
+				throw new UserValidationException(ErrorMessages.USER_NOT_DRIVER);
+			}
 			VehicleDetail vehicle = session.find(VehicleDetail.class, driverVehicle.getVehicleDetail().getId());
 			driverVehicle.setVehicleDetail(vehicle);
 			
@@ -333,6 +338,28 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 	
+	public DriverVehicleAssociation getActiveDriverVehicleAssociationByDriverId(int userId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		DriverVehicleAssociation driverAssociation = null;
+		try {
+			driverAssociation = (DriverVehicleAssociation)
+					session.getNamedQuery("DriverVehicleAssociation.findActiveAssociationByUserId").setParameter("userId", userId).getSingleResult();
+		}
+		catch(Exception e){
+			//No Active Association exists
+		}
+		return driverAssociation;
+	}
+	
+	
+	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<DriverVehicleAssociation> driverAssociationList =
+					session.getNamedQuery("DriverVehicleAssociation.findAllByUserId").setParameter("userId", userId).getResultList();
+		return driverAssociationList;
+	}
+	
+	
 	public UserSession saveUserSession(UserSession userSession) {
 		Session session = this.sessionFactory.getCurrentSession();
 		UserSession origUserSession = getUserSessionByUserId(userSession.getUserId());
@@ -343,6 +370,7 @@ public class UserDAOImpl implements UserDAO {
 			return origUserSession;
 		}
 		else {
+			userSession.setLogInDateTime(new Date());
 			session.save(userSession);
 			return userSession;
 		}

@@ -98,14 +98,22 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/saveDriverVehicleAssociation")
-	public DriverVehicleAssociationResponse saveDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
-			throws MandatoryValidationException, ParseException {
+	public @ResponseBody DriverVehicleAssociationResponse saveDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
+			throws MandatoryValidationException, ParseException, UserValidationException {
 		return userTransformer.saveDriverVehicleAssociation(driverVehicleRequest);
 	}
 	
+	@RequestMapping(value = "/getActiveDriverVehicleAssociationByDriverId")
+	public @ResponseBody DriverVehicleAssociationResponse getActiveDriverVehicleAssociationByDriverId
+				(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException {
+		return userTransformer.getActiveDriverVehicleAssociationByDriverId(driverVehicleRequest);
+	}
 	
-	
-	
+	@RequestMapping(value = "/getAllDriverVehicleAssociationByDriverId")
+	public @ResponseBody List<DriverVehicleAssociationResponse> getAllDriverVehicleAssociationByDriverId
+						(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException {
+		return userTransformer.getAllDriverVehicleAssociationByDriverId(driverVehicleRequest);
+	}
 	
 	/** --------------- DASHBOARD API ----------------- */
 	@RequestMapping(value = "/getDriverCountBySatus")
@@ -175,8 +183,6 @@ public class ZiprydeController {
 		return bookingTranssformer.createBooking(bookingRequest);
 	}
 	
-	
-	
 
 	//TODO
 	//1. DRIVER APPROVE / REJECT BOOKING
@@ -199,7 +205,7 @@ public class ZiprydeController {
 		mongoTransfomer.updateDriverSession(geoLocationRequest);
 	}
 	
-	@RequestMapping(value = "/updateDriverOnlineStatus")
+	@RequestMapping(value = "/updateDriverStatus")
 	public void updateDriverOnlineStatus(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
 		mongoTransfomer.updateDriverOnlineStatus(geoLocationRequest);
 	}

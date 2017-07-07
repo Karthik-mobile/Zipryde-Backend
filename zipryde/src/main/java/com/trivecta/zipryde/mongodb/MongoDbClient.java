@@ -16,6 +16,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 
 @Component
 public class MongoDbClient {
@@ -73,7 +74,9 @@ public class MongoDbClient {
 		
 		Bson filter = Filters.eq("userId", userId);
 		Bson toUpdate = new Document("loc",new Document("lon",longitude).append("lat", latitude));
-		mongoCollection.updateOne(filter, new Document("$set",toUpdate));
+		Bson toInsert = new Document("isActive",1);
+		UpdateOptions options = new UpdateOptions().upsert(true);
+		mongoCollection.updateOne(filter, new Document("$set",toUpdate).append("$setOnInsert",toInsert),options);
 	}
 	
 	/*public static void main(String args[]) {

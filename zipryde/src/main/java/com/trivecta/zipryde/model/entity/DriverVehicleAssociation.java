@@ -11,7 +11,13 @@ import java.util.Date;
  */
 @Entity
 @Table(name="DRIVER_VEHICLE_ASSOCIATION")
-@NamedQuery(name="DriverVehicleAssociation.findAll", query="SELECT d FROM DriverVehicleAssociation d")
+@NamedQueries({
+	@NamedQuery(name="DriverVehicleAssociation.findAll", query="SELECT d FROM DriverVehicleAssociation d"),
+	@NamedQuery(name="DriverVehicleAssociation.findAllByUserId", query="SELECT d FROM DriverVehicleAssociation d where d.user.id = :userId order by d.toDate desc"),
+	@NamedQuery(name="DriverVehicleAssociation.findActiveAssociationByUserId", 
+		query="SELECT d FROM DriverVehicleAssociation d where d.user.id = :userId and DATE(d.fromDate) <= DATE(NOW()) and "
+				+ "(d.toDate is null or DATE(d.toDate) >= DATE(NOW())) ")
+})
 public class DriverVehicleAssociation implements Serializable {
 	private static final long serialVersionUID = 1L;
 

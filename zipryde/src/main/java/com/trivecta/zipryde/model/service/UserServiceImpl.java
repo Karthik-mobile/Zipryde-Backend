@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Transactional
-	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) {
+	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
 		return userDAO.saveDriverVehicleAssociation(driverVehicle);
 	}
 	
@@ -76,5 +76,14 @@ public class UserServiceImpl implements UserService{
 	public UserSession saveUserSession(UserSession userSession) {
 		return userDAO.saveUserSession(userSession);
 	}
-
+	
+	@Transactional
+	public DriverVehicleAssociation getActiveDriverVehicleAssociationByDriverId(int userId){
+		return userDAO.getActiveDriverVehicleAssociationByDriverId(userId);
+	}
+	
+	@Transactional
+	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId){
+		return userDAO.getAllDriverVehicleAssociationByDriverId(userId);
+	}
 }

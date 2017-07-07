@@ -317,7 +317,7 @@ public class UserTransformer {
 		return commonResponse;
 	}
 	
-	public DriverVehicleAssociationResponse saveDriverVehicleAssociation(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, ParseException {
+	public DriverVehicleAssociationResponse saveDriverVehicleAssociation(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, ParseException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();		
 		
 		if(driverVehicleRequest.getDriverId() == null) {
@@ -334,7 +334,6 @@ public class UserTransformer {
 			throw new MandatoryValidationException(errorMsg.toString());
 		}
 		else {
-			DriverVehicleAssociationResponse driverVehicleResp = new DriverVehicleAssociationResponse();
 			DriverVehicleAssociation driverVehicle = new DriverVehicleAssociation();
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 			
@@ -354,27 +353,67 @@ public class UserTransformer {
 			driverVehicle.setVehicleDetail(vehicleDetail);
 			
 			DriverVehicleAssociation newAssociation = 
-					userService.saveDriverVehicleAssociation(driverVehicle);
-		
-			driverVehicleResp.setDriverVehicleId(newAssociation.getId());
-			driverVehicleResp.setCabId(newAssociation.getVehicleDetail().getId());
-			driverVehicleResp.setVin(newAssociation.getVehicleDetail().getVin());
-			driverVehicleResp.setLicensePlateNumber(newAssociation.getVehicleDetail().getLicensePlateNo());
-			driverVehicleResp.setDriverId(newAssociation.getUser().getId());
-			driverVehicleResp.setDriverName(
-					ValidationUtil.getFullName(newAssociation.getUser().getFirstName(),newAssociation.getUser().getLastName()));
-			
-			driverVehicleResp.setFromDate(dateFormat.format(newAssociation.getFromDate()));
-			
-			if(newAssociation.getToDate() != null) {
-				driverVehicleResp.setToDate(dateFormat.format(newAssociation.getToDate()));
-			}
-			return driverVehicleResp;			
+					userService.saveDriverVehicleAssociation(driverVehicle);		
+			return setDriverVehicleResponse(newAssociation);			
 		}		
 	}
 
+	public DriverVehicleAssociationResponse getActiveDriverVehicleAssociationByDriverId
+					(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException {
+		if(driverVehicleRequest.getDriverId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		else {
+			DriverVehicleAssociation driverAssociation = 
+					userService.getActiveDriverVehicleAssociationByDriverId(driverVehicleRequest.getDriverId().intValue());
+			return setDriverVehicleResponse(driverAssociation);
+		}
+	}
+	
+	public List<DriverVehicleAssociationResponse> getAllDriverVehicleAssociationByDriverId
+					(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException {
+		if(driverVehicleRequest.getDriverId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		else {
+			List<DriverVehicleAssociationResponse> driverVehicleResponseList = 
+					new ArrayList<DriverVehicleAssociationResponse>();
+			List<DriverVehicleAssociation> driverAssociationList = 
+				userService.getAllDriverVehicleAssociationByDriverId(driverVehicleRequest.getDriverId().intValue());
+			
+			if(driverAssociationList != null && driverAssociationList.size() >0) {
+				for(DriverVehicleAssociation driverAssociation : driverAssociationList) {
+					driverVehicleResponseList.add(setDriverVehicleResponse(driverAssociation));
+				}
+			}	
+			return driverVehicleResponseList;
+		}
+	}
+	
 	public void saveUserSession(UserSession userSession) {
 		userService.saveUserSession(userSession);
+	}
+	
+	private DriverVehicleAssociationResponse setDriverVehicleResponse(DriverVehicleAssociation newAssociation) {
+		DriverVehicleAssociationResponse driverVehicleResp = new DriverVehicleAssociationResponse();
+		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		
+		driverVehicleResp.setDriverVehicleId(newAssociation.getId());
+		driverVehicleResp.setCabId(newAssociation.getVehicleDetail().getId());
+		driverVehicleResp.setCabType(newAssociation.getVehicleDetail().getCabType().getType());
+		driverVehicleResp.setCabSeatingCapacity(newAssociation.getVehicleDetail().getSeatingCapacity());
+		driverVehicleResp.setVin(newAssociation.getVehicleDetail().getVin());
+		driverVehicleResp.setLicensePlateNumber(newAssociation.getVehicleDetail().getLicensePlateNo());
+		driverVehicleResp.setDriverId(newAssociation.getUser().getId());
+		driverVehicleResp.setDriverName(
+				ValidationUtil.getFullName(newAssociation.getUser().getFirstName(),newAssociation.getUser().getLastName()));
+		
+		driverVehicleResp.setFromDate(dateFormat.format(newAssociation.getFromDate()));
+		
+		if(newAssociation.getToDate() != null) {
+			driverVehicleResp.setToDate(dateFormat.format(newAssociation.getToDate()));
+		}		
+		return driverVehicleResp;
 	}
 	
 	private UserResponse setUserResponse(User user) {

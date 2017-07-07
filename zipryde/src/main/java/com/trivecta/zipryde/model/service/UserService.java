@@ -27,7 +27,11 @@ public interface UserService {
 	
 	public List<User> getAllApprovedEnabledDrivers();
 	
-	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle);
+	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle)  throws UserValidationException;
 	
 	public UserSession saveUserSession(UserSession userSession);
+	
+	public DriverVehicleAssociation getActiveDriverVehicleAssociationByDriverId(int userId) ;
+	
+	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId);
 }

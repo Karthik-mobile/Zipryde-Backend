@@ -39,9 +39,22 @@ public class MongoTransformer {
 			throw new MandatoryValidationException(errorMsg.toString());
 		}
 		else {			
-			mongoDbClient.insertDriverSession(String.valueOf(geoLocationRequest.getUserId()), 
+			/*mongoDbClient.insertDriverSession(String.valueOf(geoLocationRequest.getUserId()), 
+					Double.valueOf(geoLocationRequest.getFromLongitude()), 
+					Double.valueOf(geoLocationRequest.getFromLatitude()));*/
+			mongoDbClient.updateDriverSession(String.valueOf(geoLocationRequest.getUserId()), 
 					Double.valueOf(geoLocationRequest.getFromLongitude()), 
 					Double.valueOf(geoLocationRequest.getFromLatitude()));
+			//Mysql change online Status
+			UserSession userSession = new UserSession();
+			if(geoLocationRequest.getIsOnline() != null) {
+				userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
+			}
+			else {
+				userSession.setIsActive(1);
+			}
+			userSession.setUserId(geoLocationRequest.getUserId().intValue());
+			userTransformer.saveUserSession(userSession);
 		}
 	}
 	
