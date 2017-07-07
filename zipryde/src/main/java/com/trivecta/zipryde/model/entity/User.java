@@ -27,7 +27,10 @@ import java.util.List;
 	@NamedQuery(name="User.findByTypeAndStatus", 
 		query="SELECT u FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status order by u.id desc"),
 	@NamedQuery(name="User.findByApprovedAndEnabled", 
-		query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = :isEnable and u.driverProfile.status.status = :status order by u.id desc")
+		query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = :isEnable and u.driverProfile.status.status = :status order by u.id desc"),
+	@NamedQuery(name="User.findByOnline", 
+			query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = 1 and "
+					+ "u.id in (select us.userId FROM UserSession us where us.isActive = 1 and us.logOutDateTime is not null) ")
 })
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -86,4 +86,8 @@ public class UserServiceImpl implements UserService{
 	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId){
 		return userDAO.getAllDriverVehicleAssociationByDriverId(userId);
 	}
+	
+	public Integer getDriverCountByOnline() {
+		return userDAO.getDriverCountByOnline();
+	}
 }

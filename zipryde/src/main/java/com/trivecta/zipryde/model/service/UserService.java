@@ -34,4 +34,6 @@ public interface UserService {
 	public DriverVehicleAssociation getActiveDriverVehicleAssociationByDriverId(int userId) ;
 	
 	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId);
+	
+	public Integer getDriverCountByOnline();
 }

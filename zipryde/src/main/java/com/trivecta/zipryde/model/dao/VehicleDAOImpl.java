@@ -154,12 +154,6 @@ public class VehicleDAOImpl implements VehicleDAO{
 						session.getNamedQuery("Status.findByStatus").
 						setParameter("status", vehicleDetail.getStatus().getStatus()).getSingleResult();	
 				
-				if(STATUS.APPROVED.equalsIgnoreCase(vehicleDetail.getStatus().getStatus())) {
-					origVehicle.setIsEnable(1);	
-				}	
-				else {
-					origVehicle.setIsEnable(0);
-				}	
 				origVehicle.setStatus(status);		
 			}
 			

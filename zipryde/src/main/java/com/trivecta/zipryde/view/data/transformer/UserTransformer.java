@@ -317,6 +317,13 @@ public class UserTransformer {
 		return commonResponse;
 	}
 	
+	public CommonResponse getDriverCountByOnline() {
+		Integer driverCount = userService.getDriverCountByOnline();		
+		CommonResponse commonResponse = new CommonResponse();
+		commonResponse.setCount(driverCount);
+		return commonResponse;
+	}
+	
 	public DriverVehicleAssociationResponse saveDriverVehicleAssociation(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, ParseException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();		
 		

@@ -296,6 +296,17 @@ public class UserDAOImpl implements UserDAO {
 		return userCount;
 	}
 		
+	public Integer getDriverCountByOnline() {
+		int userCount = 0;
+		Session session = this.sessionFactory.getCurrentSession();
+		List<User> userList = session.createNamedQuery("User.findByOnline").
+				setParameter("userType", USERTYPE.DRIVER).getResultList();
+		if (userList != null && userList.size() > 0) {
+			userCount = userList.size();
+		}
+		return userCount;
+	}
+	
 	public List<User> getAllApprovedEnabledDrivers() {
 		Session session = this.sessionFactory.getCurrentSession();
 		List<User> userList = session.getNamedQuery("User.findByApprovedAndEnabled").

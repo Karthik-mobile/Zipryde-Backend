@@ -36,4 +36,6 @@ public interface UserDAO {
 	public DriverVehicleAssociation getActiveDriverVehicleAssociationByDriverId(int userId) ;
 	
 	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId);
+	
+	public Integer getDriverCountByOnline();
 }

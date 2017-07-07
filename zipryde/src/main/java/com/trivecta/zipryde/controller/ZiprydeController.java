@@ -121,6 +121,11 @@ public class ZiprydeController {
 		return userTransformer.getDriverCountBySatus(commonRequest);
 	}
 	
+	@RequestMapping(value = "/getDriverCountByOnline")
+	public CommonResponse getDriverCountByOnline() {
+		return userTransformer.getDriverCountByOnline();
+	}
+	
 	
 	
 	/** ----------------- VEHICLE  --------------------- */
