@@ -11,7 +11,10 @@ import java.util.List;
  */
 @Entity
 @Table(name="PRICING_TYPE")
-@NamedQuery(name="PricingType.findAll", query="SELECT p FROM PricingType p")
+@NamedQueries ({
+	@NamedQuery(name="PricingType.findAll", query="SELECT p FROM PricingType p"),
+	@NamedQuery(name="PricingType.findAllByIsEnable", query="SELECT p FROM PricingType p where p.isEnable = 1")
+})
 public class PricingType implements Serializable {
 	private static final long serialVersionUID = 1L;
 

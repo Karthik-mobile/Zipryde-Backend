@@ -107,6 +107,20 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}	
 	
+	public User updatePasswordByUserAndType(User user) throws NoResultEntityException {
+		Session session = this.sessionFactory.getCurrentSession();
+		User origUser = null;
+		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
+			origUser = getUserByEmailIdAndUserType(user.getEmailId(),user.getUserType().getType());
+		}
+		else {
+			origUser = getUserByMobileNoAndType(user.getMobileNumber(),user.getUserType().getType());
+		}
+		origUser.setPassword(user.getPassword());
+		User newUser = (User)session.merge(origUser);		
+		return newUser;
+	}
+	
 	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException {
 		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
 			return getUserByEmailIdPsswdAndUserType(user.getEmailId(),user.getUserType().getType(),user.getPassword());
@@ -123,6 +137,31 @@ public class UserDAOImpl implements UserDAO {
 			}
 			return newUser;
 		}		
+	}
+	
+	private User getUserByMobileNoAndType(String mobileNumber,String userType) throws NoResultEntityException {
+		Session session = this.sessionFactory.getCurrentSession();
+		try {
+			User user = (User) session.getNamedQuery("User.findByMobileNoAndUserType").
+					setParameter("mobileNumber", mobileNumber).setParameter("userType", userType).getSingleResult();
+			return user;
+		}
+		catch(NoResultException e) {
+			throw new NoResultEntityException(ErrorMessages.NO_USER_FOUND);
+		}			
+	}
+	
+	private User getUserByEmailIdAndUserType(String emailId,String userType) throws NoResultEntityException {
+		Session session = this.sessionFactory.getCurrentSession();
+		try {
+			User user = (User) session.getNamedQuery("User.findByEmailIdAndUserType").
+					setParameter("emailId", emailId).setParameter("userType", userType).getSingleResult();
+					
+			return user;
+		}
+		catch(NoResultException e) {
+			throw new NoResultEntityException(ErrorMessages.LOGGIN_FAILED);
+		}
 	}
 	
 	private User getUserByEmailIdPsswdAndUserType(String emailId,String userType,String password) throws NoResultEntityException {
@@ -153,8 +192,20 @@ public class UserDAOImpl implements UserDAO {
 
 	public User createUser(User user) throws UserValidationException {
 		
-		if(isUserExistsByMobileNoAndType(user.getMobileNumber(),user.getUserType().getType())) {
+		if(!USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType()) && 
+				isUserExistsByMobileNoAndType(user.getMobileNumber(),user.getUserType().getType())) {
 			throw new UserValidationException(ErrorMessages.MOBILE_NO_EXISTS_ALREADY);
+		}
+		else if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
+			User emailUser = null;
+			try {
+				emailUser = getUserByEmailIdAndUserType(user.getEmailId(),user.getUserType().getType());
+			} catch (NoResultEntityException e) {
+				//No Result
+			}
+			if(emailUser != null) {
+				throw new UserValidationException(ErrorMessages.MOBILE_NO_EXISTS_ALREADY);
+			}
 		}
 		else {
 			Session session = this.sessionFactory.getCurrentSession();
@@ -203,7 +254,8 @@ public class UserDAOImpl implements UserDAO {
 			}			
 			user.getDriverProfile();
 			return user;
-		}		
+		}
+		return user;		
 	}
 	
 	public User updateUser(User user) throws NoResultEntityException, UserValidationException {

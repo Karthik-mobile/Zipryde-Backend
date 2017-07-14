@@ -2,10 +2,12 @@ package com.trivecta.zipryde.model.dao;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 import com.trivecta.zipryde.model.entity.Booking;
@@ -13,6 +15,8 @@ import com.trivecta.zipryde.model.entity.BookingRequest;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.PricingMstr;
 import com.trivecta.zipryde.model.entity.User;
+import com.trivecta.zipryde.mongodb.MongoDbClient;
+import com.trivecta.zipryde.mongodb.UserGeoSpatialResponse;
 
 @Repository
 public class BookingDAOImpl implements BookingDAO{
@@ -22,6 +26,9 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	@Autowired
 	PricingDAO pricingDAO;
+	
+	@Autowired
+	MongoDbClient mongoDbClient;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -70,15 +77,14 @@ public class BookingDAOImpl implements BookingDAO{
 		booking.setSuggestedPrice(suggestedPrice);
 		
 		session.save(booking);
+		createBookingRequest(booking);
 		return booking;		
 	}
 	
-	
-	private void assignBookingToDriver() {
+	@Async
+	private BookingRequest createBookingRequest(Booking booking) {
 		
-	}
-	
-	private BookingRequest createBookingRequest() {
+		//List<> = mongoDbClient.getNearByActiveDrivers(longitude, latitude);
 		BookingRequest bookingRequest = new BookingRequest();
 		
 		return bookingRequest;

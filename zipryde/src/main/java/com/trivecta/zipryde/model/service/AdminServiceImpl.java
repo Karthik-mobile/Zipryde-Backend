@@ -14,6 +14,8 @@ import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
 import com.trivecta.zipryde.model.entity.Nyop;
+import com.trivecta.zipryde.model.entity.PricingMstr;
+import com.trivecta.zipryde.model.entity.PricingType;
 import com.trivecta.zipryde.model.entity.UserType;
 
 @Service("adminService")
@@ -53,5 +55,20 @@ public class AdminServiceImpl implements AdminService {
 	@Transactional
 	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) {
 		return pricingDAO.getAllNYOPByCabTypeDistanceAndPerson(NoOfMiles, cabTypeId,noOfPerson);
+	}
+	
+	@Transactional
+	public List<PricingType> getAllEnabledPricingType() {
+		return pricingDAO.getAllEnabledPricingType();
+	}
+	
+	@Transactional
+	public List<PricingMstr> getAllPricingMstrByCabType(int cabTypeId) {
+		return pricingDAO.getAllPricingMstrByCabType(cabTypeId);
+	}
+	
+	@Transactional
+	public void savePricingMstrs(List<PricingMstr> pricingMstrList) {
+		pricingDAO.savePricingMstrs(pricingMstrList);
 	}
 }

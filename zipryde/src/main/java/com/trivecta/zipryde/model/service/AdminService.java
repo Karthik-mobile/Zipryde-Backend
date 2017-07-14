@@ -8,6 +8,8 @@ import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
 import com.trivecta.zipryde.model.entity.Nyop;
+import com.trivecta.zipryde.model.entity.PricingMstr;
+import com.trivecta.zipryde.model.entity.PricingType;
 import com.trivecta.zipryde.model.entity.UserType;
 
 public interface AdminService {
@@ -23,4 +25,10 @@ public interface AdminService {
 	public List<Nyop> getAllNyopList();
 	
 	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson);
+	
+	public List<PricingType> getAllEnabledPricingType();
+	
+	public List<PricingMstr> getAllPricingMstrByCabType(int cabTypeId);
+	
+	public void savePricingMstrs(List<PricingMstr> pricingMstrList);
 }

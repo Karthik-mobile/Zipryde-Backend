@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.trivecta.zipryde.model.entity.PricingMstr;
+import com.trivecta.zipryde.model.entity.PricingType;
 
 public interface PricingDAO {
 
@@ -12,4 +13,7 @@ public interface PricingDAO {
 	//public BigDecimal calculatePricingByTypeAndDistance(int NoOfMiles, int cabTypeId);
 	public BigDecimal calculatePricingByTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) ;
 	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson);
+	public List<PricingType> getAllEnabledPricingType();
+	public List<PricingMstr> getAllPricingMstrByCabType(int cabTypeId) ;
+	public void savePricingMstrs(List<PricingMstr> pricingMstrList);
 }

@@ -87,7 +87,13 @@ public class UserServiceImpl implements UserService{
 		return userDAO.getAllDriverVehicleAssociationByDriverId(userId);
 	}
 	
+	@Transactional
 	public Integer getDriverCountByOnline() {
 		return userDAO.getDriverCountByOnline();
+	}
+	
+	@Transactional
+	public User updatePasswordByUserAndType(User user) throws NoResultEntityException {
+		return userDAO.updatePasswordByUserAndType(user);
 	}
 }

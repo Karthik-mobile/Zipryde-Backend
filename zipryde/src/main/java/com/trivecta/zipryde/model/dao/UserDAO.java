@@ -38,4 +38,6 @@ public interface UserDAO {
 	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId);
 	
 	public Integer getDriverCountByOnline();
+	
+	public User updatePasswordByUserAndType(User user) throws NoResultEntityException ;
 }

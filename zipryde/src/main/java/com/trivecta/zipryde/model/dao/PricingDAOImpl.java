@@ -5,14 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.NoResultException;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.trivecta.zipryde.constants.ZipRydeConstants;
+import com.trivecta.zipryde.constants.ZipRydeConstants.PRICINGTYPE;
+import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Nyop;
 import com.trivecta.zipryde.model.entity.PricingMstr;
+import com.trivecta.zipryde.model.entity.PricingType;
 
 @Repository
 public class PricingDAOImpl implements PricingDAO {
@@ -53,31 +58,20 @@ public class PricingDAOImpl implements PricingDAO {
 		
 		BigDecimal price  = new BigDecimal("0.0");
 		if(pricingMstrList != null && pricingMstrList.size() > 0) {
-			System.out.println(" Pricing Mstr List Size : "+pricingMstrList.size());
 			for(PricingMstr pricingMstr : pricingMstrList) {
-				System.out.println(" Pricing Mstr Type : "+pricingMstr.getPricingType().getType());
-				System.out.println(" Price Per Unit "+pricingMstr.getPricePerUnit());
-				System.out.println(" Price "+pricingMstr.getPrice());
 				if(ZipRydeConstants.PRICINGTYPE.DISTANCE.equalsIgnoreCase(pricingMstr.getPricingType().getType())){
 					BigDecimal distancePrice = pricingMstr.getPricePerUnit().multiply(new BigDecimal(NoOfMiles));
-					System.out.println(" distancePrice : "+distancePrice);
 					price = price.add(distancePrice);
-					System.out.println(" Price (1)  : "+price);
-
 				}
 				else if(ZipRydeConstants.PRICINGTYPE.PERSON.equalsIgnoreCase(pricingMstr.getPricingType().getType())){
 					BigDecimal personPrice = pricingMstr.getPrice().multiply(new BigDecimal(noOfPerson-1));
-					System.out.println(" distancePrice : "+personPrice);
 					price = price.add(personPrice);
-					System.out.println(" Price (2)  : "+price);
 				}
 				else {
 					price = price.add(pricingMstr.getPrice());
-					System.out.println(" Price (3)  : "+price);
 				}
 			}
 		}
-		System.out.println(" Price (4)  : "+price);
 		return price;
 	}
 	
@@ -98,5 +92,81 @@ public class PricingDAOImpl implements PricingDAO {
 			}
 		}
 		return priceMap;
+	}
+	
+	public List<PricingType> getAllEnabledPricingType() {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<PricingType> pricingTypeList = session.getNamedQuery("PricingType.findAllByIsEnable").getResultList();
+		return pricingTypeList;
+	}
+	
+	public List<PricingMstr> getAllPricingMstrByCabType(int cabTypeId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<PricingMstr> pricingMstrList = session.getNamedQuery("PricingMstr.findByCabTypeId")
+				.setParameter("cabTypeId", cabTypeId).getResultList();
+		if(pricingMstrList != null && pricingMstrList.size() > 0) {
+			for(PricingMstr pricingMstr : pricingMstrList) {
+				fetchLazyPrcingMstr(pricingMstr);
+			}
+		}
+		return pricingMstrList;
+	}
+	
+	public void savePricingMstrs(List<PricingMstr> pricingMstrList) {
+		Session session = this.sessionFactory.getCurrentSession();
+		for(PricingMstr pricingMstr : pricingMstrList) {
+			PricingMstr existingPricingMstr = null;
+			if(pricingMstr.getId() != null) {				
+				existingPricingMstr = session.find(PricingMstr.class, pricingMstr.getId());
+			}
+			else{
+				existingPricingMstr = 
+						getPricingMstrByPricingTypeCabType(pricingMstr.getCabType().getId(),pricingMstr.getPricingType().getId());
+			}
+			
+			if(existingPricingMstr != null) {
+				existingPricingMstr.setIsEnable(pricingMstr.getIsEnable());
+				if(existingPricingMstr.getPrice() != null){	
+					existingPricingMstr.setPrice(pricingMstr.getPrice());
+				}
+				else{
+					//From Request, PricePerUnit also will set in Price
+					existingPricingMstr.setPricePerUnit(pricingMstr.getPrice());
+				}
+				session.merge(existingPricingMstr);
+			}
+			else {
+				pricingMstr.setUnit("Miles");
+				CabType cabType = session.find(CabType.class, pricingMstr.getCabType().getId());
+				pricingMstr.setCabType(cabType);
+				PricingType pricingType = session.find(PricingType.class, pricingMstr.getPricingType().getId()); 
+				pricingMstr.setPricingType(pricingType);
+				
+				if(PRICINGTYPE.DISTANCE.equalsIgnoreCase(pricingType.getType())) {
+					pricingMstr.setPricePerUnit(pricingMstr.getPrice());
+					pricingMstr.setPrice(null);
+				}
+				session.save(pricingMstr);
+			}
+		}
+	}
+	
+	private PricingMstr getPricingMstrByPricingTypeCabType(int cabTypeId,int pricingTypeId){
+		Session session = this.sessionFactory.getCurrentSession();
+		PricingMstr pricingMstr = null;
+		try {
+			pricingMstr = (PricingMstr) session.getNamedQuery("PricingMstr.findByCabTypeIdPricingTypeId").
+					setParameter("cabTypeId", cabTypeId).setParameter("pricingTypeId", pricingTypeId).getSingleResult();
+		}
+		catch(Exception e){
+			// No Data
+			e.printStackTrace();
+		}
+		return pricingMstr;
+	}
+	
+	private void fetchLazyPrcingMstr(PricingMstr pricingMstr) {
+		pricingMstr.getCabType();
+		pricingMstr.getPricingType();
 	}
 }

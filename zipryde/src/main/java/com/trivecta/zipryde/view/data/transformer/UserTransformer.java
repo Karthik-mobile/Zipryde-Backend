@@ -309,6 +309,43 @@ public class UserTransformer {
 		}		
 	}
 	
+	public UserResponse updatePasswordByUserAndType(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException {
+		StringBuffer errorMsg = new StringBuffer("");
+		
+		if(!ValidationUtil.isValidString(userRequest.getUserType())) {
+			errorMsg = errorMsg.append(ErrorMessages.USER_TYPE_MANDATORY);
+		}
+				
+		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(userRequest.getUserType())){ 
+			if(!ValidationUtil.isValidString(userRequest.getEmailId())) {
+				errorMsg = errorMsg.append(ErrorMessages.EMAIL_MANDATORY);
+			}
+		}		
+		else if(!ValidationUtil.isValidString(userRequest.getMobileNumber())) {
+			errorMsg = errorMsg.append(ErrorMessages.MOBILE_MANDATORY);
+		}		
+		
+		if(!ValidationUtil.isValidString(userRequest.getPassword())) {
+			errorMsg = errorMsg.append(ErrorMessages.PASSWORD_MANDATORY);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())){
+			// Throw error
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			User user = new User();
+			user.setPassword(Utility.encryptWithMD5(userRequest.getPassword()));
+			user.setMobileNumber(userRequest.getMobileNumber());
+			user.setEmailId(userRequest.getEmailId());
+			UserType userType = new UserType();
+			userType.setType(userRequest.getUserType());
+			user.setUserType(userType);
+			User newUser = userService.updatePasswordByUserAndType(user);
+			return setUserResponse(newUser);
+		}
+	}
+	
 	public CommonResponse getDriverCountBySatus(CommonRequest commonRequest) {
 		Integer driverCount = userService.getUserCountByTypeAndStatus(USERTYPE.DRIVER, commonRequest.getStatus());
 		

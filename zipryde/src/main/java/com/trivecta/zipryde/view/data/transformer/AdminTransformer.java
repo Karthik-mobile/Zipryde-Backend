@@ -1,6 +1,7 @@
 package com.trivecta.zipryde.view.data.transformer;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,11 +16,16 @@ import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
 import com.trivecta.zipryde.model.entity.Nyop;
+import com.trivecta.zipryde.model.entity.PricingMstr;
+import com.trivecta.zipryde.model.entity.PricingType;
 import com.trivecta.zipryde.model.service.AdminService;
 import com.trivecta.zipryde.view.request.CommonRequest;
+import com.trivecta.zipryde.view.request.PricingMstrRequest;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
+import com.trivecta.zipryde.view.response.PricingMstrResponse;
+import com.trivecta.zipryde.view.response.PricingTypeResponse;
 
 @Component
 public class AdminTransformer {
@@ -144,5 +150,94 @@ public class AdminTransformer {
 		else {
 			throw new MandatoryValidationException(ErrorMessages.DISTANCE_CAB_TYPE_PERSON_MANDATORY);
 		}	
+	}
+	
+	public List<PricingTypeResponse> getAllEnabledPricingType() {
+		List<PricingTypeResponse> pricingTypeResponseList = new ArrayList<PricingTypeResponse>();
+		List<PricingType> pricingTypeList = adminService.getAllEnabledPricingType();
+		if(pricingTypeList != null && pricingTypeList.size() > 0) {
+			for(PricingType pricingType : pricingTypeList) {
+				PricingTypeResponse pricingTypeResp = new PricingTypeResponse();
+				pricingTypeResp.setPricingTypeId(pricingType.getId());
+				pricingTypeResp.setPricingType(pricingType.getType());
+				pricingTypeResponseList.add(pricingTypeResp);
+			}
+		}
+		return pricingTypeResponseList;		
+	}
+	
+	public List<PricingMstrResponse> getAllPricingMstrByCabType(CommonRequest commonRequest) throws MandatoryValidationException {
+		if(commonRequest.getCabTypeId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.CAB_TYPE_REQUIRED);
+		}
+		List<PricingMstr> pricingMstrList = adminService.getAllPricingMstrByCabType(commonRequest.getCabTypeId().intValue());
+		List<PricingMstrResponse> pricingMstrRespList = setPricingMstrResponse(pricingMstrList);
+		return pricingMstrRespList;				
+	}
+	
+	public void savePricingMstrs(List<PricingMstrRequest> pricingMstrReqList) {
+		List<PricingMstr> pricingMstrs = setPricingMstrListFromRequest(pricingMstrReqList);
+		adminService.savePricingMstrs(pricingMstrs);
+	}
+	
+	private List<PricingMstrResponse>  setPricingMstrResponse(List<PricingMstr> pricingMstrList) {
+		List<PricingMstrResponse> pricingMstrRespList = new ArrayList<PricingMstrResponse>();
+		
+		if(pricingMstrList != null && pricingMstrList.size() >0 ) {
+			for(PricingMstr pricingMstr : pricingMstrList) {
+				PricingMstrResponse pricingMstrResponse  = new PricingMstrResponse();
+				
+				CabTypeResponse cabTypeResponse = new CabTypeResponse();
+				cabTypeResponse.setCabTypeId(pricingMstr.getCabType().getId());
+				cabTypeResponse.setType(pricingMstr.getCabType().getType());
+				pricingMstrResponse.setCabTypeResponse(cabTypeResponse);
+				
+				PricingTypeResponse pricingTypeResponse = new PricingTypeResponse();
+				pricingTypeResponse.setPricingTypeId(pricingMstr.getPricingType().getId());
+				pricingTypeResponse.setPricingType(pricingMstr.getPricingType().getType());
+				
+				pricingMstrResponse.setPricingTypeResponse(pricingTypeResponse);
+
+				pricingMstrResponse.setIsEnable(pricingMstr.getIsEnable());
+				pricingMstrResponse.setPricingMstrId(pricingMstr.getId());
+				
+				if(pricingMstr.getPrice() != null) {
+					pricingMstrResponse.setPrice(pricingMstr.getPrice().doubleValue());
+				}
+				else {
+					pricingMstrResponse.setPrice(pricingMstr.getPricePerUnit().doubleValue());
+				}
+				pricingMstrRespList.add(pricingMstrResponse);
+			}
+		}
+		return pricingMstrRespList;
+	}
+	
+	private List<PricingMstr> setPricingMstrListFromRequest(List<PricingMstrRequest> pricingMstrReqList) {
+		List<PricingMstr> pricingMstrList = null;
+		
+		if(pricingMstrReqList != null && pricingMstrReqList.size() > 0) {
+			pricingMstrList = new ArrayList<PricingMstr>();
+			
+			for(PricingMstrRequest pricingMstrReq  : pricingMstrReqList) {
+				PricingMstr pricingMstr = new PricingMstr();
+				CabType cabType = new CabType();
+				cabType.setId(pricingMstrReq.getCabTypeId().intValue());
+				pricingMstr.setCabType(cabType);
+				
+				PricingType pricingType = new PricingType();
+				pricingType.setId(pricingMstrReq.getPricingTypeId().intValue());
+				pricingMstr.setPricingType(pricingType);
+				
+				if(pricingMstrReq.getPricingMstrId() != null) {
+					pricingMstr.setId(pricingMstrReq.getPricingMstrId().intValue());
+				}
+				pricingMstr.setIsEnable(pricingMstrReq.getIsEnable().intValue());
+				pricingMstr.setPrice(new BigDecimal(pricingMstrReq.getPrice()).setScale(2,RoundingMode.CEILING));
+				
+				pricingMstrList.add(pricingMstr);				
+			}
+		}
+		return pricingMstrList;
 	}
 }

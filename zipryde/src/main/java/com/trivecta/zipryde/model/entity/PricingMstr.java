@@ -13,7 +13,8 @@ import java.math.BigDecimal;
 @Table(name="PRICING_MSTR")
 @NamedQueries ({
 	@NamedQuery(name="PricingMstr.findAll", query="SELECT p FROM PricingMstr p"),
-	@NamedQuery(name="PricingMstr.findByCabType", query="SELECT p FROM PricingMstr p where p.cabType.type = :cabType"),
+	@NamedQuery(name="PricingMstr.findByCabTypeId", query="SELECT p FROM PricingMstr p where p.cabType.id = :cabTypeId"),
+	@NamedQuery(name="PricingMstr.findByCabTypeIdPricingTypeId", query="SELECT p FROM PricingMstr p where p.cabType.id = :cabTypeId and p.pricingType.id = :pricingTypeId"),
 	@NamedQuery(name="PricingMstr.findByCabTypeIdAndIsEnable", query="SELECT p FROM PricingMstr p where p.cabType.id = :cabTypeId and "
 			+ "p.isEnable = :isEnable")
 })
@@ -25,12 +26,14 @@ public class PricingMstr implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 
+	@Column(name = "`from`") 
 	private Integer from;
 
 	private BigDecimal price;
 
 	private BigDecimal pricePerUnit;
 
+	@Column(name = "`to`") 
 	private Integer to;
 
 	private String unit;
@@ -121,5 +124,14 @@ public class PricingMstr implements Serializable {
 	public void setIsEnable(Integer isEnable) {
 		this.isEnable = isEnable;
 	}
+
+	@Override
+	public String toString() {
+		return "PricingMstr [id=" + id + ", from=" + from + ", price=" + price + ", pricePerUnit=" + pricePerUnit
+				+ ", to=" + to + ", unit=" + unit + ", cabType=" + cabType + ", pricingType=" + pricingType
+				+ ", isEnable=" + isEnable + "]";
+	}
+	
+	
 
 }

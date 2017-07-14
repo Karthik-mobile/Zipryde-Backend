@@ -26,6 +26,7 @@ import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
+import com.trivecta.zipryde.view.request.PricingMstrRequest;
 import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CabResponse;
@@ -36,6 +37,8 @@ import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
 import com.trivecta.zipryde.view.response.OTPResponse;
+import com.trivecta.zipryde.view.response.PricingMstrResponse;
+import com.trivecta.zipryde.view.response.PricingTypeResponse;
 import com.trivecta.zipryde.view.response.UserGeoSpatialResponse;
 import com.trivecta.zipryde.view.response.UserResponse;
 
@@ -90,6 +93,11 @@ public class ZiprydeController {
 	@RequestMapping(value = "/verifyLogInUser")
 	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException {
 		return userTransformer.verifyLogInUser(userRequest);
+	}
+	
+	@RequestMapping(value = "/updatePasswordByUserAndType")
+	public @ResponseBody UserResponse updatePasswordByUserAndType(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException {
+		return userTransformer.updatePasswordByUserAndType(userRequest);
 	}
 	
 	@RequestMapping(value = "/getAllApprovedEnabledDrivers")
@@ -176,6 +184,20 @@ public class ZiprydeController {
 		return adminTransformer.getAllNYOPByCabTypeDistAndNoOfPassenger(commonRequest);
 	}
 	
+	@RequestMapping(value = "/getAllEnabledPricingType")
+	public @ResponseBody List<PricingTypeResponse> getAllEnabledPricingType() {
+		return adminTransformer.getAllEnabledPricingType();
+	}
+	
+	@RequestMapping(value = "/getAllPricingMstrByCabType")
+	public @ResponseBody List<PricingMstrResponse> getAllPricingMstrByCabType(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
+		return adminTransformer.getAllPricingMstrByCabType(commonRequest);
+	}
+	
+	@RequestMapping(value = "/savePricingMstrs")
+	public void savePricingMstrs(@RequestBody List<PricingMstrRequest> pricingMstrReqList) {
+		adminTransformer.savePricingMstrs(pricingMstrReqList);
+	}
 	
 	/** ------------------- BOOKING  ------------------------ */
 	@RequestMapping(value = "/requestBooking")

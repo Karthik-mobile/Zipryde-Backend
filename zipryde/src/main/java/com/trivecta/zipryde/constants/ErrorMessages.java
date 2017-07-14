@@ -18,6 +18,8 @@ public interface ErrorMessages {
 	
 	static String CAB_REQUIRED = "Cab Required";
 	
+	static String CAB_TYPE_REQUIRED = "Cab Type Required";
+	
 	static String SUGGESTED_PRICE_REQUIRED = "Suggested Price Required";
 		
 	static String OFFERED_PRICE_REQUIRED = "Offered Price Required";

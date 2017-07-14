@@ -18,6 +18,8 @@ import java.util.List;
 	@NamedQuery(name="User.findByMobileNo", query="SELECT u FROM User u where u.mobileNumber = :mobileNumber"),
 	@NamedQuery(name="User.findByMobileNoAndUserType", 
 		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.userType.type = :userType "),
+	@NamedQuery(name="User.findByEmailIdAndUserType", 
+		query="SELECT u FROM User u where u.emailId = :emailId and u.userType.type = :userType"),
 	@NamedQuery(name="User.findByMobileNoPsswdAndUserType", 
 		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType"),
 	@NamedQuery(name="User.findByEmailIdPsswdAndUserType", 
