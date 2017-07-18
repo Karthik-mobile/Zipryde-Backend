@@ -8,6 +8,8 @@ public interface ErrorMessages {
 	
 	static String VEHICLE_ID_REQUIRED = "Vehicle Id Required";
 	
+	static String DRIVER_VEHICLE_ASSOCIATION_REQUIRED = "Driver Vehicle Association Id Required";
+	
 	static String LAT_LON_REQUIRED = "Latitude and Longitude Required";
 	
 	static String ONLINE_STATUS_REQUIRED = "Online Status Required";
@@ -29,7 +31,11 @@ public interface ErrorMessages {
 	static String VIN_REQUIRED = "VIN Required";
 	
 	static String LICENSE_PLATE_REQUIRED = "License Plate Number Required";
-
+	
+	static String BOOKING_ID_REQUIRED = "Booking Id Required";
+	
+	static String DRIVER_STATUS_REQUIRED = "Driver Status  Required";
+	
 	static String MOBILE_MANDATORY = "Mobile No is Mandatory ";
 	
 	static String OTP_MANDATORY = "OTP is Mandatory";
@@ -72,4 +78,5 @@ public interface ErrorMessages {
 	
 	static String USER_NOT_DRIVER = " Given User for Vehicle Association is not a Driver";
 	
+	static String DRIVER_ASSOCIATED_VEHICLE = "Driver Associated with Vehicle. Unassign the Vehicle and delete ";
 }

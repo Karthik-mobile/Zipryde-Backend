@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
+import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.BookingRequest;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.PricingMstr;
+import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.mongodb.UserGeoSpatialResponse;
@@ -29,6 +31,9 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	@Autowired
 	MongoDbClient mongoDbClient;
+	
+	@Autowired
+	AdminDAO adminDAO;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -70,6 +75,10 @@ public class BookingDAOImpl implements BookingDAO{
 		}
 	
 		//booking.setCrnNumber(generateUniqueCRN());
+		Status bookingStatus = adminDAO.findByStatus(STATUS.REQUESTED);
+		booking.setBookingStatus(bookingStatus);
+		
+		booking.setBookingDateTime(new Date());
 		
 		BigDecimal suggestedPrice = 
 				pricingDAO.calculatePricingByTypeDistanceAndPerson(
@@ -80,6 +89,46 @@ public class BookingDAOImpl implements BookingDAO{
 		createBookingRequest(booking);
 		return booking;		
 	}
+	
+	
+	/*
+	 * DRIVER STATUS - ACCEPTED / REJECTED / ON-TRIP / COMPLETED
+	 */
+	public Booking updateBookingDriverStatus(Booking booking){
+		Session session = this.sessionFactory.getCurrentSession();
+		Booking origBooking  = session.find(Booking.class, booking.getId());
+		Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
+		origBooking.setDriverStatus(driverStatus);
+		
+		User driver = session.find(User.class, booking.getDriver().getId());
+		origBooking.setDriver(driver);
+		
+		if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+			Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
+			origBooking.setBookingStatus(bookingStatus);
+		}
+		else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+			origBooking.setBookingStatus(driverStatus);
+		}
+		
+		session.merge(origBooking);
+		return origBooking;
+	}
+	
+	/*
+	 * Booking Status - SCHEDULED / REJECTED / COMPLETED
+	 */
+	
+	public Booking updateBookingStatus(Booking booking) {
+		Session session = this.sessionFactory.getCurrentSession();
+		Booking origBooking  = session.find(Booking.class, booking.getId());
+		Status bookingStatus = 	adminDAO.findByStatus(booking.getBookingStatus().getStatus());
+		origBooking.setBookingStatus(bookingStatus);
+		session.merge(origBooking);
+		return origBooking;
+	}
+	
+	
 	
 	@Async
 	private BookingRequest createBookingRequest(Booking booking) {

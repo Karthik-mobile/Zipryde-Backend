@@ -90,6 +90,8 @@ public class VehicleDetail implements Serializable {
 	private Model model;
 	
 	private String vin;
+	
+	private String vehicleNumber;
 
 	public VehicleDetail() {
 	}
@@ -304,5 +306,13 @@ public class VehicleDetail implements Serializable {
 
 	public void setVin(String vin) {
 		this.vin = vin;
+	}
+
+	public String getVehicleNumber() {
+		return vehicleNumber;
+	}
+
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
 	}
 }

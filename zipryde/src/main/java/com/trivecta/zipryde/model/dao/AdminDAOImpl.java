@@ -12,6 +12,7 @@ import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
 import com.trivecta.zipryde.model.entity.Nyop;
 import com.trivecta.zipryde.model.entity.PricingMstr;
+import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.UserType;
 
 @Repository
@@ -19,7 +20,7 @@ public class AdminDAOImpl implements AdminDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+		
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -59,6 +60,15 @@ public class AdminDAOImpl implements AdminDAO {
 		Session session = this.sessionFactory.getCurrentSession();
 		List<Nyop> pricePercentageList = session.getNamedQuery("Nyop.findAll").getResultList();
 		return pricePercentageList;
+	}
+	
+	public Status findByStatus(String status){
+		Session session = this.sessionFactory.getCurrentSession();
+		Status statusEntity = (Status)
+				session.getNamedQuery("Status.findByStatus").
+				setParameter("status", status).getSingleResult();
+		return statusEntity;
+		
 	}
 	
 }

@@ -36,6 +36,7 @@ public class Booking implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date endDateTime;
 
+	@Column(name = "`from`")
 	private String from;
 
 	private BigDecimal fromLatitude;
@@ -51,6 +52,7 @@ public class Booking implements Serializable {
 
 	private BigDecimal suggestedPrice;
 
+	@Column(name = "`to`")
 	private String to;
 
 	private BigDecimal toLatitude;

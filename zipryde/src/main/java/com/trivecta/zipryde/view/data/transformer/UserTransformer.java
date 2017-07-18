@@ -103,7 +103,17 @@ public class UserTransformer {
 		}		
 	}
 	
-	
+	public void deleteUser(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException , UserValidationException {
+		if(userRequest.getUserId() == null || userRequest.getUserId().intValue() == 0) {
+			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
+		}
+		else {
+			User user = new User();
+			user.setId(userRequest.getUserId().intValue());
+			userService.deleteUser(user);
+		}
+	}
+		
 	public UserResponse saveUser(UserRequest userRequest) throws ParseException, NoResultEntityException, MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer("");
 		
@@ -197,7 +207,6 @@ public class UserTransformer {
 				if(userRequest.getDriverProfileId() != null) {
 					driverProfile.setId(userRequest.getDriverProfileId().intValue());
 				}
-				driverProfile.setVehicleNumber(userRequest.getVehicleNumber());
 				driverProfile.setLicenseNo(userRequest.getLicenseNo());	
 				driverProfile.setLicenseIssuedOn(licenseIssuedOn);
 				driverProfile.setLicenseValidUntil(licenseValidUntil);	
@@ -249,19 +258,7 @@ public class UserTransformer {
 		}
 		return userResponseList;
 	}
-	
-	public List<UserResponse> getAllApprovedEnabledDrivers() {
-		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
-		List<User> userList = userService.getAllApprovedEnabledDrivers();
 		
-		if(userList != null && userList.size() > 0) {
-			for(User user : userList) {
-				userResponseList.add(setUserResponse(user));
-			}
-		}
-		return userResponseList;
-	}
-	
 	public UserResponse getUserByUserId(CommonRequest commonRequest) throws MandatoryValidationException {
 		if(commonRequest.getUserId() == null) {
 			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
@@ -361,7 +358,31 @@ public class UserTransformer {
 		return commonResponse;
 	}
 	
-	public DriverVehicleAssociationResponse saveDriverVehicleAssociation(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, ParseException, UserValidationException {
+	public List<UserResponse> getDriversByStatus(CommonRequest commonRequest) {
+		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
+		List<User> userList = userService.getDriversByStatus(commonRequest.getStatus());
+		
+		if(userList != null && userList.size() > 0) {
+			for(User user : userList) {
+				userResponseList.add(setUserResponse(user));
+			}
+		}
+		return userResponseList;
+	}
+	
+	public List<UserResponse> getDriversByOnline() {
+		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
+		List<User> userList = userService.getDriversByOnline();
+		
+		if(userList != null && userList.size() > 0) {
+			for(User user : userList) {
+				userResponseList.add(setUserResponse(user));
+			}
+		}
+		return userResponseList;
+	}
+	
+	public DriverVehicleAssociationResponse assignDriverVehicleAssociation(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, ParseException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();		
 		
 		if(driverVehicleRequest.getDriverId() == null) {
@@ -370,24 +391,13 @@ public class UserTransformer {
 		if(driverVehicleRequest.getCabId() == null) {
 			errorMsg.append(ErrorMessages.VEHICLE_ID_REQUIRED);			
 		}
-		if(driverVehicleRequest.getFromDate() == null) {
-			errorMsg.append(ErrorMessages.FROM_DATE_REQUIRED);
-		}
 		
 		if(ValidationUtil.isValidString(errorMsg.toString())) {
 			throw new MandatoryValidationException(errorMsg.toString());
 		}
 		else {
 			DriverVehicleAssociation driverVehicle = new DriverVehicleAssociation();
-			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-			
-			if(driverVehicleRequest.getDriverVehicleId() != null) {
-				driverVehicle.setId(driverVehicleRequest.getDriverVehicleId().intValue());
-			}
-			driverVehicle.setFromDate(dateFormat.parse(driverVehicleRequest.getFromDate()));
-			if(driverVehicleRequest.getToDate() != null) {
-				driverVehicle.setToDate(dateFormat.parse(driverVehicleRequest.getToDate()));
-			}
+					
 			User user = new User();
 			user.setId(driverVehicleRequest.getDriverId().intValue());
 			driverVehicle.setUser(user);
@@ -397,11 +407,29 @@ public class UserTransformer {
 			driverVehicle.setVehicleDetail(vehicleDetail);
 			
 			DriverVehicleAssociation newAssociation = 
-					userService.saveDriverVehicleAssociation(driverVehicle);		
+					userService.assignDriverVehicleAssociation(driverVehicle);		
 			return setDriverVehicleResponse(newAssociation);			
 		}		
 	}
 
+	public DriverVehicleAssociationResponse unassignDriverVehicleAssociation(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, UserValidationException {
+		if(driverVehicleRequest.getDriverVehicleId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.DRIVER_VEHICLE_ASSOCIATION_REQUIRED);
+		}
+		else {
+			DriverVehicleAssociation driverVehicle = new DriverVehicleAssociation();
+		
+			if(driverVehicleRequest.getDriverVehicleId() != null) {
+				driverVehicle.setId(driverVehicleRequest.getDriverVehicleId().intValue());
+			}
+			driverVehicle.setToDate(new Date());
+						
+			DriverVehicleAssociation newAssociation = 
+					userService.unassignDriverVehicleAssociation(driverVehicle);		
+			return setDriverVehicleResponse(newAssociation);			
+		}		
+	}	
+	
 	public DriverVehicleAssociationResponse getActiveDriverVehicleAssociationByDriverId
 					(DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException {
 		if(driverVehicleRequest.getDriverId() == null) {
@@ -440,23 +468,25 @@ public class UserTransformer {
 	
 	private DriverVehicleAssociationResponse setDriverVehicleResponse(DriverVehicleAssociation newAssociation) {
 		DriverVehicleAssociationResponse driverVehicleResp = new DriverVehicleAssociationResponse();
-		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-		
-		driverVehicleResp.setDriverVehicleId(newAssociation.getId());
-		driverVehicleResp.setCabId(newAssociation.getVehicleDetail().getId());
-		driverVehicleResp.setCabType(newAssociation.getVehicleDetail().getCabType().getType());
-		driverVehicleResp.setCabSeatingCapacity(newAssociation.getVehicleDetail().getSeatingCapacity());
-		driverVehicleResp.setVin(newAssociation.getVehicleDetail().getVin());
-		driverVehicleResp.setLicensePlateNumber(newAssociation.getVehicleDetail().getLicensePlateNo());
-		driverVehicleResp.setDriverId(newAssociation.getUser().getId());
-		driverVehicleResp.setDriverName(
-				ValidationUtil.getFullName(newAssociation.getUser().getFirstName(),newAssociation.getUser().getLastName()));
-		
-		driverVehicleResp.setFromDate(dateFormat.format(newAssociation.getFromDate()));
-		
-		if(newAssociation.getToDate() != null) {
-			driverVehicleResp.setToDate(dateFormat.format(newAssociation.getToDate()));
-		}		
+		if(newAssociation != null) {		
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			
+			driverVehicleResp.setDriverVehicleId(newAssociation.getId());
+			driverVehicleResp.setCabId(newAssociation.getVehicleDetail().getId());
+			driverVehicleResp.setCabType(newAssociation.getVehicleDetail().getCabType().getType());
+			driverVehicleResp.setCabSeatingCapacity(newAssociation.getVehicleDetail().getSeatingCapacity());
+			driverVehicleResp.setVin(newAssociation.getVehicleDetail().getVin());
+			driverVehicleResp.setLicensePlateNumber(newAssociation.getVehicleDetail().getLicensePlateNo());
+			driverVehicleResp.setDriverId(newAssociation.getUser().getId());
+			driverVehicleResp.setDriverName(
+					ValidationUtil.getFullName(newAssociation.getUser().getFirstName(),newAssociation.getUser().getLastName()));
+			
+			driverVehicleResp.setFromDate(dateFormat.format(newAssociation.getFromDate()));
+			
+			if(newAssociation.getToDate() != null) {
+				driverVehicleResp.setToDate(dateFormat.format(newAssociation.getToDate()));
+			}	
+		}
 		return driverVehicleResp;
 	}
 	
@@ -476,7 +506,6 @@ public class UserTransformer {
 			
 		if(USERTYPE.DRIVER.equalsIgnoreCase(userResponse.getUserType()) && user.getDriverProfile() != null ) {
 			userResponse.setDriverProfileId(user.getDriverProfile().getId());
-			userResponse.setVehicleNumber(user.getDriverProfile().getVehicleNumber());
 			userResponse.setLicenseNo(user.getDriverProfile().getLicenseNo());
 				
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");

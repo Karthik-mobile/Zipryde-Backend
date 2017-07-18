@@ -100,7 +100,7 @@ public class VehicleTransformer {
 			cabPermit.setPermitNumber(cabRequest.getCabPermitRequest().getCabPermitNumber());
 			cabPermit.setPermitValidUntil(dateFormat.parse(cabRequest.getCabPermitRequest().getCabPermitValidUntil()));
 			vehicleDetail.setVin(cabRequest.getVin());
-			
+			vehicleDetail.setVehicleNumber(cabRequest.getVehicleNumber());
 			VehicleDetail newVehicleDetail = vehicleService.saveVehicle(vehicleDetail, cabPermit);
 			
 			return setCabResponseFromVehicleDetail(newVehicleDetail);
@@ -180,10 +180,10 @@ public class VehicleTransformer {
 		
 		cabResponse.setSeatingCapacity(vehicleDetail.getSeatingCapacity());
 		cabResponse.setVin(vehicleDetail.getVin());
+		cabResponse.setVehicleNumber(vehicleDetail.getVehicleNumber());
 		cabResponse.setYearOfManufactured(dateFormat.format(vehicleDetail.getManufacturedYear()));
 		cabResponse.setStatus(vehicleDetail.getStatus().getStatus());
 		cabResponse.setComments(vehicleDetail.getComments());
 		return cabResponse;
-
 	}
 }

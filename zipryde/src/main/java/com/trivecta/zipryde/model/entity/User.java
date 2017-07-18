@@ -14,25 +14,25 @@ import java.util.List;
 @Table(name="USER")
 @NamedQueries({
 	@NamedQuery(name="User.findAll", query="SELECT u FROM User u  order by u.id desc"),
-	@NamedQuery(name="User.findByUserType", query="SELECT u FROM User u where u.userType.type = :userType order by u.id desc"),
-	@NamedQuery(name="User.findByMobileNo", query="SELECT u FROM User u where u.mobileNumber = :mobileNumber"),
+	@NamedQuery(name="User.findByUserType", query="SELECT u FROM User u where u.userType.type = :userType and u.isDeleted = 0 order by u.id desc"),
+	@NamedQuery(name="User.findByMobileNo", query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.isDeleted = 0 "),
 	@NamedQuery(name="User.findByMobileNoAndUserType", 
-		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.userType.type = :userType "),
+		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.userType.type = :userType and u.isDeleted = 0 "),
 	@NamedQuery(name="User.findByEmailIdAndUserType", 
-		query="SELECT u FROM User u where u.emailId = :emailId and u.userType.type = :userType"),
+		query="SELECT u FROM User u where u.emailId = :emailId and u.userType.type = :userType and u.isDeleted = 0 "),
 	@NamedQuery(name="User.findByMobileNoPsswdAndUserType", 
-		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType"),
+		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType and u.isDeleted = 0 "),
 	@NamedQuery(name="User.findByEmailIdPsswdAndUserType", 
-		query="SELECT u FROM User u where u.emailId = :emailId and u.password = :password and u.userType.type = :userType"),
+		query="SELECT u FROM User u where u.emailId = :emailId and u.password = :password and u.userType.type = :userType and u.isDeleted = 0 "),
 	@NamedQuery(name="User.findByMobileNoPsswdUserTypeIsEnable", 
-		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType and u.isEnable = :isEnable"),
+		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.password = :password and u.userType.type = :userType and u.isEnable = :isEnable and u.isDeleted = 0 "),
 	@NamedQuery(name="User.findByTypeAndStatus", 
-		query="SELECT u FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status order by u.id desc"),
-	@NamedQuery(name="User.findByApprovedAndEnabled", 
-		query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = :isEnable and u.driverProfile.status.status = :status order by u.id desc"),
+		query="SELECT u FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status and u.isDeleted = 0 order by u.id desc"),
+	/*@NamedQuery(name="User.findByApprovedAndEnabled", 
+		query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = :isEnable and u.driverProfile.status.status = :status order by u.id desc"),*/
 	@NamedQuery(name="User.findByOnline", 
-			query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = 1 and "
-					+ "u.id in (select us.userId FROM UserSession us where us.isActive = 1 and us.logOutDateTime is not null) ")
+			query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = 1 and u.isDeleted = 0 and "
+					+ "u.id in (select us.userId FROM UserSession us where us.isActive = 1 and us.logOutDateTime is null) ")
 })
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -53,6 +53,8 @@ public class User implements Serializable {
 	private String firstName;
 
 	private Integer isEnable;
+	
+	private Integer isDeleted;
 
 	private String lastName;
 
@@ -421,6 +423,14 @@ public class User implements Serializable {
 
 	public void setDriverProfile(DriverProfile driverProfile) {
 		this.driverProfile = driverProfile;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 }

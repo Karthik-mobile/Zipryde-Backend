@@ -36,8 +36,6 @@ public class DriverProfile implements Serializable {
 
 	private String licenseNo;
 	
-	private String vehicleNumber;
-
 	@Temporal(TemporalType.DATE)
 	private Date licenseIssuedOn;
 	
@@ -184,14 +182,6 @@ public class DriverProfile implements Serializable {
 
 	public void setComments(String comments) {
 		this.comments = comments;
-	}
-
-	public String getVehicleNumber() {
-		return vehicleNumber;
-	}
-
-	public void setVehicleNumber(String vehicleNumber) {
-		this.vehicleNumber = vehicleNumber;
 	}
 
 	public Date getLicenseIssuedOn() {

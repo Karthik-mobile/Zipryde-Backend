@@ -17,4 +17,16 @@ public class BookingServiceImpl implements BookingService{
 	public Booking createBooking(Booking booking) {
 		return bookingDAO.createBooking(booking);
 	}
+	
+	@Transactional
+	public Booking updateBookingDriverStatus(Booking booking) {
+		return bookingDAO.updateBookingDriverStatus(booking);
+	}
+
+	@Transactional
+	public Booking updateBookingStatus(Booking booking) {
+		return bookingDAO.updateBookingStatus(booking);
+	}
+	
+	
 }

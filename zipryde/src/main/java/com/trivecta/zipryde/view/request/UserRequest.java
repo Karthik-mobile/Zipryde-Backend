@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"alternateNumber", 
 	"emailId", 
 	"driverProfileId",
-	"vehicleNumber",
 	"licenseNo", 
 	"licenseIssuedOn",
 	"licenseValidUntil", 
@@ -58,9 +57,6 @@ public class UserRequest {
 
 	@JsonProperty("driverProfileId")
 	private Number driverProfileId;
-	
-	@JsonProperty("vehicleNumber")
-	private String vehicleNumber;
 
 	@JsonProperty("licenseNo")
 	private String licenseNo;
@@ -200,14 +196,6 @@ public class UserRequest {
 
 	public void setComments(String comments) {
 		this.comments = comments;
-	}
-
-	public String getVehicleNumber() {
-		return vehicleNumber;
-	}
-
-	public void setVehicleNumber(String vehicleNumber) {
-		this.vehicleNumber = vehicleNumber;
 	}
 
 	public String getLicenseIssuedOn() {

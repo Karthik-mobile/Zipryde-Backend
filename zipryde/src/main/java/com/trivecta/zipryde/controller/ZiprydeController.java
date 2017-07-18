@@ -80,6 +80,11 @@ public class ZiprydeController {
 		return userTransformer.saveUser(user);		
 	}
 	
+	@RequestMapping(value = "/deleteUser")
+	public void deleteUser(@RequestBody UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException,UserValidationException{
+		userTransformer.deleteUser(userRequest);
+	}
+	
 	@RequestMapping(value = "/getAllUserByUserType")
 	public @ResponseBody List<UserResponse> getAllUserByUserType(@RequestBody CommonRequest commonRequest) {
 		return userTransformer.getAllUserByUserType(commonRequest);
@@ -100,15 +105,16 @@ public class ZiprydeController {
 		return userTransformer.updatePasswordByUserAndType(userRequest);
 	}
 	
-	@RequestMapping(value = "/getAllApprovedEnabledDrivers")
-	public @ResponseBody List<UserResponse> getAllApprovedEnabledDrivers() {
-		return userTransformer.getAllApprovedEnabledDrivers();
+	@RequestMapping(value = "/assignDriverVehicleAssociation")
+	public @ResponseBody DriverVehicleAssociationResponse assignDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
+			throws MandatoryValidationException, ParseException, UserValidationException {
+		return userTransformer.assignDriverVehicleAssociation(driverVehicleRequest);
 	}
 	
-	@RequestMapping(value = "/saveDriverVehicleAssociation")
-	public @ResponseBody DriverVehicleAssociationResponse saveDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
-			throws MandatoryValidationException, ParseException, UserValidationException {
-		return userTransformer.saveDriverVehicleAssociation(driverVehicleRequest);
+	@RequestMapping(value = "/unassignDriverVehicleAssociation")
+	public @ResponseBody DriverVehicleAssociationResponse unassignDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
+			throws MandatoryValidationException, UserValidationException {
+		return userTransformer.unassignDriverVehicleAssociation(driverVehicleRequest);
 	}
 	
 	@RequestMapping(value = "/getActiveDriverVehicleAssociationByDriverId")
@@ -134,7 +140,15 @@ public class ZiprydeController {
 		return userTransformer.getDriverCountByOnline();
 	}
 	
+	@RequestMapping(value = "/getDriversByStatus")
+	public @ResponseBody List<UserResponse> getDriversByStatus(@RequestBody CommonRequest commonRequest) {
+		return userTransformer.getDriversByStatus(commonRequest);
+	}
 	
+	@RequestMapping(value = "/getDriversByOnline")
+	public @ResponseBody List<UserResponse> getDriversByOnline() {
+		return userTransformer.getDriversByOnline();
+	}
 	
 	/** ----------------- VEHICLE  --------------------- */
 	
@@ -205,9 +219,9 @@ public class ZiprydeController {
 		return bookingTranssformer.createBooking(bookingRequest);
 	}
 	
-	@RequestMapping(value = "/bookingResponseByDriver")
-	public @ResponseBody BookingResponse acceptBookingByDriver(@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
-		return bookingTranssformer.createBooking(bookingRequest);
+	@RequestMapping(value = "/updateBookingDriverStatus")
+	public @ResponseBody BookingResponse updateBookingDriverStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException{
+		return bookingTranssformer.updateBookingDriverStatus(bookingRequest);
 	}
 	
 

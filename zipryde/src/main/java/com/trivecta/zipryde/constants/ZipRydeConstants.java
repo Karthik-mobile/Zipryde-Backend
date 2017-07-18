@@ -17,13 +17,17 @@ public class ZipRydeConstants {
 		
 		static String APPROVED = "APPROVED";
 		static String REJECTED = "REJECTED";
+		static String ASSIGNED = "ASSIGNED";
+		static String UNASSIGNED = "UNASSIGNED";
 		
 		static String REQUESTED = "REQUESTED";
 		static String ON_TRIP =  "ON_TRIP";
 		static String SCHEDULED = "SCHEDULED";
 		static String COMPLETED = "COMPLETED";
 		static String CANCELLED = "CANCELLED";
+		static String ACCEPTED = "ACCEPTED";
 	}
+	
 	
 	public interface PRICINGTYPE {
 		static String STANDARD = "STANDARD";

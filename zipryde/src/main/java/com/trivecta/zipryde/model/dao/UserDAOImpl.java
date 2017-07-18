@@ -34,6 +34,9 @@ public class UserDAOImpl implements UserDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
+	@Autowired
+	AdminDAO adminDAO;
+	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -240,14 +243,16 @@ public class UserDAOImpl implements UserDAO {
 				Status status = null;
 				
 				if(user.getDriverProfile().getStatus() != null) {
-					status = (Status)
+				/*	status = (Status)
 							session.getNamedQuery("Status.findByStatus").
-							setParameter("status", user.getDriverProfile().getStatus().getStatus()).getSingleResult();			
+							setParameter("status", user.getDriverProfile().getStatus().getStatus()).getSingleResult();*/
+					status = adminDAO.findByStatus(user.getDriverProfile().getStatus().getStatus());
 				}
 				else {
-					status = (Status)
+					/*status = (Status)
 							session.getNamedQuery("Status.findByStatus").
-							setParameter("status", STATUS.REQUESTED).getSingleResult();			
+							setParameter("status", STATUS.REQUESTED).getSingleResult();	*/		
+					status = adminDAO.findByStatus(STATUS.REQUESTED);
 				}
 				user.getDriverProfile().setStatus(status);				
 				session.save(user.getDriverProfile());
@@ -260,64 +265,84 @@ public class UserDAOImpl implements UserDAO {
 	
 	public User updateUser(User user) throws NoResultEntityException, UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
+		User origUser = null;
 		try {
-			
-			User origUser = session.find(User.class, user.getId());
-			
-			if(!USERTYPE.WEB_ADMIN.equalsIgnoreCase(origUser.getUserType().getType()) && 
-					!origUser.getMobileNumber().equalsIgnoreCase(user.getMobileNumber())) {
-				throw new UserValidationException(ErrorMessages.MOBILE_NO_CANNOT_UPDATE);
-			}
-			
-			origUser.setFirstName(user.getFirstName());
-			origUser.setLastName(user.getLastName());
-			origUser.setAlternateNumber(user.getAlternateNumber());
-			origUser.setMobileNumber(user.getMobileNumber());
-			origUser.setEmailId(user.getEmailId());
-			
-			if(user.getIsEnable() == null) {
-				origUser.setIsEnable(0);
-			}
-			else {
-				origUser.setIsEnable(user.getIsEnable());
-			}
-			
-			origUser.setModifiedDate(new Date());
-			origUser.setModifiedBy(user.getModifiedBy());
-			
-			DriverProfile origDriverProfile = null;			
-			Status status = null;
-			
-			if(USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())){
-				origDriverProfile = session.find(DriverProfile.class, origUser.getDriverProfile().getId());
-				
-				origDriverProfile.setComments(user.getDriverProfile().getComments());
-				origDriverProfile.setLicenseNo(user.getDriverProfile().getLicenseNo());
-				origDriverProfile.setLicenseIssuedOn(user.getDriverProfile().getLicenseIssuedOn());
-				origDriverProfile.setLicenseValidUntil(user.getDriverProfile().getLicenseValidUntil());
-				origDriverProfile.setRestrictions(user.getDriverProfile().getRestrictions());
-				
-				if(user.getDriverProfile() != null && user.getDriverProfile().getStatus() != null)
-				{					
-					if(!user.getDriverProfile().getStatus().getStatus().
-						equalsIgnoreCase(origUser.getDriverProfile().getStatus().getStatus())) {
-							String statusStr = user.getDriverProfile().getStatus().getStatus().toUpperCase();
-							status = (Status)
-								session.getNamedQuery("Status.findByStatus").
-								setParameter("status", statusStr).getSingleResult();
-						origDriverProfile.setStatus(status);	
-					}
-				}	
-				session.merge(origDriverProfile);
-			}
-			
-			User newUser = (User)session.merge(origUser);
-		
-			return newUser;
+			origUser = session.find(User.class, user.getId());
 		}
 		catch(NoResultException e) {
 			throw new NoResultEntityException(ErrorMessages.NO_USER_FOUND);
-		}		
+		}	
+		if (!USERTYPE.WEB_ADMIN.equalsIgnoreCase(origUser.getUserType().getType())
+				&& !origUser.getMobileNumber().equalsIgnoreCase(user.getMobileNumber())) {
+			throw new UserValidationException(ErrorMessages.MOBILE_NO_CANNOT_UPDATE);
+		}
+
+		origUser.setFirstName(user.getFirstName());
+		origUser.setLastName(user.getLastName());
+		origUser.setAlternateNumber(user.getAlternateNumber());
+		origUser.setMobileNumber(user.getMobileNumber());
+		origUser.setEmailId(user.getEmailId());
+
+		if (user.getIsEnable() == null) {
+			origUser.setIsEnable(0);
+		} else {
+			origUser.setIsEnable(user.getIsEnable());
+		}
+
+		origUser.setModifiedDate(new Date());
+		origUser.setModifiedBy(user.getModifiedBy());
+
+		DriverProfile origDriverProfile = null;
+		Status status = null;
+
+		if (USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())) {
+			origDriverProfile = session.find(DriverProfile.class, origUser.getDriverProfile().getId());
+
+			origDriverProfile.setComments(user.getDriverProfile().getComments());
+			origDriverProfile.setLicenseNo(user.getDriverProfile().getLicenseNo());
+			origDriverProfile.setLicenseIssuedOn(user.getDriverProfile().getLicenseIssuedOn());
+			origDriverProfile.setLicenseValidUntil(user.getDriverProfile().getLicenseValidUntil());
+			origDriverProfile.setRestrictions(user.getDriverProfile().getRestrictions());
+
+			if (user.getDriverProfile() != null && user.getDriverProfile().getStatus() != null) {
+				if (!user.getDriverProfile().getStatus().getStatus()
+						.equalsIgnoreCase(origUser.getDriverProfile().getStatus().getStatus())) {
+					String statusStr = user.getDriverProfile().getStatus().getStatus().toUpperCase();
+					/*
+					 * status = (Status)
+					 * session.getNamedQuery("Status.findByStatus").
+					 * setParameter("status", statusStr).getSingleResult();
+					 */
+					status = adminDAO.findByStatus(statusStr);
+					origDriverProfile.setStatus(status);
+				}
+			}
+			session.merge(origDriverProfile);
+		}
+
+		User newUser = (User) session.merge(origUser);
+
+		return newUser;
+		
+	}
+	
+	
+	public void deleteUser(User user) throws NoResultEntityException, UserValidationException{
+		Session session = this.sessionFactory.getCurrentSession();
+		User origUser = null;
+		try {
+			origUser = session.find(User.class, user.getId());
+		}
+		catch(NoResultException e) {
+			throw new NoResultEntityException(ErrorMessages.NO_USER_FOUND);
+		}	
+		if (USERTYPE.DRIVER.equalsIgnoreCase(origUser.getUserType().getType()) && origUser.getDriverProfile() != null && 
+				STATUS.ASSIGNED.equalsIgnoreCase(origUser.getDriverProfile().getStatus().getStatus())){
+			throw new UserValidationException(ErrorMessages.DRIVER_ASSOCIATED_VEHICLE);
+		}
+		
+		origUser.setIsDeleted(1);
+		session.merge(origUser);
 	}
 	
 	public List<User> getAllUserByUserType(String userType) {
@@ -347,7 +372,19 @@ public class UserDAOImpl implements UserDAO {
 		}
 		return userCount;
 	}
-		
+	
+	public List<User> getDriversByStatus(String status) {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<User> userList = session.createNamedQuery("User.findByTypeAndStatus").
+				setParameter("userType",USERTYPE.DRIVER).setParameter("status", status).getResultList();
+		if (userList != null && userList.size() > 0) {
+			for(User usr:userList){
+				fetchLazyInitialisation(usr);
+			}
+		}
+		return userList;
+	}
+	
 	public Integer getDriverCountByOnline() {
 		int userCount = 0;
 		Session session = this.sessionFactory.getCurrentSession();
@@ -359,7 +396,18 @@ public class UserDAOImpl implements UserDAO {
 		return userCount;
 	}
 	
-	public List<User> getAllApprovedEnabledDrivers() {
+	public List<User> getDriversByOnline() {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<User> userList = session.createNamedQuery("User.findByOnline").
+				setParameter("userType", USERTYPE.DRIVER).getResultList();
+		if (userList != null && userList.size() > 0) {
+			for(User usr:userList){
+				fetchLazyInitialisation(usr);
+			}
+		}
+		return userList;
+	}
+/*	public List<User> getAllApprovedEnabledDrivers() {
 		Session session = this.sessionFactory.getCurrentSession();
 		List<User> userList = session.getNamedQuery("User.findByApprovedAndEnabled").
 				setParameter("userType", USERTYPE.DRIVER).
@@ -370,35 +418,54 @@ public class UserDAOImpl implements UserDAO {
 		}
 		return userList;
 	}
+*/	
 	
-	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
+	private void updateDriverProfileStatus(int driverProfileId,String statusStr) {
 		Session session = this.sessionFactory.getCurrentSession();
-		if(driverVehicle.getId() == null) {
-			driverVehicle.setCreationDate(new Date());
+		Status status = adminDAO.findByStatus(statusStr);
+		DriverProfile driverProfile = session.find(DriverProfile.class, driverProfileId);
+		driverProfile.setStatus(status);
+		session.merge(driverProfile);
+	}
+	
+	public DriverVehicleAssociation assignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
+		Session session = this.sessionFactory.getCurrentSession();
+		driverVehicle.setCreationDate(new Date());
 			
-			User user = getUserByUserId(driverVehicle.getUser().getId());
-			if(USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())) {
-				driverVehicle.setUser(user);
-			}
-			else {
-				throw new UserValidationException(ErrorMessages.USER_NOT_DRIVER);
-			}
-			VehicleDetail vehicle = session.find(VehicleDetail.class, driverVehicle.getVehicleDetail().getId());
-			driverVehicle.setVehicleDetail(vehicle);
-			
-			session.save(driverVehicle);
-			return driverVehicle;
+		User user = getUserByUserId(driverVehicle.getUser().getId());
+		if (USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())) {
+			driverVehicle.setUser(user);
+		} else {
+			throw new UserValidationException(ErrorMessages.USER_NOT_DRIVER);
 		}
-		else {
-			DriverVehicleAssociation origDriverVehicle =
+		VehicleDetail vehicle = session.find(VehicleDetail.class, driverVehicle.getVehicleDetail().getId());
+		driverVehicle.setVehicleDetail(vehicle);
+
+		driverVehicle.setFromDate(new Date());
+
+		if (vehicle.getInsuranceValidUntil() != null) {
+			if (vehicle.getCabPermits() != null && vehicle.getCabPermits().size() > 0 && vehicle.getCabPermits().get(0)
+					.getPermitValidUntil().compareTo(vehicle.getInsuranceValidUntil()) > 0) {
+				driverVehicle.setToDate(vehicle.getCabPermits().get(0).getPermitValidUntil());
+			} else {
+				driverVehicle.setToDate(vehicle.getInsuranceValidUntil());
+			}
+		}
+		session.save(driverVehicle);
+		updateDriverProfileStatus(driverVehicle.getUser().getDriverProfile().getId(),STATUS.ASSIGNED);
+		return driverVehicle;		
+	}
+	
+	public DriverVehicleAssociation unassignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
+		Session session = this.sessionFactory.getCurrentSession();
+		DriverVehicleAssociation origDriverVehicle =
 					session.find(DriverVehicleAssociation.class, driverVehicle.getId());
-			origDriverVehicle.setToDate(driverVehicle.getToDate());
-			origDriverVehicle.setModifiedDate(new Date());
-			origDriverVehicle.setModifiedBy(driverVehicle.getModifiedBy());
-			
-			session.merge(origDriverVehicle);
-			return origDriverVehicle;
-		}
+		origDriverVehicle.setToDate(driverVehicle.getToDate());
+		origDriverVehicle.setModifiedDate(new Date());
+		origDriverVehicle.setModifiedBy(driverVehicle.getModifiedBy());
+		session.merge(origDriverVehicle);
+		updateDriverProfileStatus(origDriverVehicle.getUser().getDriverProfile().getId(),STATUS.UNASSIGNED);
+		return origDriverVehicle;		
 	}
 	
 	public DriverVehicleAssociation getActiveDriverVehicleAssociationByDriverId(int userId) {

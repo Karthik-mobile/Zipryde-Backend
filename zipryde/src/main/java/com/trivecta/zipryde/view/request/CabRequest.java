@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"insuranceNumber", 
 	"insuranceValidUntil",
 	"vin",
+	"vehicleNumber",
 	"status",
 	"comments",
 	"cabPermitRequest"
@@ -56,6 +57,8 @@ public class CabRequest {
 	
 	private String vin;
 	
+	private String vehicleNumber;
+
 	private String status;
 
 	private String comments;
@@ -197,6 +200,14 @@ public class CabRequest {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public String getVehicleNumber() {
+		return vehicleNumber;
+	}
+
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
 	}
 	
 }

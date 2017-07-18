@@ -27,9 +27,9 @@ public interface UserDAO {
 	
 	public Integer getUserCountByTypeAndStatus(String userType,String status);
 	
-	public List<User> getAllApprovedEnabledDrivers();
+	public DriverVehicleAssociation assignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException;
 	
-	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException;
+	public DriverVehicleAssociation unassignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException;
 	
 	public UserSession saveUserSession(UserSession userSession);
 	
@@ -38,6 +38,15 @@ public interface UserDAO {
 	public List<DriverVehicleAssociation> getAllDriverVehicleAssociationByDriverId(int userId);
 	
 	public Integer getDriverCountByOnline();
+	
+	public void deleteUser(User user) throws NoResultEntityException , UserValidationException;
+	
+	public List<User> getDriversByStatus(String status);
+	
+	public List<User> getDriversByOnline();
+
+
+
 	
 	public User updatePasswordByUserAndType(User user) throws NoResultEntityException ;
 }

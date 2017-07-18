@@ -56,9 +56,7 @@ public class BookingTransformer {
 		if( bookingRequest.getGeoLocationRequest() == null) {
 			errorMsg = errorMsg.append(ErrorMessages.LAT_LON_REQUIRED);
 		}
-		else {
-			
-		}
+		
 		if(bookingRequest.getCabTypeId() == null) {
 			errorMsg = errorMsg.append(ErrorMessages.CAB_REQUIRED);
 		}
@@ -97,35 +95,82 @@ public class BookingTransformer {
 			customer.setId(bookingRequest.getCustomerId().intValue());
 			booking.setRider(customer);
 			
+			DateFormat startDate = new SimpleDateFormat("MM-dd-YYYY HH:mm:ss");
+			
 			if(bookingRequest.getStartDateTime() != null) {
-				DateFormat startDate = new SimpleDateFormat("MM-dd-YYYY HH:mm:ss");
 				booking.setStartDateTime(startDate.parse(bookingRequest.getStartDateTime()));
 			}
 				
 			booking.setSuggestedPrice(new BigDecimal(bookingRequest.getSuggestedPrice()));
 			booking.setOfferedPrice(new BigDecimal(bookingRequest.getOfferedPrice()));
-			booking.setOfferedPricePercentage(bookingRequest.getOfferedPricePercentage().intValue());
+			if(bookingRequest.getOfferedPricePercentage() != null) {
+				booking.setOfferedPricePercentage(bookingRequest.getOfferedPricePercentage().intValue());
+			}
 			
 			Status status = new Status();
 			status.setStatus(STATUS.REQUESTED);
 			booking.setBookingStatus(status);
-			
+			if(bookingRequest.getNoOfPassengers() != null) {
+				booking.setNoOfPassengers(bookingRequest.getNoOfPassengers().intValue());
+			}
+			else {
+				booking.setNoOfPassengers(1);
+			}
 			Booking newBooking = bookingService.createBooking(booking);		
 			BookingResponse bookingResponse = setBookingResponseFromBooking(newBooking);		
 			return bookingResponse;
 		}	
 	}
 	
-	public BookingResponse bookingResponseByDriver(BookingRequest bookingRequest) {
-		BookingResponse bookingResponse = new BookingResponse();
+	public BookingResponse updateBookingDriverStatus(BookingRequest bookingRequest) throws MandatoryValidationException {
+		StringBuffer errorMsg = new StringBuffer();
 		
-		return bookingResponse;
+		if(bookingRequest.getBookingId() == null) {
+			errorMsg.append(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+		if(!ValidationUtil.isValidString(bookingRequest.getDriverStatus())) {
+			errorMsg.append(ErrorMessages.DRIVER_STATUS_REQUIRED);					
+		}
+		if(bookingRequest.getDriverId() == null) {
+			errorMsg.append(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {		
+			Booking booking = new Booking();
+			booking.setId(bookingRequest.getBookingId().intValue());
+			
+			User driver = new User();
+			driver.setId(bookingRequest.getDriverId().intValue());
+			booking.setDriver(driver);
+			
+			Status status = new Status();
+			status.setStatus(bookingRequest.getDriverStatus());
+			booking.setDriverStatus(status);
+			
+			Booking updatedBooking = bookingService.updateBookingDriverStatus(booking);
+			return setBookingResponseFromBooking(updatedBooking);
+		}
 	}
+	
+	public BookingResponse updateBookingStatus(BookingRequest bookingRequest) {
+		Booking booking = new Booking();
+		booking.setId(bookingRequest.getBookingId().intValue());
+		
+		Status status = new Status();
+		status.setStatus(bookingRequest.getBookingStatus());
+		booking.setBookingStatus(status);
+		
+		Booking updatedBooking = bookingService.updateBookingStatus(booking);
+		return setBookingResponseFromBooking(updatedBooking);
+	}
+	
 	
 	public BookingResponse updateBooking(BookingRequest bookingRequest) throws ParseException {
 		
-		Booking booking = new Booking();
-		
+		Booking booking = new Booking();		
 		booking.setId(bookingRequest.getBookingId().intValue());
 		booking.setTo(bookingRequest.getTo());
 				
@@ -151,7 +196,11 @@ public class BookingTransformer {
 		bookingResponse.setBookingId(booking.getId());
 		bookingResponse.setCustomerId(booking.getRider().getId());
 		bookingResponse.setCustomerName(booking.getRider().getFirstName()+" "+booking.getRider().getLastName());
-		bookingResponse.setDriverId(booking.getDriver().getId());
+	
+		if(booking.getDriver() != null) {
+			bookingResponse.setDriverId(booking.getDriver().getId());
+			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
+		}
 		
 		if(booking.getAcceptedDateTime() != null) {
 			bookingResponse.setAcceptedDateTime(dateFormat.format(booking.getAcceptedDateTime()));

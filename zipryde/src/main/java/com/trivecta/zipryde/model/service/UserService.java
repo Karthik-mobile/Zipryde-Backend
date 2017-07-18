@@ -25,9 +25,9 @@ public interface UserService {
 	
 	public Integer getUserCountByTypeAndStatus(String userType,String status);
 	
-	public List<User> getAllApprovedEnabledDrivers();
+	public DriverVehicleAssociation assignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle)  throws UserValidationException;
 	
-	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle)  throws UserValidationException;
+	public DriverVehicleAssociation unassignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle)  throws UserValidationException;
 	
 	public UserSession saveUserSession(UserSession userSession);
 	
@@ -38,4 +38,11 @@ public interface UserService {
 	public Integer getDriverCountByOnline();
 	
 	public User updatePasswordByUserAndType(User user) throws NoResultEntityException ;
+	
+	public void deleteUser(User user) throws NoResultEntityException , UserValidationException;
+	
+	public List<User> getDriversByStatus(String status);
+	
+	public List<User> getDriversByOnline();
+
 }

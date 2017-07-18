@@ -8,5 +8,8 @@ public interface BookingDAO {
 	
 	public Booking createBooking(Booking booking);
 	
+	public Booking updateBookingDriverStatus(Booking booking);
+	
+	public Booking updateBookingStatus(Booking booking);
 	
 }

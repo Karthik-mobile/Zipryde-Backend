@@ -63,13 +63,13 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Transactional
-	public List<User> getAllApprovedEnabledDrivers() {
-		return userDAO.getAllApprovedEnabledDrivers();
+	public DriverVehicleAssociation unassignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
+		return userDAO.unassignDriverVehicleAssociation(driverVehicle);
 	}
 	
 	@Transactional
-	public DriverVehicleAssociation saveDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
-		return userDAO.saveDriverVehicleAssociation(driverVehicle);
+	public DriverVehicleAssociation assignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle) throws UserValidationException {
+		return userDAO.assignDriverVehicleAssociation(driverVehicle);
 	}
 	
 	@Transactional
@@ -95,5 +95,20 @@ public class UserServiceImpl implements UserService{
 	@Transactional
 	public User updatePasswordByUserAndType(User user) throws NoResultEntityException {
 		return userDAO.updatePasswordByUserAndType(user);
+	}
+
+	@Transactional
+	public void deleteUser(User user) throws NoResultEntityException , UserValidationException{
+		userDAO.deleteUser(user);		
+	}
+
+	@Transactional
+	public List<User> getDriversByStatus(String status) {
+		return userDAO.getDriversByStatus(status);
+	}
+	
+	@Transactional
+	public List<User> getDriversByOnline() {
+		return userDAO.getDriversByOnline();
 	}
 }
