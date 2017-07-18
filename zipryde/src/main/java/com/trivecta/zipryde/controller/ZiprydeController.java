@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.ModelAttribute;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
@@ -75,10 +75,12 @@ public class ZiprydeController {
 	/** ------------------- USER ------------------------ */
 	
 	@RequestMapping(value = "/saveUser")
-	public @ResponseBody UserResponse saveUser(@RequestBody UserRequest user) 
-			throws ParseException, NoResultEntityException, MandatoryValidationException, UserValidationException {
-		return userTransformer.saveUser(user);		
-	}
+	public @ResponseBody UserResponse saveUser(@ModelAttribute UserRequest user) 
+			   throws ParseException, NoResultEntityException, MandatoryValidationException, UserValidationException {
+			  System.out.println("Multiple file upload! With UploadModel");
+			  System.out.println(user);
+			  return userTransformer.saveUser(user);  
+			 }
 	
 	@RequestMapping(value = "/deleteUser")
 	public void deleteUser(@RequestBody UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException,UserValidationException{

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -223,23 +225,15 @@ public class UserTransformer {
 				driverProfile.setStatus(status);
 				driverProfile.setComments(userRequest.getComments());
 				
-		/*		try {
-					//List<MultipartFile> files = userRequest.getLicenseImages();
-					//MultipartFile[] files = userRequest.getLicenseImages();
-					if(files != null && files.length > 0 ) {
-						System.out.println(" FIles Size : "+files.length);
-						
-						System.out.println(" FIles Name : "+files[0].getName());
-						
-						driverProfile.setLicenseFrontImage(files[0].getBytes());
-						if(files.length>1){
-							driverProfile.setLicenseBackImage(files[1].getBytes());
-						}
-					}
+				try {
+					driverProfile.setLicenseFrontImage(userRequest.getLicenseFrontImage().getBytes());
+					driverProfile.setLicenseBackImage(userRequest.getLicenseBackImage().getBytes());
 				} catch (IOException e) {
-					//Images have not set. 
-					System.out.println(" File Upload Exceptionn "+e);
-				}	*/		
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			     
+			     
 				user.setDriverProfile(driverProfile);			
 			}
 			User savedUser = userService.saveUser(user);
@@ -529,6 +523,13 @@ public class UserTransformer {
 				
 			userResponse.setStatus(user.getDriverProfile().getStatus().getStatus());
 			userResponse.setComments(user.getDriverProfile().getComments());
+			
+			if(user.getDriverProfile().getLicenseFrontImage() != null) {
+				userResponse.setLicenseFrontImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getLicenseFrontImage()));
+			}
+			if(user.getDriverProfile().getLicenseBackImage() != null) {
+				userResponse.setLicenseBackImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getLicenseBackImage()));
+			}			   
 		}			
 		return userResponse;
 	}

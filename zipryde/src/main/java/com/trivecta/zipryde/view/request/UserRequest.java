@@ -26,7 +26,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"isEnable",
 	"status",
 	"comments",
-	"restriction"
+	"restriction",
+	 "licenseFrontImage",
+	 "licenseBackImage"
 	//"licenseImages"
 })
 public class UserRequest {
@@ -81,10 +83,12 @@ public class UserRequest {
 	
 	@JsonProperty("restriction")
 	private String restriction;
-
-	/*@JsonProperty("licenseImages")
-	//List<MultipartFile> licenseImages;
-	MultipartFile[] licenseImages;*/
+	
+	@JsonProperty("licenseFrontImage")
+	 MultipartFile licenseFrontImage;
+	 
+	 @JsonProperty("licenseBackImage")
+	 MultipartFile licenseBackImage;
 
 	public Number getUserId() {
 		return userId;
@@ -222,6 +226,33 @@ public class UserRequest {
 		this.restriction = restriction;
 	}
 
-	
+	public MultipartFile getLicenseFrontImage() {
+		  return licenseFrontImage;
+		 }
 
+		 public void setLicenseFrontImage(MultipartFile licenseFrontImage) {
+		  this.licenseFrontImage = licenseFrontImage;
+		 }
+
+		 public MultipartFile getLicenseBackImage() {
+		  return licenseBackImage;
+		 }
+
+		 public void setLicenseBackImage(MultipartFile licenseBackImage) {
+		  this.licenseBackImage = licenseBackImage;
+		 }
+
+		@Override
+		public String toString() {
+			return "UserRequest [userId=" + userId + ", userType=" + userType + ", firstName=" + firstName
+					+ ", lastName=" + lastName + ", mobileNumber=" + mobileNumber + ", password=" + password
+					+ ", alternateNumber=" + alternateNumber + ", emailId=" + emailId + ", driverProfileId="
+					+ driverProfileId + ", licenseNo=" + licenseNo + ", licenseIssuedOn=" + licenseIssuedOn
+					+ ", licenseValidUntil=" + licenseValidUntil + ", defaultPercentageAccepted="
+					+ defaultPercentageAccepted + ", isEnable=" + isEnable + ", status=" + status + ", comments="
+					+ comments + ", restriction=" + restriction + ", licenseFrontImage=" + licenseFrontImage
+					+ ", licenseBackImage=" + licenseBackImage + ", toString()=" + super.toString() + "]";
+		}
+
+		 
 }

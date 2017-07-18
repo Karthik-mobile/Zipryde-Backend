@@ -218,5 +218,27 @@ public class UserResponse {
 
 	public void setRestriction(String restriction) {
 		this.restriction = restriction;
-	}	
+	}
+	
+	 @JsonProperty("licenseFrontImage")
+	 String licenseFrontImage;
+	 
+	 @JsonProperty("licenseBackImage")
+	 String licenseBackImage;
+	 
+	public String getLicenseFrontImage() {
+	  return licenseFrontImage;
+	 }
+
+	 public void setLicenseFrontImage(String licenseFrontImage) {
+	  this.licenseFrontImage = licenseFrontImage;
+	 }
+
+	 public String getLicenseBackImage() {
+	  return licenseBackImage;
+	 }
+
+	 public void setLicenseBackImage(String licenseBackImage) {
+	  this.licenseBackImage = licenseBackImage;
+	 }
 }
