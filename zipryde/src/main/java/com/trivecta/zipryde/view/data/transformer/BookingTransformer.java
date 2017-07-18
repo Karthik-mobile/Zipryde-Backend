@@ -4,9 +4,13 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
@@ -187,6 +191,51 @@ public class BookingTransformer {
 		return bookingResponse;
 	}
 	
+	public BookingResponse getBookingByBookingId(BookingRequest bookingRequest) throws MandatoryValidationException {
+		
+		if(bookingRequest.getBookingId() == null ){
+			throw new MandatoryValidationException(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+		else {
+			Booking booking = bookingService.getBookingById(bookingRequest.getBookingId().intValue());
+			return setBookingResponseFromBooking(booking);
+		}
+	}
+	
+	public List<BookingResponse> getBookingByDate(BookingRequest bookingRequest) throws ParseException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		Date searchDate = new Date();
+		if(bookingRequest.getStartDateTime() != null) {
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			searchDate = dateFormat.parse(bookingRequest.getStartDateTime());
+		}
+		
+		List<Booking> bookingList = bookingService.getBookingByDate(searchDate);
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking));
+			}
+		}
+		return bookingResponseList;		
+	}
+	
+	public List<BookingResponse> getBookingByBookingStatus(BookingRequest bookingRequest) throws MandatoryValidationException  {
+		if(bookingRequest.getBookingStatus() == null) {
+			throw new MandatoryValidationException(ErrorMessages.BOOKING_STATUS_REQUIRED);
+		}
+		
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		
+		List<Booking> bookingList = bookingService.getBookingByBookingStatus(bookingRequest.getBookingStatus());
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking));
+			}
+		}
+		return bookingResponseList;		
+	}
 	
 	private BookingResponse setBookingResponseFromBooking(Booking booking) {
 		BookingResponse bookingResponse = new BookingResponse();

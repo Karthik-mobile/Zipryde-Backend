@@ -226,9 +226,22 @@ public class ZiprydeController {
 		return bookingTranssformer.updateBookingDriverStatus(bookingRequest);
 	}
 	
-
+	@RequestMapping(value = "/getBookingByBookingId")
+	public @ResponseBody BookingResponse getBookingByBookingId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+		return bookingTranssformer.getBookingByBookingId(bookingRequest);
+	}
+	
+	@RequestMapping(value = "/getBookingByDate")
+	public List<BookingResponse> getBookingByDate(@RequestBody BookingRequest bookingRequest) throws ParseException {
+		return bookingTranssformer.getBookingByDate(bookingRequest);
+	}
+	
+	@RequestMapping(value = "/getBookingByBookingStatus")
+	public List<BookingResponse> getBookingByBookingStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+		return bookingTranssformer.getBookingByBookingStatus(bookingRequest);
+	}
+	
 	//TODO
-	//1. DRIVER APPROVE / REJECT BOOKING
 	//2. GET BOOKINGS BY USER TYPE AND USER ID
 	
 	/** --------- MONGO DB SERVICE -------------------- */

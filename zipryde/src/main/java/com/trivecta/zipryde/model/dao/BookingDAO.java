@@ -1,6 +1,8 @@
 package com.trivecta.zipryde.model.dao;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import com.trivecta.zipryde.model.entity.Booking;
 
@@ -12,4 +14,9 @@ public interface BookingDAO {
 	
 	public Booking updateBookingStatus(Booking booking);
 	
+	public Booking getBookingById(int bookingId);
+	
+	public List<Booking> getBookingByDate(Date bookingDate);
+	
+	public List<Booking> getBookingByBookingStatus(String status);
 }

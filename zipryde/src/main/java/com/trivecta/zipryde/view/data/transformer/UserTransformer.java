@@ -238,7 +238,7 @@ public class UserTransformer {
 				user.setDriverProfile(driverProfile);			
 			}
 			User savedUser = userService.saveUser(user);
-			return setUserResponse(savedUser);
+			return setUserResponse(savedUser,false);
 		}		
 	}
 	
@@ -248,7 +248,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user));
+				userResponseList.add(setUserResponse(user,false));
 			}
 		}
 		return userResponseList;
@@ -259,7 +259,7 @@ public class UserTransformer {
 			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
 		}
 		User user = userService.getUserByUserId(commonRequest.getUserId().intValue());
-		return setUserResponse(user);
+		return setUserResponse(user,true);
 	}
 	
 	
@@ -297,7 +297,7 @@ public class UserTransformer {
 			userType.setType(userRequest.getUserType());
 			user.setUserType(userType);
 			User newUser = userService.verifyLogInUser(user);
-			return setUserResponse(newUser);
+			return setUserResponse(newUser,false);
 		}		
 	}
 	
@@ -334,7 +334,7 @@ public class UserTransformer {
 			userType.setType(userRequest.getUserType());
 			user.setUserType(userType);
 			User newUser = userService.updatePasswordByUserAndType(user);
-			return setUserResponse(newUser);
+			return setUserResponse(newUser,false);
 		}
 	}
 	
@@ -359,7 +359,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user));
+				userResponseList.add(setUserResponse(user,false));
 			}
 		}
 		return userResponseList;
@@ -371,7 +371,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user));
+				userResponseList.add(setUserResponse(user,false));
 			}
 		}
 		return userResponseList;
@@ -485,7 +485,7 @@ public class UserTransformer {
 		return driverVehicleResp;
 	}
 	
-	private UserResponse setUserResponse(User user) {
+	private UserResponse setUserResponse(User user,boolean loadImage) {
 		UserResponse userResponse = new UserResponse();
 		
 		userResponse.setUserId(user.getId());
@@ -525,12 +525,14 @@ public class UserTransformer {
 			userResponse.setStatus(user.getDriverProfile().getStatus().getStatus());
 			userResponse.setComments(user.getDriverProfile().getComments());
 			
-			if(user.getDriverProfile().getLicenseFrontImage() != null) {
-				userResponse.setLicenseFrontImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getLicenseFrontImage()));
+			if(loadImage) {
+				if(user.getDriverProfile().getLicenseFrontImage() != null) {
+					userResponse.setLicenseFrontImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getLicenseFrontImage()));
+				}
+				if(user.getDriverProfile().getLicenseBackImage() != null) {
+					userResponse.setLicenseBackImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getLicenseBackImage()));
+				}
 			}
-			if(user.getDriverProfile().getLicenseBackImage() != null) {
-				userResponse.setLicenseBackImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getLicenseBackImage()));
-			}			   
 		}			
 		return userResponse;
 	}

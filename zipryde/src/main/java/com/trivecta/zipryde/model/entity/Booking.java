@@ -13,7 +13,11 @@ import java.util.List;
  */
 @Entity
 @Table(name="BOOKING")
-@NamedQuery(name="Booking.findAll", query="SELECT b FROM Booking b")
+@NamedQueries({
+	@NamedQuery(name="Booking.findAll", query="SELECT b FROM Booking b"),
+	@NamedQuery(name="Booking.findByBookingStatus", query="SELECT b FROM Booking b where b.bookingStatus.status = :status"),
+	@NamedQuery(name="Booking.findByBookingStartDate", query="SELECT b FROM Booking b where b.bookingStatus.status != 'REQUESTED' AND DATE(b.bookingDateTime) = :bookingDate")
+})
 public class Booking implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -34,6 +34,8 @@ public interface ErrorMessages {
 	
 	static String BOOKING_ID_REQUIRED = "Booking Id Required";
 	
+	static String BOOKING_STATUS_REQUIRED = "Booking Status Required";
+			
 	static String DRIVER_STATUS_REQUIRED = "Driver Status  Required";
 	
 	static String MOBILE_MANDATORY = "Mobile No is Mandatory ";

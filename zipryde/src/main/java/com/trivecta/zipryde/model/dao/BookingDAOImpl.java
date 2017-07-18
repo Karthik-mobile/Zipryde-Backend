@@ -38,17 +38,7 @@ public class BookingDAOImpl implements BookingDAO{
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
-	public Booking saveBooking(Booking booking) {
-		if(booking.getId() != 0) {
-			//Update Booking
-		}
-		else {
-			//Create Booking
-		}
-		return booking;
-	}
-	
+		
 	private String generateUniqueCRN() {
 		String alphaNumerics = "1234567890";
 		String crn = "";
@@ -106,6 +96,7 @@ public class BookingDAOImpl implements BookingDAO{
 		if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 			Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
 			origBooking.setBookingStatus(bookingStatus);
+			origBooking.setCrnNumber(generateUniqueCRN());
 		}
 		else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 			origBooking.setBookingStatus(driverStatus);
@@ -129,6 +120,49 @@ public class BookingDAOImpl implements BookingDAO{
 	}
 	
 	
+	public Booking getBookingById(int bookingId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		Booking origBooking  = session.find(Booking.class, bookingId);
+		fetchLazyInitialisation(origBooking);
+		return origBooking;
+	}
+	
+	public List<Booking> getBookingByDate(Date bookingDate) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStartDate").
+				 setParameter("bookingDate", bookingDate).getResultList();
+		 
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
+	public List<Booking> getBookingByBookingStatus(String status) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStatus").setParameter("status", status).getResultList();
+		 
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
+	private void fetchLazyInitialisation(Booking booking) {
+		if(booking.getBookingRequests() != null) {
+			booking.getBookingRequests().size();
+		}
+		if(booking.getPayments() != null) {
+			booking.getPayments().size();
+		}
+		booking.getBookingStatus();
+		booking.getCabType();
+		booking.getDriverStatus();	
+	}
 	
 	@Async
 	private BookingRequest createBookingRequest(Booking booking) {

@@ -235,23 +235,16 @@ public class UserDAOImpl implements UserDAO {
 					setParameter("userType", user.getUserType().getType()).getSingleResult();
 			user.setUserType(userType);
 			
+			user.setIsDeleted(0);
 			session.save(user);
 			
 			if(USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())) {
-				user.getDriverProfile().setUser(user);
-				
-				Status status = null;
-				
+				user.getDriverProfile().setUser(user);				
+				Status status = null;				
 				if(user.getDriverProfile().getStatus() != null) {
-				/*	status = (Status)
-							session.getNamedQuery("Status.findByStatus").
-							setParameter("status", user.getDriverProfile().getStatus().getStatus()).getSingleResult();*/
 					status = adminDAO.findByStatus(user.getDriverProfile().getStatus().getStatus());
 				}
 				else {
-					/*status = (Status)
-							session.getNamedQuery("Status.findByStatus").
-							setParameter("status", STATUS.REQUESTED).getSingleResult();	*/		
 					status = adminDAO.findByStatus(STATUS.REQUESTED);
 				}
 				user.getDriverProfile().setStatus(status);				
