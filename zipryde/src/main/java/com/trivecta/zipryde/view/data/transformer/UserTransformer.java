@@ -226,13 +226,14 @@ public class UserTransformer {
 				driverProfile.setComments(userRequest.getComments());
 				
 				try {
-					driverProfile.setLicenseFrontImage(userRequest.getLicenseFrontImage().getBytes());
-					driverProfile.setLicenseBackImage(userRequest.getLicenseBackImage().getBytes());
+					if(userRequest.getLicenseFrontImage() != null)
+						driverProfile.setLicenseFrontImage(userRequest.getLicenseFrontImage().getBytes());
+					if(userRequest.getLicenseBackImage() != null)
+						driverProfile.setLicenseBackImage(userRequest.getLicenseBackImage().getBytes());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-			     
+				}     
 			     
 				user.setDriverProfile(driverProfile);			
 			}
