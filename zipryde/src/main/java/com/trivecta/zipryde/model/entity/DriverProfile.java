@@ -61,6 +61,9 @@ public class DriverProfile implements Serializable {
 
 	private String comments;
 	
+	@Lob
+	private byte[] driverProfileImage;
+	
 	public DriverProfile() {
 	}
 
@@ -191,5 +194,15 @@ public class DriverProfile implements Serializable {
 	public void setLicenseIssuedOn(Date licenseIssuedOn) {
 		this.licenseIssuedOn = licenseIssuedOn;
 	}
+
+	public byte[] getDriverProfileImage() {
+		return driverProfileImage;
+	}
+
+	public void setDriverProfileImage(byte[] driverProfileImage) {
+		this.driverProfileImage = driverProfileImage;
+	}
+	
+	
 
 }

@@ -296,7 +296,8 @@ public class UserDAOImpl implements UserDAO {
 			origDriverProfile.setLicenseIssuedOn(user.getDriverProfile().getLicenseIssuedOn());
 			origDriverProfile.setLicenseValidUntil(user.getDriverProfile().getLicenseValidUntil());
 			origDriverProfile.setRestrictions(user.getDriverProfile().getRestrictions());
-
+			
+			origDriverProfile.setDriverProfileImage(user.getDriverProfile().getDriverProfileImage());
 			origDriverProfile.setLicenseBackImage( user.getDriverProfile().getLicenseBackImage());
 			origDriverProfile.setLicenseFrontImage( user.getDriverProfile().getLicenseFrontImage());
 			
