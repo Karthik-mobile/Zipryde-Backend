@@ -4,19 +4,12 @@ import java.math.BigDecimal;
 
 public class UserGeoSpatialResponse {
 
-	private String userId;
+	private Integer userId;
 	
 	private BigDecimal latitude;
 	
 	private BigDecimal longitude;
 
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 
 	public BigDecimal getLatitude() {
 		return latitude;
@@ -32,5 +25,13 @@ public class UserGeoSpatialResponse {
 
 	public void setLongitude(BigDecimal longitude) {
 		this.longitude = longitude;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 }

@@ -71,4 +71,9 @@ public class AdminServiceImpl implements AdminService {
 	public void savePricingMstrs(List<PricingMstr> pricingMstrList) {
 		pricingDAO.savePricingMstrs(pricingMstrList);
 	}
+	
+	@Transactional
+	public List<PricingMstr> getAllPricingMstr() {
+		return pricingDAO.getAllPricingMstr();
+	}
 }

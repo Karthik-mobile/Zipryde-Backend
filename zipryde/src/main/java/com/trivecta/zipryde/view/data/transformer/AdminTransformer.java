@@ -175,6 +175,13 @@ public class AdminTransformer {
 		return pricingMstrRespList;				
 	}
 	
+	public List<PricingMstrResponse> getAllPricingMstr() throws MandatoryValidationException {
+		
+		List<PricingMstr> pricingMstrList = adminService.getAllPricingMstr();
+		List<PricingMstrResponse> pricingMstrRespList = setPricingMstrResponse(pricingMstrList);
+		return pricingMstrRespList;				
+	}
+	
 	public void savePricingMstrs(List<PricingMstrRequest> pricingMstrReqList) {
 		List<PricingMstr> pricingMstrs = setPricingMstrListFromRequest(pricingMstrReqList);
 		adminService.savePricingMstrs(pricingMstrs);

@@ -10,7 +10,10 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="BOOKING_REQUEST")
-@NamedQuery(name="BookingRequest.findAll", query="SELECT b FROM BookingRequest b")
+@NamedQueries({
+	@NamedQuery(name="BookingRequest.findAll", query="SELECT b FROM BookingRequest b"),
+	@NamedQuery(name="BookingRequest.findByDriverId", query="SELECT b.booking FROM BookingRequest b where b.user.id = :userId")
+})
 public class BookingRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 

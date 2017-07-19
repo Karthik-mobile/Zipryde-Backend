@@ -44,7 +44,7 @@ public class MongoDbClient {
 			public void apply(final Document document) {
 				Document geoDoc = (Document) document.get("loc");
 				UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
-				userResponse.setUserId(document.get("userId").toString());
+				userResponse.setUserId(Integer.parseInt(document.get("userId").toString()));
 				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));
 				userResponse.setLongitude(new BigDecimal(geoDoc.get("lon").toString()));
 				userResponseList.add(userResponse);

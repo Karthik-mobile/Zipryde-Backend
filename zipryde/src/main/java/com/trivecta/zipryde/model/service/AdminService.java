@@ -31,4 +31,6 @@ public interface AdminService {
 	public List<PricingMstr> getAllPricingMstrByCabType(int cabTypeId);
 	
 	public void savePricingMstrs(List<PricingMstr> pricingMstrList);
+	
+	public List<PricingMstr> getAllPricingMstr();
 }

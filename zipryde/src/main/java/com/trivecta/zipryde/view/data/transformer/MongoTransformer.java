@@ -113,7 +113,7 @@ public class MongoTransformer {
 						Double.valueOf(geoLocationRequest.getFromLatitude()));
 		
 		return mongoUserRespList.stream()
-				.map(obj -> new UserGeoSpatialResponse(Integer.valueOf(obj.getUserId()),obj.getLongitude(),obj.getLatitude()))
+				.map(obj -> new UserGeoSpatialResponse(obj.getUserId(),obj.getLongitude(),obj.getLatitude()))
 				.collect(Collectors.toList());	
 		}			
 	}

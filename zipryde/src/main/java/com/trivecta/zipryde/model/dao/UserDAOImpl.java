@@ -297,8 +297,8 @@ public class UserDAOImpl implements UserDAO {
 			origDriverProfile.setLicenseValidUntil(user.getDriverProfile().getLicenseValidUntil());
 			origDriverProfile.setRestrictions(user.getDriverProfile().getRestrictions());
 
-			origDriverProfile.setLicenseBackImage( origUser.getDriverProfile().getLicenseBackImage());
-			origDriverProfile.setLicenseFrontImage( origUser.getDriverProfile().getLicenseFrontImage());
+			origDriverProfile.setLicenseBackImage( user.getDriverProfile().getLicenseBackImage());
+			origDriverProfile.setLicenseFrontImage( user.getDriverProfile().getLicenseFrontImage());
 			
 			if (user.getDriverProfile() != null && user.getDriverProfile().getStatus() != null) {
 				if (!user.getDriverProfile().getStatus().getStatus()
@@ -359,14 +359,13 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	public Integer getUserCountByTypeAndStatus(String userType,String status) {
-		int userCount = 0;
 		Session session = this.sessionFactory.getCurrentSession();
-		List<User> userList = session.createNamedQuery("User.findByTypeAndStatus").
-				setParameter("userType",userType).setParameter("status", status).getResultList();
-		if (userList != null && userList.size() > 0) {
-			userCount = userList.size();
+		Long userCount= (Long) session.createNamedQuery("User.countByTypeAndStatus").
+				setParameter("userType",userType).setParameter("status", status).getSingleResult();
+		if (userCount == null) {
+			userCount = 0L;
 		}
-		return userCount;
+		return userCount.intValue();
 	}
 	
 	public List<User> getDriversByStatus(String status) {
@@ -382,14 +381,13 @@ public class UserDAOImpl implements UserDAO {
 	}
 	
 	public Integer getDriverCountByOnline() {
-		int userCount = 0;
 		Session session = this.sessionFactory.getCurrentSession();
-		List<User> userList = session.createNamedQuery("User.findByOnline").
-				setParameter("userType", USERTYPE.DRIVER).getResultList();
-		if (userList != null && userList.size() > 0) {
-			userCount = userList.size();
+		Long userCount= (Long) session.createNamedQuery("User.countByOnline").
+				setParameter("userType", USERTYPE.DRIVER).getSingleResult();
+		if (userCount == null) {
+			userCount = 0L;
 		}
-		return userCount;
+		return userCount.intValue();
 	}
 	
 	public List<User> getDriversByOnline() {

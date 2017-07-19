@@ -24,6 +24,7 @@ import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.service.BookingService;
 import com.trivecta.zipryde.model.service.PaymentService;
+import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.PaymentRequest;
@@ -214,7 +215,7 @@ public class BookingTransformer {
 	public List<BookingResponse> getBookingByDate(BookingRequest bookingRequest) throws ParseException {
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		Date searchDate = new Date();
-		if(bookingRequest.getStartDateTime() != null) {
+		if(ValidationUtil.isValidString(bookingRequest.getStartDateTime())) {
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 			searchDate = dateFormat.parse(bookingRequest.getStartDateTime());
 		}
@@ -263,14 +264,31 @@ public class BookingTransformer {
 		return bookingResponseList;		
 	}
 	
-	public List<BookingResponse> getBookingByCustomerId(BookingRequest bookingRequest) throws MandatoryValidationException  {
+	public List<BookingResponse> getBookingByuserId(BookingRequest bookingRequest) throws MandatoryValidationException  {
 		if(bookingRequest.getCustomerId() == null) {
 			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
 		}
 		
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		
-		List<Booking> bookingList = bookingService.getBookingByCustomerId(bookingRequest.getCustomerId().intValue());
+		List<Booking> bookingList = bookingService.getBookingByuserId(bookingRequest.getCustomerId().intValue());
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking));
+			}
+		}
+		return bookingResponseList;		
+	}
+	
+	public List<BookingResponse> getBookingRequestedByDriverId(BookingRequest bookingRequest) throws MandatoryValidationException  {
+		if(bookingRequest.getDriverId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+				
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		
+		List<Booking> bookingList = bookingService.getBookingRequestedByDriverId(bookingRequest.getDriverId().intValue());
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
@@ -282,7 +300,7 @@ public class BookingTransformer {
 	
 	public CommonResponse getBookingCountByDate(BookingRequest bookingRequest) throws ParseException {
 		Date searchDate = new Date();
-		if(bookingRequest.getStartDateTime() != null) {
+		if(ValidationUtil.isValidString(bookingRequest.getStartDateTime())) {
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 			searchDate = dateFormat.parse(bookingRequest.getStartDateTime());
 		}

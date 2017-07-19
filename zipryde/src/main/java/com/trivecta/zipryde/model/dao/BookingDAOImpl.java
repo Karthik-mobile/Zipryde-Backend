@@ -3,6 +3,7 @@ package com.trivecta.zipryde.model.dao;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,6 +15,7 @@ import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.BookingRequest;
 import com.trivecta.zipryde.model.entity.CabType;
+import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.PricingMstr;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
@@ -75,7 +77,7 @@ public class BookingDAOImpl implements BookingDAO{
 		booking.setSuggestedPrice(suggestedPrice);
 		
 		session.save(booking);
-		createBookingRequest(booking);
+		assignBookingToNearBYDrivers(booking);
 		return booking;		
 	}
 	
@@ -120,12 +122,12 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	public Integer getBookingCountByDate(Date bookingDate) {
 		Session session = this.sessionFactory.getCurrentSession();
-		Integer bookingCount = (Integer) session.getNamedQuery("Booking.countByBookingDate").
+		Long bookingCount = (Long) session.getNamedQuery("Booking.countByBookingDate").
 				 setParameter("bookingDate", bookingDate).getSingleResult();
 		if(bookingCount == null) {
-		 bookingCount = 0;
+		 bookingCount = 0L;
 		}
-		return bookingCount;
+		return bookingCount.intValue();
 	}
 	
 	public Booking getBookingById(int bookingId) {
@@ -169,9 +171,20 @@ public class BookingDAOImpl implements BookingDAO{
 		 return bookingList;
 	}
 	
-	public List<Booking> getBookingByCustomerId(int customerId) {
+	public List<Booking> getBookingByuserId(int customerId) {
 		Session session = this.sessionFactory.getCurrentSession();
 		 List<Booking> bookingList = session.getNamedQuery("Booking.findByRiderId").setParameter("riderId", customerId).getResultList();
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
+	public List<Booking> getBookingRequestedByDriverId(int driverId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("BookingRequest.findByDriverId").setParameter("userId", driverId).getResultList();
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
@@ -192,23 +205,31 @@ public class BookingDAOImpl implements BookingDAO{
 		booking.getDriverStatus();	
 	}
 	
-	
 	@Async
 	private void assignBookingToNearBYDrivers(Booking booking) {
+		Session session = this.sessionFactory.getCurrentSession();
 		List<UserGeoSpatialResponse> nearByDriversList = mongoDbClient.getNearByActiveDrivers(booking.getFromLongitude().doubleValue(), booking.getFromLatitude().doubleValue());
-		
+		if(nearByDriversList != null && nearByDriversList.size() > 0) {
+			List<Integer> userIdList = nearByDriversList.stream()
+	                .map(UserGeoSpatialResponse::getUserId)
+	                .collect(Collectors.toList());
+			List<DriverVehicleAssociation> driverVehicleAssociationList = 
+					session.getNamedQuery("DriverVehicleAssociation.findByCabTypeAndUserIds")
+					.setParameter("cabTypeId", booking.getCabType().getId())
+					.setParameter("userIds", userIdList).getResultList();
+			for(DriverVehicleAssociation driverVehicleAssociation : driverVehicleAssociationList)	{
+				createBookingRequest(booking,driverVehicleAssociation.getUser());
+			}
+		}
 	}
 	
 	@Async
-	private BookingRequest createBookingRequest(Booking booking) {
-		
+	private void createBookingRequest(Booking booking,User user) {
+		Session session = this.sessionFactory.getCurrentSession();
 		//List<> = mongoDbClient.getNearByActiveDrivers(longitude, latitude);
 		BookingRequest bookingRequest = new BookingRequest();
-		
-		return bookingRequest;
-	}
-	
-	
-	
-	
+		bookingRequest.setBooking(booking);
+		bookingRequest.setUser(user);
+		session.save(bookingRequest);
+	}	
 }

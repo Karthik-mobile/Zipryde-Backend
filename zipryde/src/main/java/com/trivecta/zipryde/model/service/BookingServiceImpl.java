@@ -52,13 +52,18 @@ public class BookingServiceImpl implements BookingService{
 	}
 
 	@Transactional
-	public List<Booking> getBookingByCustomerId(int customerId) {
-		return bookingDAO.getBookingByCustomerId(customerId);
+	public List<Booking> getBookingByuserId(int customerId) {
+		return bookingDAO.getBookingByuserId(customerId);
 	}
 	
 	@Transactional
 	public Integer getBookingCountByDate(Date bookingDate) {
 		return bookingDAO.getBookingCountByDate(bookingDate);
+	}
+	
+	@Transactional
+	public List<Booking> getBookingRequestedByDriverId(int driverId) {
+		return bookingDAO.getBookingRequestedByDriverId(driverId);
 	}
 	
 	

@@ -219,6 +219,11 @@ public class ZiprydeController {
 		return adminTransformer.getAllPricingMstrByCabType(commonRequest);
 	}
 	
+	@RequestMapping(value = "/getAllPricingMstr")
+	public @ResponseBody List<PricingMstrResponse> getAllPricingMstr() throws MandatoryValidationException {
+		return adminTransformer.getAllPricingMstr();
+	}
+	
 	@RequestMapping(value = "/savePricingMstrs")
 	public void savePricingMstrs(@RequestBody List<PricingMstrRequest> pricingMstrReqList) {
 		adminTransformer.savePricingMstrs(pricingMstrReqList);
@@ -255,9 +260,14 @@ public class ZiprydeController {
 		return bookingTranssformer.getBookingByDriverId(bookingRequest);
 	}
 	
-	@RequestMapping(value = "/getBookingByCustomerId")
-	public @ResponseBody List<BookingResponse> getBookingByCustomerId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
-		return bookingTranssformer.getBookingByCustomerId(bookingRequest);
+	@RequestMapping(value = "/getBookingByuserId")
+	public @ResponseBody List<BookingResponse> getBookingByuserId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+		return bookingTranssformer.getBookingByuserId(bookingRequest);
+	}
+	
+	@RequestMapping(value = "/getBookingRequestedByDriverId")
+	public @ResponseBody List<BookingResponse> getBookingRequestedByDriverId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+		return bookingTranssformer.getBookingRequestedByDriverId(bookingRequest);
 	}
 	
 	//TODO
