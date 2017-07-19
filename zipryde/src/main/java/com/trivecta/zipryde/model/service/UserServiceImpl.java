@@ -58,8 +58,8 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Transactional
-	public Integer getUserCountByTypeAndStatus(String userType, String status) {
-		return userDAO.getUserCountByTypeAndStatus(userType, status);
+	public Integer getDriverCountBySatus(String status) {
+		return userDAO.getDriverCountBySatus(status);
 	}
 	
 	@Transactional

@@ -23,7 +23,7 @@ public interface UserService {
 	
 	public User getUserByUserId(int userId);
 	
-	public Integer getUserCountByTypeAndStatus(String userType,String status);
+	public Integer getDriverCountBySatus(String status);
 	
 	public DriverVehicleAssociation assignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle)  throws UserValidationException;
 	

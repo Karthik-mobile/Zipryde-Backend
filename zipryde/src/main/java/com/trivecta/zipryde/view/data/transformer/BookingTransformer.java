@@ -350,7 +350,7 @@ public class BookingTransformer {
 		if(booking.getDriver() != null) {
 			bookingResponse.setDriverId(booking.getDriver().getId());
 			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
-			//bookingResponse.setVehicleNumber(booking.getDriver().getd);
+			bookingResponse.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
 		}
 		
 		if(booking.getAcceptedDateTime() != null) {

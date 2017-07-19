@@ -341,7 +341,7 @@ public class UserTransformer {
 	}
 	
 	public CommonResponse getDriverCountBySatus(CommonRequest commonRequest) {
-		Integer driverCount = userService.getUserCountByTypeAndStatus(USERTYPE.DRIVER, commonRequest.getStatus());
+		Integer driverCount = userService.getDriverCountBySatus(commonRequest.getStatus());
 		
 		CommonResponse commonResponse = new CommonResponse();
 		commonResponse.setCount(driverCount);

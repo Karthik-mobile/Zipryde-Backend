@@ -64,6 +64,8 @@ public class DriverProfile implements Serializable {
 	@Lob
 	private byte[] driverProfileImage;
 	
+	private String vehicleNumber;
+	
 	public DriverProfile() {
 	}
 
@@ -201,6 +203,14 @@ public class DriverProfile implements Serializable {
 
 	public void setDriverProfileImage(byte[] driverProfileImage) {
 		this.driverProfileImage = driverProfileImage;
+	}
+
+	public String getVehicleNumber() {
+		return vehicleNumber;
+	}
+
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
 	}
 	
 	

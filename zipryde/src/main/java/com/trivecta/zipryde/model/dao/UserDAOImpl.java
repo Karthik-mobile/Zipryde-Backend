@@ -359,19 +359,57 @@ public class UserDAOImpl implements UserDAO {
 		return user;
 	}
 
-	public Integer getUserCountByTypeAndStatus(String userType,String status) {
+	public Integer getDriverCountBySatus(String status) {
+		if(STATUS.UNASSIGNED.equalsIgnoreCase(status)) {
+			return getDriverUnAssignedCount();
+		}
+		else {
+			Session session = this.sessionFactory.getCurrentSession();
+			Long userCount= (Long) session.createNamedQuery("User.countByTypeAndStatus").
+					setParameter("userType",USERTYPE.DRIVER).setParameter("status", status).getSingleResult();
+			if (userCount == null) {
+				userCount = 0L;
+			}
+			return userCount.intValue();
+		}
+	}
+	
+	public List<User> getDriversByStatus(String status) {
+		if(STATUS.UNASSIGNED.equalsIgnoreCase(status)) {
+			return getDriversUnAssigned();
+		}
+		else {
+			Session session = this.sessionFactory.getCurrentSession();
+			List<User> userList = session.createNamedQuery("User.findByTypeAndStatus").
+					setParameter("userType",USERTYPE.DRIVER).setParameter("status", status).getResultList();
+			if (userList != null && userList.size() > 0) {
+				for(User usr:userList){
+					fetchLazyInitialisation(usr);
+				}
+			}
+			return userList;
+		}
+	}
+	
+	private Integer getDriverUnAssignedCount() {
 		Session session = this.sessionFactory.getCurrentSession();
-		Long userCount= (Long) session.createNamedQuery("User.countByTypeAndStatus").
-				setParameter("userType",userType).setParameter("status", status).getSingleResult();
+		List<String> status = new ArrayList<String>();
+		status.add(STATUS.APPROVED);
+		status.add(STATUS.UNASSIGNED);
+		Long userCount= (Long) session.createNamedQuery("User.countByUnAssignedDriver").
+				setParameter("userType",USERTYPE.DRIVER).setParameter("status", status).getSingleResult();
 		if (userCount == null) {
 			userCount = 0L;
 		}
 		return userCount.intValue();
 	}
 	
-	public List<User> getDriversByStatus(String status) {
+	private List<User> getDriversUnAssigned() {
 		Session session = this.sessionFactory.getCurrentSession();
-		List<User> userList = session.createNamedQuery("User.findByTypeAndStatus").
+		List<String> status = new ArrayList<String>();
+		status.add(STATUS.APPROVED);
+		status.add(STATUS.UNASSIGNED);
+		List<User> userList = session.createNamedQuery("User.findUnAssignedDriver").
 				setParameter("userType",USERTYPE.DRIVER).setParameter("status", status).getResultList();
 		if (userList != null && userList.size() > 0) {
 			for(User usr:userList){
@@ -415,11 +453,12 @@ public class UserDAOImpl implements UserDAO {
 	}
 */	
 	
-	private void updateDriverProfileStatus(int driverProfileId,String statusStr) {
+	private void updateDriverProfileStatus(int driverProfileId,String statusStr,String vehicleNumber) {
 		Session session = this.sessionFactory.getCurrentSession();
 		Status status = adminDAO.findByStatus(statusStr);
 		DriverProfile driverProfile = session.find(DriverProfile.class, driverProfileId);
 		driverProfile.setStatus(status);
+		driverProfile.setVehicleNumber(vehicleNumber);
 		session.merge(driverProfile);
 	}
 	
@@ -447,7 +486,7 @@ public class UserDAOImpl implements UserDAO {
 			}
 		}
 		session.save(driverVehicle);
-		updateDriverProfileStatus(driverVehicle.getUser().getDriverProfile().getId(),STATUS.ASSIGNED);
+		updateDriverProfileStatus(driverVehicle.getUser().getDriverProfile().getId(),STATUS.ASSIGNED,vehicle.getVehicleNumber());
 		return driverVehicle;		
 	}
 	
@@ -459,7 +498,7 @@ public class UserDAOImpl implements UserDAO {
 		origDriverVehicle.setModifiedDate(new Date());
 		origDriverVehicle.setModifiedBy(driverVehicle.getModifiedBy());
 		session.merge(origDriverVehicle);
-		updateDriverProfileStatus(origDriverVehicle.getUser().getDriverProfile().getId(),STATUS.UNASSIGNED);
+		updateDriverProfileStatus(origDriverVehicle.getUser().getDriverProfile().getId(),STATUS.UNASSIGNED,null);
 		return origDriverVehicle;		
 	}
 	

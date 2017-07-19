@@ -19,7 +19,8 @@ import java.util.Date;
 		query="SELECT d FROM DriverVehicleAssociation d where d.user.id = :userId and DATE(d.fromDate) <= DATE(NOW()) and "
 				+ "(d.toDate is null or d.toDate >= NOW()) "),
 	@NamedQuery(name="DriverVehicleAssociation.findByCabTypeAndUserIds", 
-		query="SELECT d FROM DriverVehicleAssociation d where d.vehicleDetail.cabType.id = :cabTypeId and d.user.id in :userIds order by d.toDate desc"),
+		query="SELECT d FROM DriverVehicleAssociation d where d.vehicleDetail.cabType.id = :cabTypeId and DATE(d.fromDate) <= DATE(NOW()) and (d.toDate is null or d.toDate >= NOW()) "
+				+ " and d.user.id in :userIds order by d.toDate desc"),
 	
 })
 public class DriverVehicleAssociation implements Serializable {

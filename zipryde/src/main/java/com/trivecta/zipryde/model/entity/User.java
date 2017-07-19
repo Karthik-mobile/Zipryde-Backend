@@ -29,7 +29,7 @@ import java.util.List;
 	@NamedQuery(name="User.findByTypeAndStatus", 
 		query="SELECT u FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status and u.isDeleted = 0 order by u.id desc"),
 	@NamedQuery(name="User.countByTypeAndStatus", 
-	query="SELECT count(u) FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status and u.isDeleted = 0"),
+		query="SELECT count(u) FROM User u where u.userType.type = :userType and u.driverProfile.status.status = :status and u.isDeleted = 0"),
 	/*@NamedQuery(name="User.findByApprovedAndEnabled", 
 		query="SELECT u FROM User u where u.userType.type = :userType and u.isEnable = :isEnable and u.driverProfile.status.status = :status order by u.id desc"),*/
 	@NamedQuery(name="User.findByOnline", 
@@ -37,7 +37,11 @@ import java.util.List;
 					+ "u.id in (select us.userId FROM UserSession us where us.isActive = 1 and us.logOutDateTime is null)"),
 	@NamedQuery(name="User.countByOnline", 
 		query="SELECT count(u) FROM User u where u.userType.type = :userType and u.isEnable = 1 and u.isDeleted = 0 and "
-			+ "u.id in (select us.userId FROM UserSession us where us.isActive = 1 and us.logOutDateTime is null)")
+			+ "u.id in (select us.userId FROM UserSession us where us.isActive = 1 and us.logOutDateTime is null)"),
+	@NamedQuery(name="User.findUnAssignedDriver", 
+		query="SELECT u FROM User u where u.userType.type = :userType and u.driverProfile.status.status in :status and u.isDeleted = 0 order by u.id desc"),
+	@NamedQuery(name="User.countByUnAssignedDriver", 
+		query="SELECT count(u) FROM User u where u.userType.type = :userType and u.driverProfile.status.status in :status and u.isDeleted = 0")
 })
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
