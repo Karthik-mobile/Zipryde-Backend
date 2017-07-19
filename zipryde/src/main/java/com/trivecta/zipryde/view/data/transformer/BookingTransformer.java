@@ -13,17 +13,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
+import com.trivecta.zipryde.constants.ZipRydeConstants.PAYMENT;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.CabType;
+import com.trivecta.zipryde.model.entity.Payment;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.service.BookingService;
+import com.trivecta.zipryde.model.service.PaymentService;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
+import com.trivecta.zipryde.view.request.PaymentRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
+import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
 
 @Component
@@ -31,6 +36,10 @@ public class BookingTransformer {
 
 	@Autowired
 	BookingService bookingService;
+	
+    @Autowired
+    PaymentService paymentService;
+
 	
 	/*
 	 * Step 1 - Create Booking with Status - Requested
@@ -270,6 +279,47 @@ public class BookingTransformer {
 		}
 		return bookingResponseList;		
 	}
+	
+	public CommonResponse getBookingCountByDate(BookingRequest bookingRequest) throws ParseException {
+		Date searchDate = new Date();
+		if(bookingRequest.getStartDateTime() != null) {
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			searchDate = dateFormat.parse(bookingRequest.getStartDateTime());
+		}
+		
+		Integer bookingCount = bookingService.getBookingCountByDate(searchDate);
+		CommonResponse commonResponse = new CommonResponse();
+		commonResponse.setCount(bookingCount);
+		return commonResponse;
+	}
+	
+	public void savePayment(PaymentRequest paymentRequest) throws MandatoryValidationException {
+		StringBuffer errorMsg = new StringBuffer();
+		if(paymentRequest.getBookingId() == null) {
+			errorMsg.append(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+		if(paymentRequest.getAmountPaid() == null) {
+			errorMsg.append(ErrorMessages.AMOUNT_TO_PAY_REQUIRED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {			
+	        Payment payment = new Payment();
+	        if(paymentRequest.getPaymentId() != null)
+	               payment.setId(paymentRequest.getPaymentId().intValue());
+	        Booking booking = new Booking();
+	        booking.setId(paymentRequest.getBookingId().intValue());
+	        payment.setBooking(booking);
+	        payment.setAmountPaid(BigDecimal.valueOf(paymentRequest.getAmountPaid()));
+	        payment.setPaymentType(paymentRequest.getPaymentType() != null ? paymentRequest.getPaymentType() : PAYMENT.CASH);
+	        payment.setPaidDateTime(new Date());
+	        paymentService.savePayment(payment);
+		}
+	}
+
+	
 	private BookingResponse setBookingResponseFromBooking(Booking booking) {
 		BookingResponse bookingResponse = new BookingResponse();
 		
@@ -335,4 +385,5 @@ public class BookingTransformer {
 		
 		return bookingResponse;
 	}
+	
 }

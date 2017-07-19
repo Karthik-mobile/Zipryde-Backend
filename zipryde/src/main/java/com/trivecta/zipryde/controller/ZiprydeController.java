@@ -5,10 +5,12 @@ import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
@@ -26,6 +28,7 @@ import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
+import com.trivecta.zipryde.view.request.PaymentRequest;
 import com.trivecta.zipryde.view.request.PricingMstrRequest;
 import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
@@ -152,6 +155,12 @@ public class ZiprydeController {
 		return userTransformer.getDriversByOnline();
 	}
 	
+	@RequestMapping(value = "/getBookingCountByDate")
+	public @ResponseBody CommonResponse getBookingCountByDate(@RequestBody BookingRequest bookingRequest) throws ParseException {
+		return bookingTranssformer.getBookingCountByDate(bookingRequest);
+	}
+	
+	
 	/** ----------------- VEHICLE  --------------------- */
 	
 	@RequestMapping(value = "/saveVehicle")
@@ -253,6 +262,13 @@ public class ZiprydeController {
 	
 	//TODO
 	//2. GET BOOKINGS BY USER TYPE AND USER ID
+	
+	/** ----------- PAYMENT -------------------- */
+	@RequestMapping(value = "/savePayment")  
+    public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException{
+           bookingTranssformer.savePayment(paymentRequest);
+    }
+
 	
 	/** --------- MONGO DB SERVICE -------------------- */
 	

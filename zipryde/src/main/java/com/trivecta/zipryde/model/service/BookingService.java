@@ -23,4 +23,5 @@ public interface BookingService {
 	
 	public List<Booking> getBookingByCustomerId(int customerId);
 	
+	public Integer getBookingCountByDate(Date bookingDate);
 }

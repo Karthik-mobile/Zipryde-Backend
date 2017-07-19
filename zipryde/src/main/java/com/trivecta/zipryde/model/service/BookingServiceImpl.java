@@ -56,5 +56,10 @@ public class BookingServiceImpl implements BookingService{
 		return bookingDAO.getBookingByCustomerId(customerId);
 	}
 	
+	@Transactional
+	public Integer getBookingCountByDate(Date bookingDate) {
+		return bookingDAO.getBookingCountByDate(bookingDate);
+	}
+	
 	
 }

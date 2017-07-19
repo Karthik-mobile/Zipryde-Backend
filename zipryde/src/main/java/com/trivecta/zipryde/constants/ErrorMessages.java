@@ -38,6 +38,8 @@ public interface ErrorMessages {
 			
 	static String DRIVER_STATUS_REQUIRED = "Driver Status  Required";
 	
+	static String AMOUNT_TO_PAY_REQUIRED = "Amount to Pay Required";
+	
 	static String MOBILE_MANDATORY = "Mobile No is Mandatory ";
 	
 	static String OTP_MANDATORY = "OTP is Mandatory";

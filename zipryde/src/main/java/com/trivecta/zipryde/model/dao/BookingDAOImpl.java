@@ -64,7 +64,6 @@ public class BookingDAOImpl implements BookingDAO{
 			booking.setDriver(driver);
 		}
 	
-		//booking.setCrnNumber(generateUniqueCRN());
 		Status bookingStatus = adminDAO.findByStatus(STATUS.REQUESTED);
 		booking.setBookingStatus(bookingStatus);
 		
@@ -119,6 +118,15 @@ public class BookingDAOImpl implements BookingDAO{
 		return origBooking;
 	}
 	
+	public Integer getBookingCountByDate(Date bookingDate) {
+		Session session = this.sessionFactory.getCurrentSession();
+		Integer bookingCount = (Integer) session.getNamedQuery("Booking.countByBookingDate").
+				 setParameter("bookingDate", bookingDate).getSingleResult();
+		if(bookingCount == null) {
+		 bookingCount = 0;
+		}
+		return bookingCount;
+	}
 	
 	public Booking getBookingById(int bookingId) {
 		Session session = this.sessionFactory.getCurrentSession();
@@ -129,9 +137,8 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	public List<Booking> getBookingByDate(Date bookingDate) {
 		Session session = this.sessionFactory.getCurrentSession();
-		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStartDate").
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingDate").
 				 setParameter("bookingDate", bookingDate).getResultList();
-		 
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
@@ -143,7 +150,6 @@ public class BookingDAOImpl implements BookingDAO{
 	public List<Booking> getBookingByBookingStatus(String status) {
 		Session session = this.sessionFactory.getCurrentSession();
 		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStatus").setParameter("status", status).getResultList();
-		 
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
@@ -155,7 +161,6 @@ public class BookingDAOImpl implements BookingDAO{
 	public List<Booking> getBookingByDriverId(int driverId) {
 		Session session = this.sessionFactory.getCurrentSession();
 		 List<Booking> bookingList = session.getNamedQuery("Booking.findByDriverId").setParameter("driverId", driverId).getResultList();
-		 
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
@@ -167,7 +172,6 @@ public class BookingDAOImpl implements BookingDAO{
 	public List<Booking> getBookingByCustomerId(int customerId) {
 		Session session = this.sessionFactory.getCurrentSession();
 		 List<Booking> bookingList = session.getNamedQuery("Booking.findByRiderId").setParameter("riderId", customerId).getResultList();
-		 
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
@@ -189,6 +193,7 @@ public class BookingDAOImpl implements BookingDAO{
 	}
 	
 	
+	@Async
 	private void assignBookingToNearBYDrivers(Booking booking) {
 		List<UserGeoSpatialResponse> nearByDriversList = mongoDbClient.getNearByActiveDrivers(booking.getFromLongitude().doubleValue(), booking.getFromLatitude().doubleValue());
 		

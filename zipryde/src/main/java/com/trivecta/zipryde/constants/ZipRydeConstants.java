@@ -35,5 +35,9 @@ public class ZipRydeConstants {
 		static String DISTANCE = "DISTANCE";
 	}
 	
+	public interface PAYMENT {
+		static String CASH = "CASH";
+	}
+	
 	
 }
