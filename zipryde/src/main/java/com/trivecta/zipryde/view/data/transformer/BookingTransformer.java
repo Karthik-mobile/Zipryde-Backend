@@ -408,4 +408,17 @@ public class BookingTransformer {
 		return bookingResponse;
 	}
 	
+	public CommonResponse getRevenueByDate(PaymentRequest paymentRequest) throws ParseException {	
+		Date date = new Date();
+		if(ValidationUtil.isValidString(paymentRequest.getPaidDateTime())) {
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			date = dateFormat.parse(paymentRequest.getPaidDateTime());
+		}
+		
+		Double revenueAmount = paymentService.getPaymentAmountByDate(date);
+		CommonResponse commonResponse = new CommonResponse();
+		commonResponse.setRevenueAmount(revenueAmount);
+		return commonResponse;
+	}
+	
 }

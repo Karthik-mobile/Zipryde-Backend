@@ -278,6 +278,11 @@ public class ZiprydeController {
     public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException{
            bookingTranssformer.savePayment(paymentRequest);
     }
+	
+	@RequestMapping(value = "/getRevenueByDate")
+	public @ResponseBody CommonResponse getRevenueByDate(@RequestBody PaymentRequest paymentRequest) throws ParseException {
+		return bookingTranssformer.getRevenueByDate(paymentRequest);
+	}
 
 	
 	/** --------- MONGO DB SERVICE -------------------- */

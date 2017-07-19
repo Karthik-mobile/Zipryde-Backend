@@ -14,6 +14,18 @@ public class CommonResponse {
 	public void setCount(Number count) {
 		this.count = count;
 	}
+	
+	private Double revenueAmount;
+
+	public Double getRevenueAmount() {
+		return revenueAmount;
+	}
+
+	public void setRevenueAmount(Double revenueAmount) {
+		this.revenueAmount = revenueAmount;
+	}
+	
+	
 
 	
 }

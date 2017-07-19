@@ -1,6 +1,8 @@
 package com.trivecta.zipryde.model.service;
 
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,5 +27,11 @@ public class PaymentServiceImpl implements PaymentService {
 	@Transactional
 	public Payment getPayment(Integer paymentId) {
 		return paymentDAO.getPayment(paymentId);
+	}
+
+	@Override
+	@Transactional
+	public Double getPaymentAmountByDate(Date date) {
+		return paymentDAO.getPaymentAmountByDate(date);
 	}
 }

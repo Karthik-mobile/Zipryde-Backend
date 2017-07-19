@@ -1,5 +1,8 @@
 package com.trivecta.zipryde.model.dao;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,6 @@ public class PaymentDAOImpl implements PaymentDAO {
 	@Override
 	public void savePayment(Payment payment) {		
 		Session session = this.sessionFactory.getCurrentSession();
-		
 		Booking origBooking = session.find(Booking.class, payment.getBooking().getId());
 		payment.setBooking(origBooking);
 		session.saveOrUpdate(payment);
@@ -27,5 +29,16 @@ public class PaymentDAOImpl implements PaymentDAO {
 	public Payment getPayment(Integer paymentId) {
 		Session session = this.sessionFactory.getCurrentSession();
 		return session.find(Payment.class, paymentId);
+	}
+
+	@Override
+	public Double getPaymentAmountByDate(Date date) {
+		Session session = this.sessionFactory.getCurrentSession();
+		BigDecimal amount = (BigDecimal) session.getNamedQuery("Payment.revenueAmountByDate").
+				 setParameter("date", date).getSingleResult();
+		if(amount == null) {
+			amount = BigDecimal.ZERO;
+		}
+		return amount.doubleValue();
 	}
 }

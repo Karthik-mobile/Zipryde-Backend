@@ -12,7 +12,11 @@ import java.util.Date;
  */
 @Entity
 @Table(name="PAYMENT")
-@NamedQuery(name="Payment.findAll", query="SELECT p FROM Payment p")
+@NamedQueries({
+	@NamedQuery(name="Payment.findAll", query="SELECT p FROM Payment p"),
+	@NamedQuery(name="Payment.revenueAmountByDate", query="SELECT SUM(amountPaid) FROM Payment p where DATE(p.paidDateTime) = :date"),
+})
+
 public class Payment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
