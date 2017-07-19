@@ -42,7 +42,7 @@ public class BookingDAOImpl implements BookingDAO{
 	}
 		
 	private String generateUniqueCRN() {
-		String alphaNumerics = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+		String alphaNumerics = "1234567890";
 		String crn = "";
 		for (int i = 0; i < 8; i++) {
 			crn += alphaNumerics.charAt((int) (Math.random() * alphaNumerics.length()));
@@ -75,7 +75,7 @@ public class BookingDAOImpl implements BookingDAO{
 				pricingDAO.calculatePricingByTypeDistanceAndPerson(
 						booking.getDistanceInMiles(),booking.getCabType().getId(),booking.getNoOfPassengers());
 		booking.setSuggestedPrice(suggestedPrice);
-		booking.setCrnNumber(generateUniqueCRN());
+		
 		session.save(booking);
 		assignBookingToNearBYDrivers(booking);
 		return booking;		
@@ -96,11 +96,13 @@ public class BookingDAOImpl implements BookingDAO{
 		
 		if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 			Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
-			origBooking.setBookingStatus(bookingStatus);			
+			origBooking.setBookingStatus(bookingStatus);
+			origBooking.setCrnNumber(generateUniqueCRN());
 		}
 		else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 			origBooking.setBookingStatus(driverStatus);
-		}		
+		}
+		
 		session.merge(origBooking);
 		return origBooking;
 	}
