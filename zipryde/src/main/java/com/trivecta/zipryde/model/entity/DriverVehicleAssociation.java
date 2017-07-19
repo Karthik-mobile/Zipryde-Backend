@@ -1,3 +1,4 @@
+
 package com.trivecta.zipryde.model.entity;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import java.util.Date;
 	@NamedQuery(name="DriverVehicleAssociation.findAllByUserId", query="SELECT d FROM DriverVehicleAssociation d where d.user.id = :userId ORDER BY d.toDate DESC"),
 	@NamedQuery(name="DriverVehicleAssociation.findActiveAssociationByUserId", 
 		query="SELECT d FROM DriverVehicleAssociation d where d.user.id = :userId and DATE(d.fromDate) <= DATE(NOW()) and "
-				+ "(d.toDate is null or DATE(d.toDate) >= DATE(NOW())) "),
+				+ "(d.toDate is null or d.toDate >= NOW()) "),
 	@NamedQuery(name="DriverVehicleAssociation.findByCabTypeAndUserIds", 
 		query="SELECT d FROM DriverVehicleAssociation d where d.vehicleDetail.cabType.id = :cabTypeId and d.user.id in :userIds order by d.toDate desc"),
 	
