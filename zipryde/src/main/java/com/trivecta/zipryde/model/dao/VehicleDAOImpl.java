@@ -168,7 +168,7 @@ public class VehicleDAOImpl implements VehicleDAO{
 			origVehicle.setVin(vehicleDetail.getVin());
 			origVehicle.setManufacturedYear(vehicleDetail.getManufacturedYear());
 			origVehicle.setLicensePlateNo(vehicleDetail.getLicensePlateNo());
-			
+			origVehicle.setVehicleNumber(vehicleDetail.getVehicleNumber());
 			origVehicle.setModifiedDate(new Date());
 			session.merge(origVehicle);
 			
