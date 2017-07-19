@@ -9,27 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ 
-	"userId",
-	"userType", 
-	"firstName", 
-	"lastName",
-	"mobileNumber",
-	"password",
-	"alternateNumber", 
-	"emailId", 
-	"driverProfileId",
-	"licenseNo", 
-	"licenseIssuedOn",
-	"licenseValidUntil", 
-	"defaultPercentageAccepted" ,
-	"isEnable",
-	"status",
-	"comments",
-	"restriction",
-	 "licenseFrontImage",
-	 "licenseBackImage"
-	//"licenseImages"
+@JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "password", "alternateNumber",
+		"emailId", "driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil", "defaultPercentageAccepted",
+		"isEnable", "status", "comments", "restriction", "licenseFrontImage", "licenseBackImage", "userImage"
+		// "licenseImages"
 })
 public class UserRequest {
 
@@ -47,10 +30,10 @@ public class UserRequest {
 
 	@JsonProperty("mobileNumber")
 	private String mobileNumber;
-	
+
 	@JsonProperty("password")
 	private String password;
-	
+
 	@JsonProperty("alternateNumber")
 	private String alternateNumber;
 
@@ -74,21 +57,24 @@ public class UserRequest {
 
 	@JsonProperty("isEnable")
 	private Number isEnable;
-	
+
 	@JsonProperty("status")
 	private String status;
 
 	@JsonProperty("comments")
-	private String comments;	
-	
+	private String comments;
+
 	@JsonProperty("restriction")
 	private String restriction;
-	
+
 	@JsonProperty("licenseFrontImage")
-	 MultipartFile licenseFrontImage;
-	 
-	 @JsonProperty("licenseBackImage")
-	 MultipartFile licenseBackImage;
+	MultipartFile licenseFrontImage;
+
+	@JsonProperty("licenseBackImage")
+	MultipartFile licenseBackImage;
+
+	@JsonProperty("userImage")
+	MultipartFile userImage;
 
 	public Number getUserId() {
 		return userId;
@@ -227,32 +213,27 @@ public class UserRequest {
 	}
 
 	public MultipartFile getLicenseFrontImage() {
-		  return licenseFrontImage;
-		 }
+		return licenseFrontImage;
+	}
 
-		 public void setLicenseFrontImage(MultipartFile licenseFrontImage) {
-		  this.licenseFrontImage = licenseFrontImage;
-		 }
+	public void setLicenseFrontImage(MultipartFile licenseFrontImage) {
+		this.licenseFrontImage = licenseFrontImage;
+	}
 
-		 public MultipartFile getLicenseBackImage() {
-		  return licenseBackImage;
-		 }
+	public MultipartFile getLicenseBackImage() {
+		return licenseBackImage;
+	}
 
-		 public void setLicenseBackImage(MultipartFile licenseBackImage) {
-		  this.licenseBackImage = licenseBackImage;
-		 }
+	public void setLicenseBackImage(MultipartFile licenseBackImage) {
+		this.licenseBackImage = licenseBackImage;
+	}
 
-		@Override
-		public String toString() {
-			return "UserRequest [userId=" + userId + ", userType=" + userType + ", firstName=" + firstName
-					+ ", lastName=" + lastName + ", mobileNumber=" + mobileNumber + ", password=" + password
-					+ ", alternateNumber=" + alternateNumber + ", emailId=" + emailId + ", driverProfileId="
-					+ driverProfileId + ", licenseNo=" + licenseNo + ", licenseIssuedOn=" + licenseIssuedOn
-					+ ", licenseValidUntil=" + licenseValidUntil + ", defaultPercentageAccepted="
-					+ defaultPercentageAccepted + ", isEnable=" + isEnable + ", status=" + status + ", comments="
-					+ comments + ", restriction=" + restriction + ", licenseFrontImage=" + licenseFrontImage
-					+ ", licenseBackImage=" + licenseBackImage + ", toString()=" + super.toString() + "]";
-		}
+	public MultipartFile getUserImage() {
+		return userImage;
+	}
 
-		 
+	public void setUserImage(MultipartFile userImage) {
+		this.userImage = userImage;
+	}
+
 }

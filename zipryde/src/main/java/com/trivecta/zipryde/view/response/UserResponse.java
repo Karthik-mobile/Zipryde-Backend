@@ -8,51 +8,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-	"userId",
-	"userType",
-	"firstName",		
-	"lastName",
-	"mobileNumber",
-	"alternateNumber",
-	"emailId",
-	"driverProfileId",
-	"licenseNo",
-	"licenseIssuedOn",
-	"licenseValidUntil",	
-	"licenseFrontImage",
-	"licenseBackImage",
-	"defaultPercentageAccepted"	,
-	"isLoggedIn",	
-	"isEnable",
-	"status",
-	"comments",
-	"restriction"
-})
+@JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "alternateNumber", "emailId",
+		"driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil", "licenseFrontImage", "licenseBackImage",
+		"defaultPercentageAccepted", "isLoggedIn", "isEnable", "status", "comments", "restriction", "userImage" })
 
 public class UserResponse {
 
 	@JsonProperty("userId")
 	private Number userId;
-	
+
 	@JsonProperty("userType")
 	private String userType;
-	
+
 	@JsonProperty("firstName")
 	private String firstName;
-	
+
 	@JsonProperty("lastName")
 	private String lastName;
-	
+
 	@JsonProperty("mobileNumber")
 	private String mobileNumber;
-	
+
 	@JsonProperty("alternateNumber")
 	private String alternateNumber;
-	
+
 	@JsonProperty("emailId")
 	private String emailId;
-	
+
 	@JsonProperty("driverProfileId")
 	private Number driverProfileId;
 
@@ -61,28 +43,37 @@ public class UserResponse {
 
 	@JsonProperty("licenseIssuedOn")
 	private String licenseIssuedOn;
-	
-	//Format : MM-dd-YYYY
+
+	// Format : MM-dd-YYYY
 	@JsonProperty("licenseValidUntil")
 	private String licenseValidUntil;
-	
+
 	@JsonProperty("defaultPercentageAccepted")
 	private Number defaultPercentageAccepted;
 
 	@JsonProperty("isLoggedIn")
 	private Number isLoggedIn;
-	
+
 	@JsonProperty("isEnable")
 	private Number isEnable;
-	
+
 	@JsonProperty("status")
 	private String status;
 
 	@JsonProperty("comments")
 	private String comments;
-	
+
 	@JsonProperty("restriction")
 	private String restriction;
+
+	@JsonProperty("licenseFrontImage")
+	String licenseFrontImage;
+
+	@JsonProperty("licenseBackImage")
+	String licenseBackImage;
+
+	@JsonProperty("userImage")
+	String userImage;
 
 	public Number getUserId() {
 		return userId;
@@ -219,26 +210,29 @@ public class UserResponse {
 	public void setRestriction(String restriction) {
 		this.restriction = restriction;
 	}
-	
-	 @JsonProperty("licenseFrontImage")
-	 String licenseFrontImage;
-	 
-	 @JsonProperty("licenseBackImage")
-	 String licenseBackImage;
-	 
+
 	public String getLicenseFrontImage() {
-	  return licenseFrontImage;
-	 }
+		return licenseFrontImage;
+	}
 
-	 public void setLicenseFrontImage(String licenseFrontImage) {
-	  this.licenseFrontImage = licenseFrontImage;
-	 }
+	public void setLicenseFrontImage(String licenseFrontImage) {
+		this.licenseFrontImage = licenseFrontImage;
+	}
 
-	 public String getLicenseBackImage() {
-	  return licenseBackImage;
-	 }
+	public String getLicenseBackImage() {
+		return licenseBackImage;
+	}
 
-	 public void setLicenseBackImage(String licenseBackImage) {
-	  this.licenseBackImage = licenseBackImage;
-	 }
+	public void setLicenseBackImage(String licenseBackImage) {
+		this.licenseBackImage = licenseBackImage;
+	}
+
+	public String getUserImage() {
+		return userImage;
+	}
+
+	public void setUserImage(String userImage) {
+		this.userImage = userImage;
+	}
+
 }

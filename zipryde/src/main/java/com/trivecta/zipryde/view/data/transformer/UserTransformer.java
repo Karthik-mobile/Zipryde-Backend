@@ -226,6 +226,8 @@ public class UserTransformer {
 				driverProfile.setComments(userRequest.getComments());
 				
 				try {
+					if(userRequest.getUserImage() != null)
+						driverProfile.setDriverProfileImage(userRequest.getUserImage().getBytes());
 					if(userRequest.getLicenseFrontImage() != null)
 						driverProfile.setLicenseFrontImage(userRequest.getLicenseFrontImage().getBytes());
 					if(userRequest.getLicenseBackImage() != null)
@@ -531,6 +533,9 @@ public class UserTransformer {
 				}
 				if(user.getDriverProfile().getLicenseBackImage() != null) {
 					userResponse.setLicenseBackImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getLicenseBackImage()));
+				}
+				if(user.getDriverProfile().getDriverProfileImage() != null) {
+					userResponse.setUserImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getDriverProfileImage()));
 				}
 			}
 		}			
