@@ -350,6 +350,7 @@ public class BookingTransformer {
 		if(booking.getDriver() != null) {
 			bookingResponse.setDriverId(booking.getDriver().getId());
 			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
+			//bookingResponse.setVehicleNumber(booking.getDriver().getd);
 		}
 		
 		if(booking.getAcceptedDateTime() != null) {
@@ -369,6 +370,9 @@ public class BookingTransformer {
 		if(booking.getDriverStatus() != null)
 			bookingResponse.setDriverStatus(booking.getDriverStatus().getStatus());
 		
+		if(booking.getBookingDateTime() != null) 
+			bookingResponse.setBookingDateTime(dateFormat.format(booking.getBookingDateTime()));
+		
 		if(booking.getStartDateTime() != null)
 			bookingResponse.setStartDateTime(dateFormat.format(booking.getStartDateTime()));
 		
@@ -377,7 +381,7 @@ public class BookingTransformer {
 		
 		bookingResponse.setFrom(booking.getFrom());
 		bookingResponse.setTo(booking.getTo());
-		
+		bookingResponse.setCrnNumber(booking.getCrnNumber());
 		
 		GeoLocationResponse geoLocationResponse = new GeoLocationResponse();
 		if(booking.getFromLatitude() != null && booking.getFromLongitude() != null) {

@@ -9,13 +9,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"bookingId",
 	"cabTypeId",
 	"cabType",
-	"vin",
+	"vehicleNumber",
 	"customerId",
 	"customerName",
 	"customerMobileNumber",
 	"driverId",
 	"driverName",
 	"driverMobileNumber",
+	"crnNumber",
 	"from", 
 	"to", 
 	"geoLocationResponse",
@@ -47,6 +48,9 @@ public class BookingResponse {
 	
 	@JsonProperty("acceptedDateTime")
 	private String acceptedDateTime;
+	
+	@JsonProperty("bookingDateTime")
+	private String bookingDateTime;
 	
 	@JsonProperty("startDateTime")
 	private String startDateTime;
@@ -96,8 +100,11 @@ public class BookingResponse {
 	@JsonProperty("cabType")
 	private String cabType;
 	
-	@JsonProperty("vin")
-	private String vin;
+	@JsonProperty("vehicleNumber")
+	private String vehicleNumber;
+	
+	@JsonProperty("crnNumber")
+	private String crnNumber;
 	
 	public Number getBookingId() {
 		return bookingId;
@@ -267,11 +274,29 @@ public class BookingResponse {
 		this.driverMobileNumber = driverMobileNumber;
 	}
 
-	public String getVin() {
-		return vin;
+	public String getVehicleNumber() {
+		return vehicleNumber;
 	}
 
-	public void setVin(String vin) {
-		this.vin = vin;
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
 	}
+
+	public String getCrnNumber() {
+		return crnNumber;
+	}
+
+	public void setCrnNumber(String crnNumber) {
+		this.crnNumber = crnNumber;
+	}
+
+	public String getBookingDateTime() {
+		return bookingDateTime;
+	}
+
+	public void setBookingDateTime(String bookingDateTime) {
+		this.bookingDateTime = bookingDateTime;
+	}
+
+	
 }
