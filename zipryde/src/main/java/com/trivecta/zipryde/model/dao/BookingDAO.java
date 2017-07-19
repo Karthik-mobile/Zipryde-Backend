@@ -19,4 +19,8 @@ public interface BookingDAO {
 	public List<Booking> getBookingByDate(Date bookingDate);
 	
 	public List<Booking> getBookingByBookingStatus(String status);
+	
+	public List<Booking> getBookingByDriverId(int driverId);
+	
+	public List<Booking> getBookingByCustomerId(int customerId);
 }

@@ -45,6 +45,16 @@ public class BookingServiceImpl implements BookingService{
 	public List<Booking> getBookingByBookingStatus(String status) {
 		return bookingDAO.getBookingByBookingStatus(status);
 	}
+
+	@Transactional
+	public List<Booking> getBookingByDriverId(int driverId) {
+		return bookingDAO.getBookingByDriverId(driverId);
+	}
+
+	@Transactional
+	public List<Booking> getBookingByCustomerId(int customerId) {
+		return bookingDAO.getBookingByCustomerId(customerId);
+	}
 	
 	
 }

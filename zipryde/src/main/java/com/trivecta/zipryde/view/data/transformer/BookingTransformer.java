@@ -237,6 +237,39 @@ public class BookingTransformer {
 		return bookingResponseList;		
 	}
 	
+	public List<BookingResponse> getBookingByDriverId(BookingRequest bookingRequest) throws MandatoryValidationException  {
+		if(bookingRequest.getDriverId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		
+		List<Booking> bookingList = bookingService.getBookingByDriverId(bookingRequest.getDriverId().intValue());
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking));
+			}
+		}
+		return bookingResponseList;		
+	}
+	
+	public List<BookingResponse> getBookingByCustomerId(BookingRequest bookingRequest) throws MandatoryValidationException  {
+		if(bookingRequest.getCustomerId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
+		}
+		
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		
+		List<Booking> bookingList = bookingService.getBookingByCustomerId(bookingRequest.getCustomerId().intValue());
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking));
+			}
+		}
+		return bookingResponseList;		
+	}
 	private BookingResponse setBookingResponseFromBooking(Booking booking) {
 		BookingResponse bookingResponse = new BookingResponse();
 		

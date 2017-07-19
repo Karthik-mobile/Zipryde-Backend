@@ -232,13 +232,23 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/getBookingByDate")
-	public List<BookingResponse> getBookingByDate(@RequestBody BookingRequest bookingRequest) throws ParseException {
+	public @ResponseBody List<BookingResponse> getBookingByDate(@RequestBody BookingRequest bookingRequest) throws ParseException {
 		return bookingTranssformer.getBookingByDate(bookingRequest);
 	}
 	
 	@RequestMapping(value = "/getBookingByBookingStatus")
-	public List<BookingResponse> getBookingByBookingStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+	public @ResponseBody List<BookingResponse> getBookingByBookingStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
 		return bookingTranssformer.getBookingByBookingStatus(bookingRequest);
+	}
+	
+	@RequestMapping(value = "/getBookingByDriverId")
+	public @ResponseBody List<BookingResponse> getBookingByDriverId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+		return bookingTranssformer.getBookingByDriverId(bookingRequest);
+	}
+	
+	@RequestMapping(value = "/getBookingByCustomerId")
+	public @ResponseBody List<BookingResponse> getBookingByCustomerId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+		return bookingTranssformer.getBookingByCustomerId(bookingRequest);
 	}
 	
 	//TODO

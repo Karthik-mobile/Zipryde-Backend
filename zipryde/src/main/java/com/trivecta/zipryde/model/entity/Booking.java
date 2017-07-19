@@ -16,7 +16,10 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="Booking.findAll", query="SELECT b FROM Booking b"),
 	@NamedQuery(name="Booking.findByBookingStatus", query="SELECT b FROM Booking b where b.bookingStatus.status = :status"),
-	@NamedQuery(name="Booking.findByBookingStartDate", query="SELECT b FROM Booking b where b.bookingStatus.status != 'REQUESTED' AND DATE(b.bookingDateTime) = :bookingDate")
+	//@NamedQuery(name="Booking.findByBookingStartDate", query="SELECT b FROM Booking b where b.bookingStatus.status != 'REQUESTED' AND DATE(b.bookingDateTime) = :bookingDate")
+	@NamedQuery(name="Booking.findByBookingStartDate", query="SELECT b FROM Booking b where DATE(b.bookingDateTime) = :bookingDate"),
+	@NamedQuery(name="Booking.findByDriverId", query="SELECT b FROM Booking b where b.driver.id=:driverId ORDER BY b.bookingDateTime DESC"),
+	@NamedQuery(name="Booking.findByRiderId", query="SELECT b FROM Booking b where b.rider.id=:riderId ORDER BY b.bookingDateTime DESC")
 })
 public class Booking implements Serializable {
 	private static final long serialVersionUID = 1L;

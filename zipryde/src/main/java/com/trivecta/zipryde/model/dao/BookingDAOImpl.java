@@ -152,6 +152,30 @@ public class BookingDAOImpl implements BookingDAO{
 		 return bookingList;
 	}
 	
+	public List<Booking> getBookingByDriverId(int driverId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByDriverId").setParameter("driverId", driverId).getResultList();
+		 
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
+	public List<Booking> getBookingByCustomerId(int customerId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByRiderId").setParameter("riderId", customerId).getResultList();
+		 
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
 	private void fetchLazyInitialisation(Booking booking) {
 		if(booking.getBookingRequests() != null) {
 			booking.getBookingRequests().size();
@@ -162,6 +186,12 @@ public class BookingDAOImpl implements BookingDAO{
 		booking.getBookingStatus();
 		booking.getCabType();
 		booking.getDriverStatus();	
+	}
+	
+	
+	private void assignBookingToNearBYDrivers(Booking booking) {
+		List<UserGeoSpatialResponse> nearByDriversList = mongoDbClient.getNearByActiveDrivers(booking.getFromLongitude().doubleValue(), booking.getFromLatitude().doubleValue());
+		
 	}
 	
 	@Async
