@@ -173,8 +173,10 @@ public class VehicleDAOImpl implements VehicleDAO{
 			origVehicle.setModifiedDate(new Date());
 			session.merge(origVehicle);
 			
-			if(cabPermit.getId() != null) {
+			if(cabPermit != null && cabPermit.getId() != null) {
 				CabPermit origCabPermit = session.find(CabPermit.class,cabPermit.getId());
+				origCabPermit.setPermitNumber(cabPermit.getPermitNumber());
+				origCabPermit.setPermitValidUntil(cabPermit.getPermitValidUntil());
 				origCabPermit.setVehicleDetail(vehicleDetail);
 				session.merge(origCabPermit);			
 			}		

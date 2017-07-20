@@ -21,7 +21,7 @@ public class CabPermit implements Serializable {
 
 	private String permitNumber;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date permitValidUntil;
 
 	//bi-directional many-to-one association to VehicleDetail

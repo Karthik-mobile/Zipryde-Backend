@@ -15,9 +15,9 @@ import java.util.List;
 @Table(name="BOOKING")
 @NamedQueries({
 	@NamedQuery(name="Booking.findAll", query="SELECT b FROM Booking b"),
-	@NamedQuery(name="Booking.findByBookingStatus", query="SELECT b FROM Booking b where b.bookingStatus.status = :status"),
+	@NamedQuery(name="Booking.findByBookingStatus", query="SELECT b FROM Booking b where b.bookingStatus.status = :status ORDER BY b.id DESC"),
 	//@NamedQuery(name="Booking.findByBookingStartDate", query="SELECT b FROM Booking b where b.bookingStatus.status != 'REQUESTED' AND DATE(b.bookingDateTime) = :bookingDate")
-	@NamedQuery(name="Booking.findByBookingDate", query="SELECT b FROM Booking b where DATE(b.bookingDateTime) = :bookingDate"),
+	@NamedQuery(name="Booking.findByBookingDate", query="SELECT b FROM Booking b where DATE(b.bookingDateTime) = :bookingDate ORDER BY b.id DESC"),
 	@NamedQuery(name="Booking.countByBookingDate", query="SELECT count(b) FROM Booking b where DATE(b.bookingDateTime) = :bookingDate"),
 	@NamedQuery(name="Booking.findByDriverId", query="SELECT b FROM Booking b where b.driver.id=:driverId ORDER BY b.bookingDateTime DESC"),
 	@NamedQuery(name="Booking.findByRiderId", query="SELECT b FROM Booking b where b.rider.id=:riderId ORDER BY b.bookingDateTime DESC")

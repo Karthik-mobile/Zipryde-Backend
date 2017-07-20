@@ -44,7 +44,7 @@ public class VehicleDetail implements Serializable {
 
 	private String insuranceNo;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date insuranceValidUntil;
 
 	private Integer isEnable;
