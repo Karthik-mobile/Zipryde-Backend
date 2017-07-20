@@ -100,6 +100,12 @@ public class Booking implements Serializable {
 	@OneToMany(mappedBy="booking")
 	private List<Payment> payments;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+	
 	@Transient
 	private Integer offeredPricePercentage;
 	
@@ -332,6 +338,22 @@ public class Booking implements Serializable {
 
 	public void setOfferedPricePercentage(Integer offeredPricePercentage) {
 		this.offeredPricePercentage = offeredPricePercentage;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 }

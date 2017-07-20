@@ -1,6 +1,8 @@
 package com.trivecta.zipryde.model.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.*;
 
 
@@ -12,7 +14,7 @@ import javax.persistence.*;
 @Table(name="BOOKING_REQUEST")
 @NamedQueries({
 	@NamedQuery(name="BookingRequest.findAll", query="SELECT b FROM BookingRequest b"),
-	@NamedQuery(name="BookingRequest.findByDriverId", query="SELECT b.booking FROM BookingRequest b where b.user.id = :userId")
+	@NamedQuery(name="BookingRequest.findByDriverId", query="SELECT b.booking FROM BookingRequest b where b.user.id = :userId ORDER BY b.id DESC")
 })
 public class BookingRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -30,7 +32,13 @@ public class BookingRequest implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="driverId")
 	private User user;
-
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+	
 	public BookingRequest() {
 	}
 
@@ -56,6 +64,22 @@ public class BookingRequest implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 }

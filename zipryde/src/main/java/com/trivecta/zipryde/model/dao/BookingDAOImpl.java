@@ -76,6 +76,7 @@ public class BookingDAOImpl implements BookingDAO{
 						booking.getDistanceInMiles(),booking.getCabType().getId(),booking.getNoOfPassengers());
 		booking.setSuggestedPrice(suggestedPrice);
 		booking.setCrnNumber(generateUniqueCRN());
+		booking.setCreationDate(new Date());
 		session.save(booking);
 		assignBookingToNearBYDrivers(booking);
 		return booking;		
@@ -93,12 +94,12 @@ public class BookingDAOImpl implements BookingDAO{
 			(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
 			
 			Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
-			origBooking.setDriverStatus(driverStatus);
-			
-			User driver = session.find(User.class, booking.getDriver().getId());
-			origBooking.setDriver(driver);
+			origBooking.setDriverStatus(driverStatus);			
 			
 			if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+				User driver = session.find(User.class, booking.getDriver().getId());
+				origBooking.setDriver(driver);
+				
 				Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
 				origBooking.setBookingStatus(bookingStatus);	
 				origBooking.setAcceptedDateTime(new Date());
@@ -112,7 +113,8 @@ public class BookingDAOImpl implements BookingDAO{
 				else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 					origBooking.setEndDateTime(new Date());
 				}			
-			}			
+			}	
+			origBooking.setModifiedDate(new Date());
 			session.merge(origBooking);
 		}		
 		return origBooking;
@@ -241,6 +243,7 @@ public class BookingDAOImpl implements BookingDAO{
 		BookingRequest bookingRequest = new BookingRequest();
 		bookingRequest.setBooking(booking);
 		bookingRequest.setUser(user);
+		bookingRequest.setCreationDate(new Date());
 		session.save(bookingRequest);
 	}	
 }
