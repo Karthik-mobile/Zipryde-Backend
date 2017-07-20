@@ -102,6 +102,7 @@ public class BookingDAOImpl implements BookingDAO{
 				Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
 				origBooking.setBookingStatus(bookingStatus);	
 				origBooking.setAcceptedDateTime(new Date());
+				origBooking.setAcceptedPrice(origBooking.getOfferedPrice());
 			}
 			else {
 				origBooking.setBookingStatus(driverStatus);

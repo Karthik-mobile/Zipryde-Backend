@@ -230,8 +230,13 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/savePricingMstrs")
-	public void savePricingMstrs(@RequestBody List<PricingMstrRequest> pricingMstrReqList) {
-		adminTransformer.savePricingMstrs(pricingMstrReqList);
+	public List<PricingMstrResponse> savePricingMstrs(@RequestBody List<PricingMstrRequest> pricingMstrReqList) {
+		return adminTransformer.savePricingMstrs(pricingMstrReqList);
+	}
+	
+	@RequestMapping(value = "/savePricingMstr")
+	public PricingMstrResponse savePricingMstr(@RequestBody PricingMstrRequest pricingMstrReqList) {
+		return adminTransformer.savePricingMstr(pricingMstrReqList);
 	}
 	
 	/** ------------------- BOOKING  ------------------------ */

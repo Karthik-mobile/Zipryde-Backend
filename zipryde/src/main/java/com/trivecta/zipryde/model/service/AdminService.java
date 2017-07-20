@@ -30,7 +30,9 @@ public interface AdminService {
 	
 	public List<PricingMstr> getAllPricingMstrByCabType(int cabTypeId);
 	
-	public void savePricingMstrs(List<PricingMstr> pricingMstrList);
+	public List<PricingMstr> savePricingMstrs(List<PricingMstr> pricingMstrList);
 	
 	public List<PricingMstr> getAllPricingMstr();
+	
+	public PricingMstr savePricingMstr(PricingMstr pricingMstr);
 }

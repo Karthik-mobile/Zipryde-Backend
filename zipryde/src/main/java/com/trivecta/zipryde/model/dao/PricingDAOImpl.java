@@ -1,6 +1,7 @@
 package com.trivecta.zipryde.model.dao;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +39,6 @@ public class PricingDAOImpl implements PricingDAO {
 		List<PricingMstr> pricingMstrList = session.getNamedQuery("PricingMstr.findAll").getResultList();
 		return pricingMstrList;
 	}
-	
-	/*public BigDecimal calculatePricingByTypeAndDistance(int NoOfMiles, int cabTypeId) {
-		Session session = this.sessionFactory.getCurrentSession();
-
-		PricingMstr pricingMstr = (PricingMstr) session.getNamedQuery("PricingMstr.findByCabTypeId")
-				.setParameter("cabTypeId", cabTypeId).getSingleResult();
-
-		BigDecimal price = pricingMstr.getPricePerUnit().multiply(new BigDecimal(NoOfMiles));
-
-		return price;
-	}*/
 	
 	public BigDecimal calculatePricingByTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) {
 		Session session = this.sessionFactory.getCurrentSession();
@@ -112,42 +102,50 @@ public class PricingDAOImpl implements PricingDAO {
 		return pricingMstrList;
 	}
 	
-	public void savePricingMstrs(List<PricingMstr> pricingMstrList) {
-		Session session = this.sessionFactory.getCurrentSession();
+	public List<PricingMstr>  savePricingMstrs(List<PricingMstr> pricingMstrList) {
+		List<PricingMstr>  pricingMstrSavedList = new ArrayList<PricingMstr>();
 		for(PricingMstr pricingMstr : pricingMstrList) {
-			PricingMstr existingPricingMstr = null;
-			if(pricingMstr.getId() != null) {				
-				existingPricingMstr = session.find(PricingMstr.class, pricingMstr.getId());
+			pricingMstrSavedList.add(savePricingMstr(pricingMstr));
+		}
+		return pricingMstrSavedList;
+	}
+	
+	public PricingMstr savePricingMstr(PricingMstr pricingMstr) {
+		Session session = this.sessionFactory.getCurrentSession();
+		PricingMstr existingPricingMstr = null;
+		if(pricingMstr.getId() != null) {				
+			existingPricingMstr = session.find(PricingMstr.class, pricingMstr.getId());
+		}
+		else{
+			existingPricingMstr = 
+					getPricingMstrByPricingTypeCabType(pricingMstr.getCabType().getId(),pricingMstr.getPricingType().getId());
+		}
+		
+		if(existingPricingMstr != null) {
+			existingPricingMstr.setIsEnable(pricingMstr.getIsEnable());
+			if(existingPricingMstr.getPrice() != null){	
+				existingPricingMstr.setPrice(pricingMstr.getPrice());
 			}
 			else{
-				existingPricingMstr = 
-						getPricingMstrByPricingTypeCabType(pricingMstr.getCabType().getId(),pricingMstr.getPricingType().getId());
+				//From Request, PricePerUnit also will set in Price
+				existingPricingMstr.setPricePerUnit(pricingMstr.getPrice());
 			}
+			session.merge(existingPricingMstr);
+			return existingPricingMstr;
+		}
+		else {
+			pricingMstr.setUnit("Miles");
+			CabType cabType = session.find(CabType.class, pricingMstr.getCabType().getId());
+			pricingMstr.setCabType(cabType);
+			PricingType pricingType = session.find(PricingType.class, pricingMstr.getPricingType().getId()); 
+			pricingMstr.setPricingType(pricingType);
 			
-			if(existingPricingMstr != null) {
-				existingPricingMstr.setIsEnable(pricingMstr.getIsEnable());
-				if(existingPricingMstr.getPrice() != null){	
-					existingPricingMstr.setPrice(pricingMstr.getPrice());
-				}
-				else{
-					//From Request, PricePerUnit also will set in Price
-					existingPricingMstr.setPricePerUnit(pricingMstr.getPrice());
-				}
-				session.merge(existingPricingMstr);
+			if(PRICINGTYPE.DISTANCE.equalsIgnoreCase(pricingType.getType())) {
+				pricingMstr.setPricePerUnit(pricingMstr.getPrice());
+				pricingMstr.setPrice(null);
 			}
-			else {
-				pricingMstr.setUnit("Miles");
-				CabType cabType = session.find(CabType.class, pricingMstr.getCabType().getId());
-				pricingMstr.setCabType(cabType);
-				PricingType pricingType = session.find(PricingType.class, pricingMstr.getPricingType().getId()); 
-				pricingMstr.setPricingType(pricingType);
-				
-				if(PRICINGTYPE.DISTANCE.equalsIgnoreCase(pricingType.getType())) {
-					pricingMstr.setPricePerUnit(pricingMstr.getPrice());
-					pricingMstr.setPrice(null);
-				}
-				session.save(pricingMstr);
-			}
+			session.save(pricingMstr);
+			return pricingMstr;
 		}
 	}
 	

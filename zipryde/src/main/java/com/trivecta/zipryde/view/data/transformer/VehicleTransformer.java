@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,15 +91,35 @@ public class VehicleTransformer {
 			vehicleDetail.setColor(cabRequest.getColor());
 			vehicleDetail.setAccessories(cabRequest.getAccessories());
 			vehicleDetail.setInsuranceCompany(cabRequest.getInsuranceCompanyName());
-			vehicleDetail.setInsuranceNo(cabRequest.getInsuranceNumber());			
-			vehicleDetail.setInsuranceValidUntil(dateFormat.parse(cabRequest.getInsuranceValidUntil()));
-					
-			CabPermit cabPermit = new CabPermit();
-			if(cabRequest.getCabPermitRequest().getCabPermitId() != null) {
-				cabPermit.setId(cabRequest.getCabPermitRequest().getCabPermitId().intValue());
-			}
-			cabPermit.setPermitNumber(cabRequest.getCabPermitRequest().getCabPermitNumber());
-			cabPermit.setPermitValidUntil(dateFormat.parse(cabRequest.getCabPermitRequest().getCabPermitValidUntil()));
+			vehicleDetail.setInsuranceNo(cabRequest.getInsuranceNumber());		
+			
+			if(cabRequest.getInsuranceValidUntil() != null) {
+				//vehicleDetail.setInsuranceValidUntil(dateFormat.parse(cabRequest.getInsuranceValidUntil()));
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(dateFormat.parse(cabRequest.getInsuranceValidUntil()));
+				calendar.add(Calendar.HOUR, 23); 
+				calendar.add(Calendar.MINUTE, 59);
+				calendar.add(Calendar.SECOND, 59);
+				vehicleDetail.setInsuranceValidUntil(calendar.getTime());
+			}		
+				
+			CabPermit cabPermit =null;
+			if(cabRequest.getCabPermitRequest() != null) {
+				cabPermit = new CabPermit();
+				if(cabRequest.getCabPermitRequest().getCabPermitId() != null) {
+					cabPermit.setId(cabRequest.getCabPermitRequest().getCabPermitId().intValue());
+				}
+				cabPermit.setPermitNumber(cabRequest.getCabPermitRequest().getCabPermitNumber());
+				//cabPermit.setPermitValidUntil(dateFormat.parse(cabRequest.getCabPermitRequest().getCabPermitValidUntil()));
+				if(cabRequest.getCabPermitRequest().getCabPermitValidUntil() != null) {
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(dateFormat.parse(cabRequest.getInsuranceValidUntil()));
+					calendar.add(Calendar.HOUR, 23); 
+					calendar.add(Calendar.MINUTE, 59);
+					calendar.add(Calendar.SECOND, 59);
+					cabPermit.setPermitValidUntil(calendar.getTime());
+				}
+			}						
 			vehicleDetail.setVin(cabRequest.getVin());
 			vehicleDetail.setVehicleNumber(cabRequest.getVehicleNumber());
 			VehicleDetail newVehicleDetail = vehicleService.saveVehicle(vehicleDetail, cabPermit);

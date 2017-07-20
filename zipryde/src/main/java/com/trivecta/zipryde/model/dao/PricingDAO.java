@@ -15,5 +15,6 @@ public interface PricingDAO {
 	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson);
 	public List<PricingType> getAllEnabledPricingType();
 	public List<PricingMstr> getAllPricingMstrByCabType(int cabTypeId) ;
-	public void savePricingMstrs(List<PricingMstr> pricingMstrList);
+	public List<PricingMstr> savePricingMstrs(List<PricingMstr> pricingMstrList);
+	public PricingMstr savePricingMstr(PricingMstr pricingMstr);
 }

@@ -106,9 +106,10 @@ public class VehicleDAOImpl implements VehicleDAO{
 			vehicleDetail.setModifiedDate(new Date());
 			session.save(vehicleDetail);
 			
-			cabPermit.setVehicleDetail(vehicleDetail);
-			session.save(cabPermit);
-			
+			if(cabPermit != null) {
+				cabPermit.setVehicleDetail(vehicleDetail);
+				session.save(cabPermit);
+			}			
 			return getVehicleDetailById(vehicleDetail.getId());	
 		}		
 	}

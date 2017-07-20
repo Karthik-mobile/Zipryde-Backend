@@ -171,53 +171,69 @@ public class AdminTransformer {
 			throw new MandatoryValidationException(ErrorMessages.CAB_TYPE_REQUIRED);
 		}
 		List<PricingMstr> pricingMstrList = adminService.getAllPricingMstrByCabType(commonRequest.getCabTypeId().intValue());
-		List<PricingMstrResponse> pricingMstrRespList = setPricingMstrResponse(pricingMstrList);
+		List<PricingMstrResponse> pricingMstrRespList = setPricingMstrResponseFromList(pricingMstrList);
 		return pricingMstrRespList;				
 	}
 	
 	public List<PricingMstrResponse> getAllPricingMstr() throws MandatoryValidationException {
 		
 		List<PricingMstr> pricingMstrList = adminService.getAllPricingMstr();
-		List<PricingMstrResponse> pricingMstrRespList = setPricingMstrResponse(pricingMstrList);
+		List<PricingMstrResponse> pricingMstrRespList = setPricingMstrResponseFromList(pricingMstrList);
 		return pricingMstrRespList;				
 	}
 	
-	public void savePricingMstrs(List<PricingMstrRequest> pricingMstrReqList) {
+	public List<PricingMstrResponse> savePricingMstrs(List<PricingMstrRequest> pricingMstrReqList) {
+		List<PricingMstrResponse> pricingMstrRespList = new ArrayList<PricingMstrResponse>();		
 		List<PricingMstr> pricingMstrs = setPricingMstrListFromRequest(pricingMstrReqList);
-		adminService.savePricingMstrs(pricingMstrs);
-	}
-	
-	private List<PricingMstrResponse>  setPricingMstrResponse(List<PricingMstr> pricingMstrList) {
-		List<PricingMstrResponse> pricingMstrRespList = new ArrayList<PricingMstrResponse>();
-		
-		if(pricingMstrList != null && pricingMstrList.size() >0 ) {
-			for(PricingMstr pricingMstr : pricingMstrList) {
-				PricingMstrResponse pricingMstrResponse  = new PricingMstrResponse();
-				
-				CabTypeResponse cabTypeResponse = new CabTypeResponse();
-				cabTypeResponse.setCabTypeId(pricingMstr.getCabType().getId());
-				cabTypeResponse.setType(pricingMstr.getCabType().getType());
-				pricingMstrResponse.setCabTypeResponse(cabTypeResponse);
-				
-				PricingTypeResponse pricingTypeResponse = new PricingTypeResponse();
-				pricingTypeResponse.setPricingTypeId(pricingMstr.getPricingType().getId());
-				pricingTypeResponse.setPricingType(pricingMstr.getPricingType().getType());
-				
-				pricingMstrResponse.setPricingTypeResponse(pricingTypeResponse);
-
-				pricingMstrResponse.setIsEnable(pricingMstr.getIsEnable());
-				pricingMstrResponse.setPricingMstrId(pricingMstr.getId());
-				
-				if(pricingMstr.getPrice() != null) {
-					pricingMstrResponse.setPrice(pricingMstr.getPrice().doubleValue());
-				}
-				else {
-					pricingMstrResponse.setPrice(pricingMstr.getPricePerUnit().doubleValue());
-				}
-				pricingMstrRespList.add(pricingMstrResponse);
+		List<PricingMstr> newPricingMstrList = adminService.savePricingMstrs(pricingMstrs);
+		if(newPricingMstrList != null && newPricingMstrList.size() >0 ) {
+			for(PricingMstr pricingMstr : newPricingMstrList) {			
+				pricingMstrRespList.add(setPricingMstrResponse(pricingMstr));
 			}
 		}
 		return pricingMstrRespList;
+	}
+	
+	public PricingMstrResponse savePricingMstr(PricingMstrRequest pricingMstrReq) {
+		PricingMstr pricingMstr = setPricingMstrFromRequest(pricingMstrReq);
+		pricingMstr  = adminService.savePricingMstr(pricingMstr);
+		return setPricingMstrResponse(pricingMstr);
+	}
+	
+	private List<PricingMstrResponse>  setPricingMstrResponseFromList(List<PricingMstr> pricingMstrList) {
+		List<PricingMstrResponse> pricingMstrRespList = new ArrayList<PricingMstrResponse>();		
+		if(pricingMstrList != null && pricingMstrList.size() >0 ) {
+			for(PricingMstr pricingMstr : pricingMstrList) {			
+				pricingMstrRespList.add(setPricingMstrResponse(pricingMstr));
+			}
+		}
+		return pricingMstrRespList;
+	}
+	
+	private PricingMstrResponse setPricingMstrResponse(PricingMstr pricingMstr) {
+		PricingMstrResponse pricingMstrResponse  = new PricingMstrResponse();
+		
+		CabTypeResponse cabTypeResponse = new CabTypeResponse();
+		cabTypeResponse.setCabTypeId(pricingMstr.getCabType().getId());
+		cabTypeResponse.setType(pricingMstr.getCabType().getType());
+		pricingMstrResponse.setCabTypeResponse(cabTypeResponse);
+		
+		PricingTypeResponse pricingTypeResponse = new PricingTypeResponse();
+		pricingTypeResponse.setPricingTypeId(pricingMstr.getPricingType().getId());
+		pricingTypeResponse.setPricingType(pricingMstr.getPricingType().getType());
+		
+		pricingMstrResponse.setPricingTypeResponse(pricingTypeResponse);
+
+		pricingMstrResponse.setIsEnable(pricingMstr.getIsEnable());
+		pricingMstrResponse.setPricingMstrId(pricingMstr.getId());
+		
+		if(pricingMstr.getPrice() != null) {
+			pricingMstrResponse.setPrice(pricingMstr.getPrice().doubleValue());
+		}
+		else {
+			pricingMstrResponse.setPrice(pricingMstr.getPricePerUnit().doubleValue());
+		}
+		return pricingMstrResponse;
 	}
 	
 	private List<PricingMstr> setPricingMstrListFromRequest(List<PricingMstrRequest> pricingMstrReqList) {
@@ -226,25 +242,28 @@ public class AdminTransformer {
 		if(pricingMstrReqList != null && pricingMstrReqList.size() > 0) {
 			pricingMstrList = new ArrayList<PricingMstr>();
 			
-			for(PricingMstrRequest pricingMstrReq  : pricingMstrReqList) {
-				PricingMstr pricingMstr = new PricingMstr();
-				CabType cabType = new CabType();
-				cabType.setId(pricingMstrReq.getCabTypeId().intValue());
-				pricingMstr.setCabType(cabType);
-				
-				PricingType pricingType = new PricingType();
-				pricingType.setId(pricingMstrReq.getPricingTypeId().intValue());
-				pricingMstr.setPricingType(pricingType);
-				
-				if(pricingMstrReq.getPricingMstrId() != null) {
-					pricingMstr.setId(pricingMstrReq.getPricingMstrId().intValue());
-				}
-				pricingMstr.setIsEnable(pricingMstrReq.getIsEnable().intValue());
-				pricingMstr.setPrice(new BigDecimal(pricingMstrReq.getPrice()).setScale(2,RoundingMode.CEILING));
-				
-				pricingMstrList.add(pricingMstr);				
+			for(PricingMstrRequest pricingMstrReq  : pricingMstrReqList) {				
+				pricingMstrList.add(setPricingMstrFromRequest(pricingMstrReq));				
 			}
 		}
 		return pricingMstrList;
+	}
+	
+	private PricingMstr setPricingMstrFromRequest(PricingMstrRequest pricingMstrReq) {
+		PricingMstr pricingMstr = new PricingMstr();
+		CabType cabType = new CabType();
+		cabType.setId(pricingMstrReq.getCabTypeId().intValue());
+		pricingMstr.setCabType(cabType);
+		
+		PricingType pricingType = new PricingType();
+		pricingType.setId(pricingMstrReq.getPricingTypeId().intValue());
+		pricingMstr.setPricingType(pricingType);
+		
+		if(pricingMstrReq.getPricingMstrId() != null) {
+			pricingMstr.setId(pricingMstrReq.getPricingMstrId().intValue());
+		}
+		pricingMstr.setIsEnable(pricingMstrReq.getIsEnable().intValue());
+		pricingMstr.setPrice(new BigDecimal(pricingMstrReq.getPrice()).setScale(2,RoundingMode.CEILING));
+		return pricingMstr;
 	}
 }

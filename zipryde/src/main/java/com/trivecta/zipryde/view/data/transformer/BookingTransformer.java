@@ -359,7 +359,9 @@ public class BookingTransformer {
 		
 		if(booking.getAcceptedDateTime() != null) {
 			bookingResponse.setAcceptedDateTime(dateFormat.format(booking.getAcceptedDateTime()));
-			bookingResponse.setAcceptedPrice(booking.getAcceptedPrice().doubleValue());
+			if(booking.getAcceptedPrice() != null){
+				bookingResponse.setAcceptedPrice(booking.getAcceptedPrice().doubleValue());
+			}
 		}
 		
 		if(booking.getBookingStatus() != null) {
@@ -402,12 +404,11 @@ public class BookingTransformer {
 		
 		bookingResponse.setNoOfPassengers(booking.getNoOfPassengers());
 		
-		
-		bookingResponse.setSuggestedPrice(booking.getSuggestedPrice().doubleValue());
+		if(booking.getSuggestedPrice() != null)
+			bookingResponse.setSuggestedPrice(booking.getSuggestedPrice().doubleValue());
 		
 		if(booking.getOfferedPrice() != null)
 			bookingResponse.setOfferedPrice(booking.getOfferedPrice().doubleValue());
-		
 		
 		return bookingResponse;
 	}
