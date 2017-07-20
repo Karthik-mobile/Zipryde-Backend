@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"driverId",
 	"driverName",
 	"driverMobileNumber",
+	"driverImage",
 	"crnNumber",
 	"from", 
 	"to", 
@@ -105,6 +106,9 @@ public class BookingResponse {
 	
 	@JsonProperty("crnNumber")
 	private String crnNumber;
+	
+	@JsonProperty("driverImage")
+	String driverImage;
 	
 	public Number getBookingId() {
 		return bookingId;
@@ -296,6 +300,14 @@ public class BookingResponse {
 
 	public void setBookingDateTime(String bookingDateTime) {
 		this.bookingDateTime = bookingDateTime;
+	}
+
+	public String getDriverImage() {
+		return driverImage;
+	}
+
+	public void setDriverImage(String driverImage) {
+		this.driverImage = driverImage;
 	}
 
 	

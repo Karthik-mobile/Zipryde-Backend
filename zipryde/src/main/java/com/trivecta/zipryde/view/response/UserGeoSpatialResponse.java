@@ -12,6 +12,10 @@ public class UserGeoSpatialResponse {
 	
 	private Number isOnline;
 
+	public UserGeoSpatialResponse() {
+		//Nothing to do
+	}
+	
 	public UserGeoSpatialResponse(Integer userId,BigDecimal longitude,BigDecimal latitude) {
 		this.userId = userId;
 		this.latitude = latitude;

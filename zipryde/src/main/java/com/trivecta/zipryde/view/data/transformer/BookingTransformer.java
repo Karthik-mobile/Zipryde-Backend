@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,7 +133,7 @@ public class BookingTransformer {
 				booking.setNoOfPassengers(1);
 			}
 			Booking newBooking = bookingService.createBooking(booking);		
-			BookingResponse bookingResponse = setBookingResponseFromBooking(newBooking);		
+			BookingResponse bookingResponse = setBookingResponseFromBooking(newBooking,false);		
 			return bookingResponse;
 		}	
 	}
@@ -165,7 +167,7 @@ public class BookingTransformer {
 			booking.setDriverStatus(status);
 			
 			Booking updatedBooking = bookingService.updateBookingDriverStatus(booking);
-			return setBookingResponseFromBooking(updatedBooking);
+			return setBookingResponseFromBooking(updatedBooking,false);
 		}
 	}
 	
@@ -178,7 +180,7 @@ public class BookingTransformer {
 		booking.setBookingStatus(status);
 		
 		Booking updatedBooking = bookingService.updateBookingStatus(booking);
-		return setBookingResponseFromBooking(updatedBooking);
+		return setBookingResponseFromBooking(updatedBooking,false);
 	}
 	
 	
@@ -208,7 +210,7 @@ public class BookingTransformer {
 		}
 		else {
 			Booking booking = bookingService.getBookingById(bookingRequest.getBookingId().intValue());
-			return setBookingResponseFromBooking(booking);
+			return setBookingResponseFromBooking(booking,true);
 		}
 	}
 	
@@ -224,7 +226,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
 			}
 		}
 		return bookingResponseList;		
@@ -241,7 +243,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
 			}
 		}
 		return bookingResponseList;		
@@ -258,7 +260,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
 			}
 		}
 		return bookingResponseList;		
@@ -275,7 +277,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,true));
 			}
 		}
 		return bookingResponseList;		
@@ -292,7 +294,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
 			}
 		}
 		return bookingResponseList;		
@@ -338,7 +340,7 @@ public class BookingTransformer {
 	}
 
 	
-	private BookingResponse setBookingResponseFromBooking(Booking booking) {
+	private BookingResponse setBookingResponseFromBooking(Booking booking,boolean loadImages) {
 		BookingResponse bookingResponse = new BookingResponse();
 		
 		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
@@ -351,6 +353,8 @@ public class BookingTransformer {
 			bookingResponse.setDriverId(booking.getDriver().getId());
 			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
 			bookingResponse.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
+			if(booking.getDriver().getDriverProfile().getDriverProfileImage() != null)
+				bookingResponse.setDriverImage(DatatypeConverter.printBase64Binary(booking.getDriver().getDriverProfile().getDriverProfileImage()));
 		}
 		
 		if(booking.getAcceptedDateTime() != null) {

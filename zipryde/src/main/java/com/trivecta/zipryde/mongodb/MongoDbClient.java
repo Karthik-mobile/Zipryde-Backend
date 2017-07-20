@@ -27,6 +27,20 @@ public class MongoDbClient {
 	
 	private static Double noOfMiles = 5 / 3963.2 ;
 		
+	public UserGeoSpatialResponse getGeoLocationByDriverId(String userId) {
+		UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
+		FindIterable<Document> findIterable = mongoCollection.find(new Document("userId",userId).append("isActive",1));
+		findIterable.forEach(new Block<Document>() {
+			public void apply(final Document document) {
+				Document geoDoc = (Document) document.get("loc");
+				userResponse.setUserId(Integer.parseInt(document.get("userId").toString()));
+				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));
+				userResponse.setLongitude(new BigDecimal(geoDoc.get("lon").toString()));	
+			}
+		});
+		return userResponse;
+	}
+	
 	public List<UserGeoSpatialResponse> getNearByActiveDrivers(Double longitude,Double latitude){
 		final List<UserGeoSpatialResponse> userResponseList = new ArrayList<UserGeoSpatialResponse>();
 		List<Double> coordinates = new LinkedList<Double>();

@@ -240,7 +240,7 @@ public class UserTransformer {
 				user.setDriverProfile(driverProfile);			
 			}
 			User savedUser = userService.saveUser(user);
-			return setUserResponse(savedUser,false);
+			return setUserResponse(savedUser,true);
 		}		
 	}
 	

@@ -117,4 +117,19 @@ public class MongoTransformer {
 				.collect(Collectors.toList());	
 		}			
 	}
+	
+	public UserGeoSpatialResponse getGeoLocationByDriverId(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException{
+		if(geoLocationRequest.getUserId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		else {
+			com.trivecta.zipryde.mongodb.UserGeoSpatialResponse 
+			mongoUserResp =
+				mongoDbClient.getGeoLocationByDriverId(geoLocationRequest.getUserId().toString());
+		
+			UserGeoSpatialResponse userResp = new 
+					UserGeoSpatialResponse(mongoUserResp.getUserId(), mongoUserResp.getLongitude(), mongoUserResp.getLatitude());
+			return userResp;
+		}			
+	}
 }

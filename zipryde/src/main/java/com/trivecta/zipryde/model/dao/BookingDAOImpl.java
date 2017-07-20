@@ -88,20 +88,32 @@ public class BookingDAOImpl implements BookingDAO{
 	public Booking updateBookingDriverStatus(Booking booking){
 		Session session = this.sessionFactory.getCurrentSession();
 		Booking origBooking  = session.find(Booking.class, booking.getId());
-		Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
-		origBooking.setDriverStatus(driverStatus);
 		
-		User driver = session.find(User.class, booking.getDriver().getId());
-		origBooking.setDriver(driver);
-		
-		if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
-			Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
-			origBooking.setBookingStatus(bookingStatus);			
-		}
-		else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
-			origBooking.setBookingStatus(driverStatus);
+		if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) || 
+			(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
+			
+			Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
+			origBooking.setDriverStatus(driverStatus);
+			
+			User driver = session.find(User.class, booking.getDriver().getId());
+			origBooking.setDriver(driver);
+			
+			if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+				Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
+				origBooking.setBookingStatus(bookingStatus);	
+				origBooking.setAcceptedDateTime(new Date());
+			}
+			else {
+				origBooking.setBookingStatus(driverStatus);
+				if(STATUS.ON_TRIP.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+					origBooking.setStartDateTime(new Date());
+				}
+				else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+					origBooking.setEndDateTime(new Date());
+				}			
+			}			
+			session.merge(origBooking);
 		}		
-		session.merge(origBooking);
 		return origBooking;
 	}
 	
