@@ -167,16 +167,29 @@ public class BookingTransformer {
 		}
 	}
 	
-	public BookingResponse updateBookingStatus(BookingRequest bookingRequest) {
-		Booking booking = new Booking();
-		booking.setId(bookingRequest.getBookingId().intValue());
+	public BookingResponse updateBookingStatus(BookingRequest bookingRequest) throws MandatoryValidationException {
+		StringBuffer errorMsg = new StringBuffer();
 		
-		Status status = new Status();
-		status.setStatus(bookingRequest.getBookingStatus());
-		booking.setBookingStatus(status);
-		
-		Booking updatedBooking = bookingService.updateBookingStatus(booking);
-		return setBookingResponseFromBooking(updatedBooking,false);
+		if(bookingRequest.getBookingId() == null) {
+			errorMsg.append(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+		if(!ValidationUtil.isValidString(bookingRequest.getBookingStatus())) {
+			errorMsg.append(ErrorMessages.BOOKING_STATUS_REQUIRED);					
+		}
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			Booking booking = new Booking();
+			booking.setId(bookingRequest.getBookingId().intValue());
+			
+			Status status = new Status();
+			status.setStatus(bookingRequest.getBookingStatus());
+			booking.setBookingStatus(status);
+			
+			Booking updatedBooking = bookingService.updateBookingStatus(booking);
+			return setBookingResponseFromBooking(updatedBooking,false);
+		}
 	}
 	
 	
@@ -353,9 +366,11 @@ public class BookingTransformer {
 		if(booking.getDriver() != null) {
 			bookingResponse.setDriverId(booking.getDriver().getId());
 			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
-			bookingResponse.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
-			if(booking.getDriver().getDriverProfile().getDriverProfileImage() != null)
-				bookingResponse.setDriverImage(DatatypeConverter.printBase64Binary(booking.getDriver().getDriverProfile().getDriverProfileImage()));
+			if(booking.getDriver().getDriverProfile() != null) {
+				bookingResponse.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
+				if(booking.getDriver().getDriverProfile().getDriverProfileImage() != null)
+					bookingResponse.setDriverImage(DatatypeConverter.printBase64Binary(booking.getDriver().getDriverProfile().getDriverProfileImage()));
+			}
 		}
 		
 		if(booking.getAcceptedDateTime() != null) {

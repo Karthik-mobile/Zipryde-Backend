@@ -106,7 +106,17 @@ public class BookingDAOImpl implements BookingDAO{
 				Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
 				origBooking.setBookingStatus(bookingStatus);	
 				origBooking.setAcceptedDateTime(new Date());
-				origBooking.setAcceptedPrice(origBooking.getOfferedPrice());
+				origBooking.setAcceptedPrice(origBooking.getOfferedPrice());				
+
+				User user = session.find(User.class,origBooking.getRider().getId());
+				if(user.getCancellationCount() == null) {
+					user.setCancellationCount(0);
+				}
+				else {
+					user.setCancellationCount(user.getCancellationCount()+1);
+				}
+				session.merge(user);
+				origBooking.setRider(user);	
 			}
 			else {
 				origBooking.setBookingStatus(driverStatus);
@@ -133,6 +143,18 @@ public class BookingDAOImpl implements BookingDAO{
 		Booking origBooking  = session.find(Booking.class, booking.getId());
 		Status bookingStatus = 	adminDAO.findByStatus(booking.getBookingStatus().getStatus());
 		origBooking.setBookingStatus(bookingStatus);
+		
+		if(STATUS.CANCELLED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+			User user = session.find(User.class,origBooking.getRider().getId());
+			if(user.getCancellationCount() == null) {
+				user.setCancellationCount(1);
+			}
+			else {
+				user.setCancellationCount(user.getCancellationCount()+1);
+			}
+			session.merge(user);
+			origBooking.setRider(user);
+		}
 		session.merge(origBooking);
 		return origBooking;
 	}

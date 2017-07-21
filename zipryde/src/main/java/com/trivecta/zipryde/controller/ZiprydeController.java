@@ -258,7 +258,13 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateBookingDriverStatus")
 	public @ResponseBody BookingResponse updateBookingDriverStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException{
 		return bookingTranssformer.updateBookingDriverStatus(bookingRequest);
+	}	
+
+	@RequestMapping(value = "/updateBookingStatus")
+	public @ResponseBody BookingResponse updateBookingStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
+		return bookingTranssformer.updateBookingStatus(bookingRequest);
 	}
+	
 	
 	@RequestMapping(value = "/getBookingByBookingId")
 	public @ResponseBody BookingResponse getBookingByBookingId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {

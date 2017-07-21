@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name="USER")
 @NamedQueries({
 	@NamedQuery(name="User.findAll", query="SELECT u FROM User u  order by u.id desc"),
-	@NamedQuery(name="User.findByUserType", query="SELECT u FROM User u where u.userType.type = :userType and u.isDeleted = 0 order by u.id desc"),
+	@NamedQuery(name="User.findByUserType", query="SELECT u FROM User u where u.userType.type = :userType and u.isDeleted = 0 ORDER BY u.id DESC"),
 	@NamedQuery(name="User.findByMobileNo", query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.isDeleted = 0 "),
 	@NamedQuery(name="User.findByMobileNoAndUserType", 
 		query="SELECT u FROM User u where u.mobileNumber = :mobileNumber and u.userType.type = :userType and u.isDeleted = 0 "),
@@ -121,6 +121,8 @@ public class User implements Serializable {
 	@OneToOne(mappedBy="user")
 	private DriverProfile driverProfile;
 
+	private Integer cancellationCount;
+	
 	public User() {
 	}
 
@@ -441,5 +443,14 @@ public class User implements Serializable {
 	public void setIsDeleted(Integer isDeleted) {
 		this.isDeleted = isDeleted;
 	}
+
+	public Integer getCancellationCount() {
+		return cancellationCount;
+	}
+
+	public void setCancellationCount(Integer cancellationCount) {
+		this.cancellationCount = cancellationCount;
+	}
+
 
 }
