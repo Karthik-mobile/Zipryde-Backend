@@ -83,4 +83,10 @@ public interface ErrorMessages {
 	static String USER_NOT_DRIVER = " Given User for Vehicle Association is not a Driver";
 	
 	static String DRIVER_ASSOCIATED_VEHICLE = "Driver Associated with Vehicle. Unassign the Vehicle and delete ";
+	
+	static String COMMISSION_ID_EMPTY = "Kindly Send Commission Id.";
+	
+	static String COMMISSION_ID_INVALID = "Invalid Commission Id.";
+
+	static String COMMISSION_MSTR_REQUEST_EXCEPTION_MESSAGE = "Send Either No of Miles or No of Trips in request";
 }

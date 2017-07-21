@@ -40,10 +40,6 @@ public class BookingTransformer {
 	@Autowired
 	BookingService bookingService;
 	
-    @Autowired
-    PaymentService paymentService;
-
-	
 	/*
 	 * Step 1 - Create Booking with Status - Requested
 	 * Step 2 - get logged in near by Driver ( Max Count for now - 10) with Customer Geo location
@@ -343,32 +339,6 @@ public class BookingTransformer {
 		}
 		return bookingResponseList;		
 	}
-	
-	public void savePayment(PaymentRequest paymentRequest) throws MandatoryValidationException {
-		StringBuffer errorMsg = new StringBuffer();
-		if(paymentRequest.getBookingId() == null) {
-			errorMsg.append(ErrorMessages.BOOKING_ID_REQUIRED);
-		}
-		if(paymentRequest.getAmountPaid() == null) {
-			errorMsg.append(ErrorMessages.AMOUNT_TO_PAY_REQUIRED);
-		}
-		
-		if(ValidationUtil.isValidString(errorMsg.toString())) {
-			throw new MandatoryValidationException(errorMsg.toString());
-		}
-		else {			
-	        Payment payment = new Payment();
-	        if(paymentRequest.getPaymentId() != null)
-	               payment.setId(paymentRequest.getPaymentId().intValue());
-	        Booking booking = new Booking();
-	        booking.setId(paymentRequest.getBookingId().intValue());
-	        payment.setBooking(booking);
-	        payment.setAmountPaid(BigDecimal.valueOf(paymentRequest.getAmountPaid()));
-	        payment.setPaymentType(paymentRequest.getPaymentType() != null ? paymentRequest.getPaymentType() : PAYMENT.CASH);
-	        payment.setPaidDateTime(new Date());
-	        paymentService.savePayment(payment);
-		}
-	}
 
 	
 	private BookingResponse setBookingResponseFromBooking(Booking booking,boolean loadImages) {
@@ -442,19 +412,6 @@ public class BookingTransformer {
 			bookingResponse.setOfferedPrice(booking.getOfferedPrice().doubleValue());
 		
 		return bookingResponse;
-	}
-	
-	public CommonResponse getRevenueByDate(PaymentRequest paymentRequest) throws ParseException {	
-		Date date = new Date();
-		if(ValidationUtil.isValidString(paymentRequest.getPaidDateTime())) {
-			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-			date = dateFormat.parse(paymentRequest.getPaidDateTime());
-		}
-		
-		Double revenueAmount = paymentService.getPaymentAmountByDate(date);
-		CommonResponse commonResponse = new CommonResponse();
-		commonResponse.setRevenueAmount(revenueAmount);
-		return commonResponse;
 	}
 	
 }

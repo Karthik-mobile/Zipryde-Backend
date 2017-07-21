@@ -12,7 +12,10 @@ import java.util.Date;
  */
 @Entity
 @Table(name="COMMISSION")
-@NamedQuery(name="Commission.findAll", query="SELECT c FROM Commission c")
+@NamedQueries({
+	@NamedQuery(name="Commission.findAll", query="SELECT c FROM Commission c"),
+	@NamedQuery(name="Commission.getLatest",query="SELECT c FROM Commission c where c.user.id = :driverId and c.calculatedDate IS NULL")
+})
 public class Commission implements Serializable {
 	private static final long serialVersionUID = 1L;
 

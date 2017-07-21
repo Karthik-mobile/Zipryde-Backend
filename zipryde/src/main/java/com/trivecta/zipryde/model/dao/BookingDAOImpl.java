@@ -37,6 +37,9 @@ public class BookingDAOImpl implements BookingDAO{
 	@Autowired
 	AdminDAO adminDAO;
 	
+	@Autowired
+	CommissionDAO commissionDAO;
+	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -112,6 +115,7 @@ public class BookingDAOImpl implements BookingDAO{
 				}
 				else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 					origBooking.setEndDateTime(new Date());
+					commissionDAO.updateCommision(booking);
 				}			
 			}	
 			origBooking.setModifiedDate(new Date());

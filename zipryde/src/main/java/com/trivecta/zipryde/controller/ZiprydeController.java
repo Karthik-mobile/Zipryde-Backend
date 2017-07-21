@@ -21,10 +21,12 @@ import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.view.data.transformer.AdminTransformer;
 import com.trivecta.zipryde.view.data.transformer.BookingTransformer;
 import com.trivecta.zipryde.view.data.transformer.MongoTransformer;
+import com.trivecta.zipryde.view.data.transformer.PaymentTransformer;
 import com.trivecta.zipryde.view.data.transformer.UserTransformer;
 import com.trivecta.zipryde.view.data.transformer.VehicleTransformer;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.CabRequest;
+import com.trivecta.zipryde.view.request.CommissionMasterRequest;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
@@ -35,6 +37,8 @@ import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CabResponse;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
+import com.trivecta.zipryde.view.response.CommissionMasterResponse;
+import com.trivecta.zipryde.view.response.CommissionResponse;
 import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.DriverVehicleAssociationResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
@@ -63,6 +67,9 @@ public class ZiprydeController {
 	
 	@Autowired
 	MongoTransformer mongoTransfomer;
+	
+	@Autowired
+	PaymentTransformer paymentTransformer;
 	
 	/** ------------ MOBILE REGISTRATION ------------- */
 	
@@ -166,7 +173,7 @@ public class ZiprydeController {
 
 	@RequestMapping(value = "/getRevenueByDate")
 	public @ResponseBody CommonResponse getRevenueByDate(@RequestBody PaymentRequest paymentRequest) throws ParseException {
-		return bookingTranssformer.getRevenueByDate(paymentRequest);
+		return paymentTransformer.getRevenueByDate(paymentRequest);
 	}
 	
 	/** ----------------- VEHICLE  --------------------- */
@@ -294,7 +301,22 @@ public class ZiprydeController {
 	/** ----------- PAYMENT -------------------- */
 	@RequestMapping(value = "/savePayment")  
     public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException{
-           bookingTranssformer.savePayment(paymentRequest);
+           paymentTransformer.savePayment(paymentRequest);
+    }
+	
+	@RequestMapping(value = "/payCommission")  
+    public @ResponseStatus(value = HttpStatus.OK)  void payCommission(@RequestBody CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {
+		paymentTransformer.saveCommission(commonRequest);
+    }
+	
+	@RequestMapping(value = "/getAllCommission")  
+    public @ResponseBody List<CommissionResponse> getAllCommission() {
+		return paymentTransformer.getAllCommissionsAvailable();
+    }
+	
+	@RequestMapping(value = "/saveCommissionMaster")  
+    public @ResponseBody CommissionMasterResponse saveCommissionMaster(@RequestBody CommissionMasterRequest commissionMasterRequest) throws MandatoryValidationException{
+		return paymentTransformer.saveCommissionMstr(commissionMasterRequest);
     }
 		
 	/** --------- MONGO DB SERVICE -------------------- */

@@ -37,6 +37,8 @@ public class ZipRydeConstants {
 	
 	public interface PAYMENT {
 		static String CASH = "CASH";
+		static String PAID = "PAID";
+		static String PENDING = "PENDING";
 	}
 	
 	

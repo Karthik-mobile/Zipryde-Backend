@@ -5,22 +5,24 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
 /**
  * The persistent class for the commission_mstr database table.
  * 
  */
 @Entity
-@Table(name="COMMISSION_MSTR")
-@NamedQuery(name="CommissionMstr.findAll", query="SELECT c FROM CommissionMstr c")
+@Table(name = "COMMISSION_MSTR")
+@NamedQueries({ 
+		@NamedQuery(name = "CommissionMstr.findAll", query = "SELECT c FROM CommissionMstr c"),
+		@NamedQuery(name = "CommissionMstr.getCommissionMstrForDate", query = "SELECT c FROM CommissionMstr c where DATE(fromDate) <= DATE(NOW()) and (toDate is NULL or DATE(toDate) >= DATE(NOW()))") 
+	})
 public class CommissionMstr implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	private BigDecimal commisionAmount;
+	private BigDecimal commisionPercentage;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fromDate;
@@ -43,12 +45,12 @@ public class CommissionMstr implements Serializable {
 		this.id = id;
 	}
 
-	public BigDecimal getCommisionAmount() {
-		return this.commisionAmount;
+	public BigDecimal getCommisionPercentage() {
+		return this.commisionPercentage;
 	}
 
-	public void setCommisionAmount(BigDecimal commisionAmount) {
-		this.commisionAmount = commisionAmount;
+	public void setCommisionPercentage(BigDecimal commisionPercentage) {
+		this.commisionPercentage = commisionPercentage;
 	}
 
 	public Date getFromDate() {
