@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +72,14 @@ public class CommissionDAOImpl implements CommissionDAO{
 		Session session = this.sessionFactory.getCurrentSession();
 		CommissionMstr commissionMstr = (CommissionMstr)session.getNamedQuery("CommissionMstr.getCommissionMstrForDate")
 				.getSingleResult();
-		
-		Commission commission = (Commission)session.getNamedQuery("Commission.getLatest")
-				.setParameter("driverId",booking.getDriver().getId()).getSingleResult();
+		Commission commission = null;
+		try{
+			commission = (Commission)session.getNamedQuery("Commission.getLatest")
+					.setParameter("driverId",booking.getDriver().getId()).getSingleResult();
+		}catch(NoResultException nre) {
+			System.out.println("New Commission rowto be created");
+		}
+				
 		
 		if(commission == null) {
 			commission = getNewCommissionObject();

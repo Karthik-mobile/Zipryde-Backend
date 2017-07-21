@@ -125,7 +125,7 @@ public class BookingDAOImpl implements BookingDAO{
 				}
 				else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 					origBooking.setEndDateTime(new Date());
-					commissionDAO.updateCommision(booking);
+					commissionDAO.updateCommision(origBooking);
 				}			
 			}	
 			origBooking.setModifiedDate(new Date());
