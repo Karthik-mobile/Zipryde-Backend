@@ -228,9 +228,9 @@ public class UserDAOImpl implements UserDAO {
 				}
 			}
 			else {
-				user.setIsEnable(0);
+				user.setIsEnable(1);
 			}
-			
+						
 			UserType userType = (UserType) session.getNamedQuery("UserType.findByType").
 					setParameter("userType", user.getUserType().getType()).getSingleResult();
 			user.setUserType(userType);
@@ -576,6 +576,11 @@ public class UserDAOImpl implements UserDAO {
 		}		
 	}
 	
-
+	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList) {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<DriverVehicleAssociation> driverVehicleAssociationList = 
+				session.getNamedQuery("DriverVehicleAssociation.findActiveAssociationByUserIds").setParameter("userIds", userIdList).getResultList();
+		return driverVehicleAssociationList;
+	}
 	
 }

@@ -195,10 +195,11 @@ public class UserTransformer {
 			user.setEmailId(userRequest.getEmailId());
 			user.setAlternateNumber(userRequest.getAlternateNumber());
 				
-			if(!USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())){
+			/*if(!USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())){
 				user.setIsEnable(1);
 			}
-			else if(userRequest.getIsEnable() != null) {
+			else*/ 
+			if(userRequest.getIsEnable() != null) {
 				user.setIsEnable(userRequest.getIsEnable().intValue());
 			}
 			

@@ -1,4 +1,5 @@
 
+
 package com.trivecta.zipryde.controller;
 
 import java.text.ParseException;
@@ -80,10 +81,8 @@ public class ZiprydeController {
 	@RequestMapping(value = "/saveUser")
 	public @ResponseBody UserResponse saveUser(@ModelAttribute UserRequest user) 
 			   throws ParseException, NoResultEntityException, MandatoryValidationException, UserValidationException {
-			  System.out.println("Multiple file upload! With UploadModel");
-			  System.out.println(user);
 			  return userTransformer.saveUser(user);  
-			 }
+	 }
 	
 	@RequestMapping(value = "/deleteUser")
 	public void deleteUser(@RequestBody UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException,UserValidationException{
@@ -160,6 +159,10 @@ public class ZiprydeController {
 		return bookingTranssformer.getBookingCountByDate(bookingRequest);
 	}
 	
+	@RequestMapping(value = "/getBookingCountByDateNotInRequested")
+	public @ResponseBody CommonResponse getBookingCountByDateNotInRequested(@RequestBody BookingRequest bookingRequest) throws ParseException {
+		return bookingTranssformer.getBookingCountByDateNotInRequested(bookingRequest);
+	}
 
 	@RequestMapping(value = "/getRevenueByDate")
 	public @ResponseBody CommonResponse getRevenueByDate(@RequestBody PaymentRequest paymentRequest) throws ParseException {
@@ -258,6 +261,11 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByDate")
 	public @ResponseBody List<BookingResponse> getBookingByDate(@RequestBody BookingRequest bookingRequest) throws ParseException {
 		return bookingTranssformer.getBookingByDate(bookingRequest);
+	}
+	
+	@RequestMapping(value = "/getBookingByDateNotInRequested")
+	public @ResponseBody List<BookingResponse> getBookingByDateNotInRequested(@RequestBody BookingRequest bookingRequest) throws ParseException {
+		return bookingTranssformer.getBookingByDateNotInRequested(bookingRequest);
 	}
 	
 	@RequestMapping(value = "/getBookingByBookingStatus")

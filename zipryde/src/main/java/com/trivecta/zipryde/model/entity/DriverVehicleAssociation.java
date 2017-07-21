@@ -18,6 +18,9 @@ import java.util.Date;
 	@NamedQuery(name="DriverVehicleAssociation.findActiveAssociationByUserId", 
 		query="SELECT d FROM DriverVehicleAssociation d where d.user.id = :userId and DATE(d.fromDate) <= DATE(NOW()) and "
 				+ "(d.toDate is null or d.toDate >= NOW()) "),
+	@NamedQuery(name="DriverVehicleAssociation.findActiveAssociationByUserIds", 
+	query="SELECT d FROM DriverVehicleAssociation d where DATE(d.fromDate) <= DATE(NOW()) and "
+			+ "(d.toDate is null or d.toDate >= NOW()) and d.user.id in :userIds "),
 	@NamedQuery(name="DriverVehicleAssociation.findByCabTypeAndUserIds", 
 		query="SELECT d FROM DriverVehicleAssociation d where d.vehicleDetail.cabType.id = :cabTypeId and DATE(d.fromDate) <= DATE(NOW()) and (d.toDate is null or d.toDate >= NOW()) "
 				+ " and d.user.id in :userIds order by d.toDate desc"),

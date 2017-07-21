@@ -45,4 +45,5 @@ public interface UserService {
 	
 	public List<User> getDriversByOnline();
 
+	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList);
 }

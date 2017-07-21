@@ -162,6 +162,28 @@ public class BookingDAOImpl implements BookingDAO{
 		 return bookingList;
 	}
 	
+	public Integer getBookingCountByDateNotInRequested(Date bookingDate) {
+		Session session = this.sessionFactory.getCurrentSession();
+		Long bookingCount = (Long) session.getNamedQuery("Booking.countByBookingDateNotInRequested").
+				 setParameter("bookingDate", bookingDate).getSingleResult();
+		if(bookingCount == null) {
+		 bookingCount = 0L;
+		}
+		return bookingCount.intValue();
+	}
+	
+	public List<Booking> getBookingByDateNotInRequested(Date bookingDate) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingDateNotInRequested").
+				 setParameter("bookingDate", bookingDate).getResultList();
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
 	public List<Booking> getBookingByBookingStatus(String status) {
 		Session session = this.sessionFactory.getCurrentSession();
 		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStatus").setParameter("status", status).getResultList();

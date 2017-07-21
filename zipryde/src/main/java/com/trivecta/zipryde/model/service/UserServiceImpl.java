@@ -111,4 +111,9 @@ public class UserServiceImpl implements UserService{
 	public List<User> getDriversByOnline() {
 		return userDAO.getDriversByOnline();
 	}
+	
+	@Transactional
+	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList) {
+		return userDAO.getDriverVehcileAssociationByDriverIds(userIdList);
+	}
 }

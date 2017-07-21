@@ -313,6 +313,37 @@ public class BookingTransformer {
 		return commonResponse;
 	}
 	
+	public CommonResponse getBookingCountByDateNotInRequested(BookingRequest bookingRequest) throws ParseException {
+		Date searchDate = new Date();
+		if(ValidationUtil.isValidString(bookingRequest.getStartDateTime())) {
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			searchDate = dateFormat.parse(bookingRequest.getStartDateTime());
+		}
+		
+		Integer bookingCount = bookingService.getBookingCountByDateNotInRequested(searchDate);
+		CommonResponse commonResponse = new CommonResponse();
+		commonResponse.setCount(bookingCount);
+		return commonResponse;
+	}
+	
+	public List<BookingResponse> getBookingByDateNotInRequested(BookingRequest bookingRequest) throws ParseException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		Date searchDate = new Date();
+		if(ValidationUtil.isValidString(bookingRequest.getStartDateTime())) {
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			searchDate = dateFormat.parse(bookingRequest.getStartDateTime());
+		}
+		
+		List<Booking> bookingList = bookingService.getBookingByDateNotInRequested(searchDate);
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+			}
+		}
+		return bookingResponseList;		
+	}
+	
 	public void savePayment(PaymentRequest paymentRequest) throws MandatoryValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		if(paymentRequest.getBookingId() == null) {

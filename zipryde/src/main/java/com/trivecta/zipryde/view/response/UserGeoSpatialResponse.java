@@ -11,6 +11,10 @@ public class UserGeoSpatialResponse {
 	private BigDecimal longitude;
 	
 	private Number isOnline;
+	
+	private String cabType;
+	
+	private Number cabTypeId;
 
 	public UserGeoSpatialResponse() {
 		//Nothing to do
@@ -53,4 +57,22 @@ public class UserGeoSpatialResponse {
 	public void setIsOnline(Number isOnline) {
 		this.isOnline = isOnline;
 	}
+
+	public String getCabType() {
+		return cabType;
+	}
+
+	public void setCabType(String cabType) {
+		this.cabType = cabType;
+	}
+
+	public Number getCabTypeId() {
+		return cabTypeId;
+	}
+
+	public void setCabTypeId(Number cabTypeId) {
+		this.cabTypeId = cabTypeId;
+	}
+
+
 }

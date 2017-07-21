@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
+import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.UserSession;
+import com.trivecta.zipryde.model.service.UserService;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
@@ -24,6 +26,9 @@ public class MongoTransformer {
 	
 	@Autowired
 	UserTransformer userTransformer;
+	
+	@Autowired
+	UserService userService;
 	
 	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
 		StringBuffer errorMsg = new StringBuffer();
@@ -107,14 +112,35 @@ public class MongoTransformer {
 			throw new MandatoryValidationException(ErrorMessages.LAT_LON_REQUIRED);
 		}
 		else {
+			List<UserGeoSpatialResponse> userGeoRespList = new ArrayList<UserGeoSpatialResponse>();
 			List<com.trivecta.zipryde.mongodb.UserGeoSpatialResponse> 
 			mongoUserRespList =
 				mongoDbClient.getNearByActiveDrivers(Double.valueOf(geoLocationRequest.getFromLongitude()),
 						Double.valueOf(geoLocationRequest.getFromLatitude()));
 		
-		return mongoUserRespList.stream()
-				.map(obj -> new UserGeoSpatialResponse(obj.getUserId(),obj.getLongitude(),obj.getLatitude()))
-				.collect(Collectors.toList());	
+			if(mongoUserRespList != null && mongoUserRespList.size() > 0) {
+				 userGeoRespList = mongoUserRespList.stream()
+							.map(obj -> new UserGeoSpatialResponse(obj.getUserId(),obj.getLongitude(),obj.getLatitude()))
+							.collect(Collectors.toList());	
+					
+				List<Integer> userIdList = mongoUserRespList.stream()
+				                .map(com.trivecta.zipryde.mongodb.UserGeoSpatialResponse::getUserId)
+				                .collect(Collectors.toList()); 
+						
+				List<DriverVehicleAssociation> associationList = userService.getDriverVehcileAssociationByDriverIds(userIdList);
+				
+				if(associationList != null && associationList.size() > 0) {
+					for(UserGeoSpatialResponse userGeoResponse : userGeoRespList ) {
+						for(DriverVehicleAssociation driverVehicleAssociation : associationList) {
+							if(userGeoResponse.getUserId().intValue() == driverVehicleAssociation.getUser().getId().intValue()) {
+								userGeoResponse.setCabType(driverVehicleAssociation.getVehicleDetail().getCabType().getType());
+								userGeoResponse.setCabTypeId(driverVehicleAssociation.getVehicleDetail().getCabType().getId());
+							}
+						}
+					}
+				}						
+			}			
+			return userGeoRespList;
 		}			
 	}
 	
