@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "commissionId", "driverName", "commissionAmount", "calcualtedDate", "paidDate", "status" })
+@JsonPropertyOrder({ "commissionId", "driverName", "commissionAmount", "calcualtedDate", "paidDate", "noOfMiles","noOfTrips", "status" })
 public class CommissionResponse {
 
 	@JsonProperty("commissionId")
@@ -20,6 +20,10 @@ public class CommissionResponse {
 	private String paidDate;
 	@JsonProperty("status")
 	private String status;
+	@JsonProperty("noOfMiles")
+	private Integer noOfMiles;
+	@JsonProperty("noOfTrips")
+	private Integer noOfTrips;
 
 	public Integer getCommissionId() {
 		return commissionId;
@@ -67,6 +71,22 @@ public class CommissionResponse {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Integer getNoOfMiles() {
+		return noOfMiles;
+	}
+
+	public void setNoOfMiles(Integer noOfMiles) {
+		this.noOfMiles = noOfMiles;
+	}
+
+	public Integer getNoOfTrips() {
+		return noOfTrips;
+	}
+
+	public void setNoOfTrips(Integer noOfTrips) {
+		this.noOfTrips = noOfTrips;
 	}
 
 }

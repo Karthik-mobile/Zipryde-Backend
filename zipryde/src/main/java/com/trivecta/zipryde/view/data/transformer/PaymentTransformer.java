@@ -102,6 +102,8 @@ public class PaymentTransformer {
 			commissionResponse.setCommissionAmount(commission.getCommisionAmount().doubleValue());
 			commissionResponse.setDriverName(commission.getUser().getFirstName());
 			commissionResponse.setStatus(commission.getStatus());
+			commissionResponse.setNoOfMiles(commission.getNoOfMiles());
+			commissionResponse.setNoOfTrips(commission.getNoOfTrips());
 			commissionList.add(commissionResponse);
 		}
 		return commissionList;
