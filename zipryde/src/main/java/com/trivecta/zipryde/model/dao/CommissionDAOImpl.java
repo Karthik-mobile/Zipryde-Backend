@@ -40,17 +40,17 @@ public class CommissionDAOImpl implements CommissionDAO{
 	@Override
 	public void saveCommissionMaster(CommissionMstr commissionMstr) {
 		Session session = this.sessionFactory.getCurrentSession();
-		if(commissionMstr.getId() == null) {
+		CommissionMstr orgCommissionMstr = getCommissionMstr();
+		if(orgCommissionMstr == null) {
+			commissionMstr.setFromDate(new Date());
 			session.save(commissionMstr);
 		}else {
-			CommissionMstr commissionMstrUpdate = session.find(CommissionMstr.class, commissionMstr.getId());
-			commissionMstrUpdate.setCommisionPercentage(commissionMstr.getCommisionPercentage());
-			commissionMstrUpdate.setNoOfMiles(commissionMstr.getNoOfMiles());
-			commissionMstrUpdate.setNoOfTrips(commissionMstr.getNoOfTrips());
-			session.merge(commissionMstrUpdate);
-			commissionMstr = commissionMstrUpdate;
-		}
-		
+			orgCommissionMstr.setCommisionPercentage(commissionMstr.getCommisionPercentage());
+			orgCommissionMstr.setNoOfMiles(commissionMstr.getNoOfMiles());
+			orgCommissionMstr.setNoOfTrips(commissionMstr.getNoOfTrips());
+			session.merge(orgCommissionMstr);
+			commissionMstr = orgCommissionMstr;
+		}		
 	}
 
 	@Override
@@ -108,6 +108,20 @@ public class CommissionDAOImpl implements CommissionDAO{
 	
 	private Double calculateCommissionAmount(BigDecimal acceptedPrice, BigDecimal commisionPercentage) {
 		return (acceptedPrice.doubleValue() * commisionPercentage.doubleValue()) / 100 ;
+	}
+
+	@Override
+	public CommissionMstr getCommissionMstr(){
+		Session session = this.sessionFactory.getCurrentSession();
+		CommissionMstr commissionMstr = null;
+		try {
+			commissionMstr = (CommissionMstr)session.getNamedQuery("CommissionMstr.getCommissionMstrForDate")
+					.getSingleResult();
+		}catch(NoResultException nre) {
+			nre.printStackTrace();
+		}
+		return commissionMstr;
+		
 	}
 	
 	

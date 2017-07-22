@@ -15,4 +15,5 @@ public interface CommissionDAO {
 	public Commission getCommission(int commissionId);
 	public List getAllCommissions();
 	public void updateCommision(Booking booking);
+	public CommissionMstr getCommissionMstr();
 }

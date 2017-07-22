@@ -12,4 +12,5 @@ public interface CommissionService {
 	public Commission getCommission(int commissionId);
 	public List getAllCommission();
 	public void saveCommissionMaster(CommissionMstr commissionMstr);
+	public CommissionMstr getCommissionMstr();
 }

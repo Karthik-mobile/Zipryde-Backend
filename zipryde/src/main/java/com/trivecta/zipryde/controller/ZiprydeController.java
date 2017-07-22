@@ -324,6 +324,11 @@ public class ZiprydeController {
     public @ResponseBody CommissionMasterResponse saveCommissionMaster(@RequestBody CommissionMasterRequest commissionMasterRequest) throws MandatoryValidationException{
 		return paymentTransformer.saveCommissionMstr(commissionMasterRequest);
     }
+	
+	@RequestMapping(value = "/getCommissionMaster")  
+    public @ResponseBody CommissionMasterResponse getCommissionMaster() throws MandatoryValidationException{
+		return paymentTransformer.getCommissionMstr();
+    }
 		
 	/** --------- MONGO DB SERVICE -------------------- */
 	

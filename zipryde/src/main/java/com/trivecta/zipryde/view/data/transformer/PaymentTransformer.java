@@ -118,18 +118,23 @@ public class PaymentTransformer {
 		commissionMstr.setNoOfTrips(commissionMstrRequest.getNoOfTrips());
 		commissionMstr.setCommisionPercentage(BigDecimal.valueOf(commissionMstrRequest.getCommissionPercentage()));
 		
-		if(commissionMstrRequest.getId() != null) {
-			commissionMstr.setId(commissionMstrRequest.getId());
-		}else {
-			commissionMstr.setFromDate(new Date());
-		}
-		
 		commissionService.saveCommissionMaster(commissionMstr);
 		CommissionMasterResponse commissionMasterResponse = new CommissionMasterResponse();
 		commissionMasterResponse.setNoOfMiles(commissionMstrRequest.getNoOfMiles());
 		commissionMasterResponse.setNoOfTrips(commissionMstrRequest.getNoOfTrips());
 		commissionMasterResponse.setCommissionPercentage(commissionMstrRequest.getCommissionPercentage());
 		commissionMasterResponse.setId(commissionMstr.getId());
+		return commissionMasterResponse;
+	}
+
+	public CommissionMasterResponse getCommissionMstr() {
+		CommissionMasterResponse commissionMasterResponse = new CommissionMasterResponse();
+		CommissionMstr commissionMstr = commissionService.getCommissionMstr();
+		if(commissionMstr != null) {
+			commissionMasterResponse.setCommissionPercentage(commissionMstr.getCommisionPercentage().doubleValue());
+			commissionMasterResponse.setNoOfMiles(commissionMstr.getNoOfMiles());
+			commissionMasterResponse.setNoOfTrips(commissionMstr.getNoOfTrips());
+		}
 		return commissionMasterResponse;
 	}
 	

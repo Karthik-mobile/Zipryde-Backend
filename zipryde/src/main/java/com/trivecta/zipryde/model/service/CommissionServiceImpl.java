@@ -46,4 +46,11 @@ public class CommissionServiceImpl implements CommissionService {
 		
 	}
 
+
+	@Override
+	@Transactional
+	public CommissionMstr getCommissionMstr() {
+		return commissionDAO.getCommissionMstr();
+	}
+
 }
