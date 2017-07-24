@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"bookingId",
 	"amountPaid",
 	"paymentType",
-	"paidDateTime"
+	"paidDateTime",
+	"driverId"
 })
 public class PaymentRequest {	
 	
@@ -24,7 +25,9 @@ public class PaymentRequest {
 	private String paymentType;
 	@JsonProperty("paidDateTime")
 	private String paidDateTime;
-
+	@JsonProperty("driverId")
+	private Number driverId;
+	
 	public Number getPaymentId() {
 		return paymentId;
 	}
@@ -63,6 +66,14 @@ public class PaymentRequest {
 
 	public void setPaidDateTime(String paidDateTime) {
 		this.paidDateTime = paidDateTime;
+	}
+
+	public Number getDriverId() {
+		return driverId;
+	}
+
+	public void setDriverId(Number driverId) {
+		this.driverId = driverId;
 	}
 
 }

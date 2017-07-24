@@ -78,6 +78,25 @@ public class PaymentTransformer {
 		commonResponse.setRevenueAmount(revenueAmount);
 		return commonResponse;
 	}
+    
+    public CommonResponse getRevenueByDateAndDriverId(PaymentRequest paymentRequest) throws ParseException, MandatoryValidationException {	
+  		if(paymentRequest.getDriverId() == null) {
+  			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+  		}
+  		else {
+  			Date date = new Date(); 	  		
+  	  		
+  	  		if(ValidationUtil.isValidString(paymentRequest.getPaidDateTime())) {
+  	  			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+  	  			date = dateFormat.parse(paymentRequest.getPaidDateTime());
+  	  		}
+  	  		
+  	  		Double revenueAmount = paymentService.getPaymentAmountByDateAndDriverId(date,paymentRequest.getDriverId().intValue());
+  	  		CommonResponse commonResponse = new CommonResponse();
+  	  		commonResponse.setRevenueAmount(revenueAmount);
+  	  		return commonResponse;
+  		}
+  	}
 
 	public void saveCommission(CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {		
 		if(commonRequest.getCommissionId() != null) {

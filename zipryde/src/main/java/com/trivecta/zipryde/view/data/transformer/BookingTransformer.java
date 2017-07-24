@@ -322,6 +322,24 @@ public class BookingTransformer {
 		return commonResponse;
 	}
 	
+	public CommonResponse getBookingCountByDateAndDriverId(BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
+		if(bookingRequest.getDriverId() == null) {
+  			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+  		}
+  		else {
+  			Date searchDate = new Date();
+  			if(ValidationUtil.isValidString(bookingRequest.getStartDateTime())) {
+  				DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+  				searchDate = dateFormat.parse(bookingRequest.getStartDateTime());
+  			}
+  			
+  			Integer bookingCount = bookingService.getBookingCountByDateAndDriverId(searchDate,bookingRequest.getDriverId().intValue());
+  			CommonResponse commonResponse = new CommonResponse();
+  			commonResponse.setCount(bookingCount);
+  			return commonResponse;
+  		}
+	}
+	
 	public CommonResponse getBookingCountByDateNotInRequested(BookingRequest bookingRequest) throws ParseException {
 		Date searchDate = new Date();
 		if(ValidationUtil.isValidString(bookingRequest.getStartDateTime())) {

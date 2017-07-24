@@ -34,4 +34,10 @@ public class PaymentServiceImpl implements PaymentService {
 	public Double getPaymentAmountByDate(Date date) {
 		return paymentDAO.getPaymentAmountByDate(date);
 	}
+	
+	@Override
+	@Transactional
+	public Double getPaymentAmountByDateAndDriverId(Date date,Integer driverId) {
+		return paymentDAO.getPaymentAmountByDateAndDriverId(date,driverId);
+	}
 }

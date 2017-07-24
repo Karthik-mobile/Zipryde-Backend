@@ -76,5 +76,10 @@ public class BookingServiceImpl implements BookingService{
 		return bookingDAO.getBookingByDateNotInRequested(bookingDate);
 	}
 	
+	@Transactional
+	public Integer getBookingCountByDateAndDriverId(Date bookingDate,Integer driverId){
+		return bookingDAO.getBookingCountByDateAndDriverId(bookingDate, driverId);
+	}
+	
 	
 }

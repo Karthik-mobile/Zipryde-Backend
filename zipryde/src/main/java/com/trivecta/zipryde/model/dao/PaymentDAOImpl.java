@@ -3,6 +3,8 @@ package com.trivecta.zipryde.model.dao;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.NoResultException;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +36,33 @@ public class PaymentDAOImpl implements PaymentDAO {
 	@Override
 	public Double getPaymentAmountByDate(Date date) {
 		Session session = this.sessionFactory.getCurrentSession();
-		BigDecimal amount = (BigDecimal) session.getNamedQuery("Payment.revenueAmountByDate").
-				 setParameter("date", date).getSingleResult();
+		BigDecimal amount = null ;
+		try {
+			amount = (BigDecimal) session.getNamedQuery("Payment.revenueAmountByDate").
+						 setParameter("date", date).getSingleResult();
+		}
+		catch(NoResultException e) {
+			//No Result found
+		}
 		if(amount == null) {
-			amount = BigDecimal.ZERO;
+			amount  = BigDecimal.ZERO;
+		}
+		return amount.doubleValue();
+	}
+	
+	@Override
+	public Double getPaymentAmountByDateAndDriverId(Date date,Integer driverId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		BigDecimal amount = null ;
+		try {
+			amount = (BigDecimal) session.getNamedQuery("Payment.revenueAmountByDateAndDriverId").
+				 setParameter("date", date).setParameter("driverId", driverId).getSingleResult();
+		}
+		catch(NoResultException e) {
+			//No Result found
+		}
+		if(amount == null) {
+			amount  = BigDecimal.ZERO;
 		}
 		return amount.doubleValue();
 	}

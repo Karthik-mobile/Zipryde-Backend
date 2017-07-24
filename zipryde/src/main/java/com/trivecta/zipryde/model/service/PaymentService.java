@@ -10,4 +10,5 @@ public interface PaymentService {
 	public void savePayment(Payment payment);
 	public Payment getPayment(Integer paymentId);
 	public Double getPaymentAmountByDate(Date searchDate);
+	public Double getPaymentAmountByDateAndDriverId(Date date,Integer driverId);
 }

@@ -31,4 +31,6 @@ public interface BookingDAO {
 	public Integer getBookingCountByDateNotInRequested(Date bookingDate);
 	
 	public List<Booking> getBookingByDateNotInRequested(Date bookingDate);
+	
+	public Integer getBookingCountByDateAndDriverId(Date bookingDate,Integer driverId);
 }

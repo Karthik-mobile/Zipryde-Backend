@@ -174,6 +174,16 @@ public class ZiprydeController {
 		return paymentTransformer.getRevenueByDate(paymentRequest);
 	}
 	
+	@RequestMapping(value = "/getRevenueByDateAndDriverId")
+	public @ResponseBody CommonResponse getRevenueByDateAndDriverId(@RequestBody PaymentRequest paymentRequest) throws ParseException, MandatoryValidationException {
+		return paymentTransformer.getRevenueByDateAndDriverId(paymentRequest);
+	}
+	
+	@RequestMapping(value = "/getBookingCountByDateAndDriverId")
+	public @ResponseBody CommonResponse getBookingCountByDateAndDriverId(@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
+		return bookingTranssformer.getBookingCountByDateAndDriverId(bookingRequest);
+	}
+	
 	/** ----------------- VEHICLE  --------------------- */
 	
 	@RequestMapping(value = "/saveVehicle")

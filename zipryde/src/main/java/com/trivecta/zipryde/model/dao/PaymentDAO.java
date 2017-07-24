@@ -9,4 +9,5 @@ public interface PaymentDAO {
 	public void savePayment(Payment payment);
 	public Payment getPayment(Integer paymentId);
 	public Double getPaymentAmountByDate(Date date);	
+	public Double getPaymentAmountByDateAndDriverId(Date date,Integer driverId);
 }

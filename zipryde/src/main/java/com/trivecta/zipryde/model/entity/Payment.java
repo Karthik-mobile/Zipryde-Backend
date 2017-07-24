@@ -15,6 +15,7 @@ import java.util.Date;
 @NamedQueries({
 	@NamedQuery(name="Payment.findAll", query="SELECT p FROM Payment p"),
 	@NamedQuery(name="Payment.revenueAmountByDate", query="SELECT SUM(amountPaid) FROM Payment p where DATE(p.paidDateTime) = :date"),
+	@NamedQuery(name="Payment.revenueAmountByDateAndDriverId", query="SELECT SUM(amountPaid) FROM Payment p where DATE(p.paidDateTime) = :date and p.booking.driver.id=:driverId")
 })
 
 public class Payment implements Serializable {

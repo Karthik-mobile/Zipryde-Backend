@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.NoResultException;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,10 +167,32 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	public Integer getBookingCountByDate(Date bookingDate) {
 		Session session = this.sessionFactory.getCurrentSession();
-		Long bookingCount = (Long) session.getNamedQuery("Booking.countByBookingDate").
+		Long bookingCount = null;
+		try {
+			bookingCount =  (Long) session.getNamedQuery("Booking.countByBookingDate").
 				 setParameter("bookingDate", bookingDate).getSingleResult();
-		if(bookingCount == null) {
-		 bookingCount = 0L;
+		}
+		catch(NoResultException e){
+			//No Count
+		}
+		if(bookingCount == null){
+			bookingCount = 0L;
+		}
+		return bookingCount.intValue();
+	}
+	
+	public Integer getBookingCountByDateAndDriverId(Date bookingDate,Integer driverId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		Long bookingCount = null;
+		try {
+			bookingCount = (Long) session.getNamedQuery("Booking.countByBookingDateAndDriverId")
+					 .setParameter("bookingDate", bookingDate).setParameter("driverId", driverId).getSingleResult();
+		}
+		catch(NoResultException e){
+			//No Count
+		}
+		if(bookingCount == null){
+			bookingCount = 0L;
 		}
 		return bookingCount.intValue();
 	}
