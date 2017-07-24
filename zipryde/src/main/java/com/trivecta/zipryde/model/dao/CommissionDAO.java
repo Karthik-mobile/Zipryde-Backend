@@ -1,6 +1,7 @@
 package com.trivecta.zipryde.model.dao;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
@@ -16,4 +17,5 @@ public interface CommissionDAO {
 	public List getAllCommissions();
 	public void updateCommision(Booking booking);
 	public CommissionMstr getCommissionMstr();
+	public BigDecimal getCommissionByStatus(String status);
 }

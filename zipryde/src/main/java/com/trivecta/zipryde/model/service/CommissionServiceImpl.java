@@ -1,5 +1,6 @@
 package com.trivecta.zipryde.model.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,13 @@ public class CommissionServiceImpl implements CommissionService {
 	@Transactional
 	public CommissionMstr getCommissionMstr() {
 		return commissionDAO.getCommissionMstr();
+	}
+
+
+	@Override
+	@Transactional
+	public BigDecimal getCommissionByStatus(String status) {
+		return commissionDAO.getCommissionByStatus(status);
 	}
 
 }

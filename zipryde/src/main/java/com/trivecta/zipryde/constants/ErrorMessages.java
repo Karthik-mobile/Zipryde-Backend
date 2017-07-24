@@ -89,4 +89,6 @@ public interface ErrorMessages {
 	static String COMMISSION_ID_INVALID = "Invalid Commission Id.";
 
 	static String COMMISSION_MSTR_REQUEST_EXCEPTION_MESSAGE = "Send Either No of Miles or No of Trips in request";
+
+	static String STATUS_REQUERIED = "STATUS IS REQUIRED FOR GETTING COMMISSION AMOUNT";
 }

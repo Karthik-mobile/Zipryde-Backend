@@ -123,6 +123,21 @@ public class CommissionDAOImpl implements CommissionDAO{
 		return commissionMstr;
 		
 	}
+
+	@Override
+	public BigDecimal getCommissionByStatus(String status) {
+		Session session = this.sessionFactory.getCurrentSession();
+		BigDecimal commissionAmount = null;
+		try {
+			commissionAmount = (BigDecimal)session.getNamedQuery("Commission.getCommissionAmountByStatus").setParameter("status", status)
+			.getSingleResult();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		if(commissionAmount == null)
+			commissionAmount = BigDecimal.ZERO;
+		return commissionAmount;
+	}
 	
 	
 }

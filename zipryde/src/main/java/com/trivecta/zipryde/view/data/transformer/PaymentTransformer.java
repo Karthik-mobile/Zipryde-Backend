@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -136,6 +137,16 @@ public class PaymentTransformer {
 			commissionMasterResponse.setNoOfTrips(commissionMstr.getNoOfTrips());
 		}
 		return commissionMasterResponse;
+	}
+	
+	public CommonResponse getCommissionAmountByStatus(CommonRequest commonRequest) throws MandatoryValidationException {
+		if(commonRequest == null || StringUtils.isBlank(commonRequest.getStatus()))
+			throw new MandatoryValidationException(ErrorMessages.STATUS_REQUERIED);
+		Double amount = commissionService.getCommissionByStatus(commonRequest.getStatus().trim().toUpperCase()).doubleValue();
+		CommonResponse commonResponse = new CommonResponse();
+		commonResponse.setRevenueAmount(amount);
+		return commonResponse;
+		
 	}
 	
 }

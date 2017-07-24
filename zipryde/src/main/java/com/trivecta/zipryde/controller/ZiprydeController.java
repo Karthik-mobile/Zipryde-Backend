@@ -1,5 +1,3 @@
-
-
 package com.trivecta.zipryde.controller;
 
 import java.text.ParseException;
@@ -329,6 +327,11 @@ public class ZiprydeController {
     public @ResponseBody CommissionMasterResponse getCommissionMaster() throws MandatoryValidationException{
 		return paymentTransformer.getCommissionMstr();
     }
+	
+	@RequestMapping(value = "/getCommissionAmountByStatus")
+	public @ResponseBody CommonResponse getCommissionAmountByStatus(@RequestBody CommonRequest commonRequest)throws MandatoryValidationException{
+		return paymentTransformer.getCommissionAmountByStatus(commonRequest);
+	}
 		
 	/** --------- MONGO DB SERVICE -------------------- */
 	

@@ -14,7 +14,8 @@ import java.util.Date;
 @Table(name="COMMISSION")
 @NamedQueries({
 	@NamedQuery(name="Commission.findAll", query="SELECT c FROM Commission c"),
-	@NamedQuery(name="Commission.getLatest",query="SELECT c FROM Commission c where c.user.id = :driverId and c.calculatedDate IS NULL")
+	@NamedQuery(name="Commission.getLatest",query="SELECT c FROM Commission c where c.user.id = :driverId and c.calculatedDate IS NULL"),
+	@NamedQuery(name="Commission.getCommissionAmountByStatus",query="SELECT SUM(c.commisionAmount) FROM Commission c where c.status = :status")
 })
 public class Commission implements Serializable {
 	private static final long serialVersionUID = 1L;
