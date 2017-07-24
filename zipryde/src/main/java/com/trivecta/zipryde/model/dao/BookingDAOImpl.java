@@ -117,6 +117,8 @@ public class BookingDAOImpl implements BookingDAO{
 				}
 				session.merge(user);
 				origBooking.setRider(user);	
+				
+				deleteAcceptedBookingRequest(origBooking.getId());
 			}
 			else {
 				origBooking.setBookingStatus(driverStatus);
@@ -154,6 +156,8 @@ public class BookingDAOImpl implements BookingDAO{
 			}
 			session.merge(user);
 			origBooking.setRider(user);
+			
+			deleteAcceptedBookingRequest(origBooking.getId());
 		}
 		session.merge(origBooking);
 		return origBooking;
@@ -285,6 +289,12 @@ public class BookingDAOImpl implements BookingDAO{
 	}
 	
 	@Async
+	private void deleteAcceptedBookingRequest(Integer bookingId){
+		Session session = this.sessionFactory.getCurrentSession();
+		session.getNamedQuery("BookingRequest.deleteByBookingId").setParameter("bookingId", bookingId).executeUpdate();
+	}
+	
+	@Async
 	private void createBookingRequest(Booking booking,User user) {
 		Session session = this.sessionFactory.getCurrentSession();
 		//List<> = mongoDbClient.getNearByActiveDrivers(longitude, latitude);
@@ -292,6 +302,7 @@ public class BookingDAOImpl implements BookingDAO{
 		bookingRequest.setBooking(booking);
 		bookingRequest.setUser(user);
 		bookingRequest.setCreationDate(new Date());
+		bookingRequest.setIsDeleted(0);
 		session.save(bookingRequest);
 	}	
 }

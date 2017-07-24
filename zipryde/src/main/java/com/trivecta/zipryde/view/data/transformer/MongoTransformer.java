@@ -1,6 +1,7 @@
 package com.trivecta.zipryde.view.data.transformer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,22 +108,21 @@ public class MongoTransformer {
 		}
 	}
 	
-	public List<UserGeoSpatialResponse> getNearByActiveDrivers(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException{
+	public List<UserGeoSpatialResponse> getNearByActiveDrivers(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException
+	{
 		if(geoLocationRequest.getFromLatitude() == null || geoLocationRequest.getFromLongitude() == null) {
 			throw new MandatoryValidationException(ErrorMessages.LAT_LON_REQUIRED);
 		}
-		else {
+		else 
+		{
 			List<UserGeoSpatialResponse> userGeoRespList = new ArrayList<UserGeoSpatialResponse>();
 			List<com.trivecta.zipryde.mongodb.UserGeoSpatialResponse> 
 			mongoUserRespList =
 				mongoDbClient.getNearByActiveDrivers(Double.valueOf(geoLocationRequest.getFromLongitude()),
 						Double.valueOf(geoLocationRequest.getFromLatitude()));
 		
-			if(mongoUserRespList != null && mongoUserRespList.size() > 0) {
-				 userGeoRespList = mongoUserRespList.stream()
-							.map(obj -> new UserGeoSpatialResponse(obj.getUserId(),obj.getLongitude(),obj.getLatitude()))
-							.collect(Collectors.toList());	
-					
+			if(mongoUserRespList != null && mongoUserRespList.size() > 0) 
+			{
 				List<Integer> userIdList = mongoUserRespList.stream()
 				                .map(com.trivecta.zipryde.mongodb.UserGeoSpatialResponse::getUserId)
 				                .collect(Collectors.toList()); 
@@ -130,6 +130,9 @@ public class MongoTransformer {
 				List<DriverVehicleAssociation> associationList = userService.getDriverVehcileAssociationByDriverIds(userIdList);
 				
 				if(associationList != null && associationList.size() > 0) {
+					 userGeoRespList = mongoUserRespList.stream()
+								.map(obj -> new UserGeoSpatialResponse(obj.getUserId(),obj.getLongitude(),obj.getLatitude()))
+								.collect(Collectors.toList());	
 					for(UserGeoSpatialResponse userGeoResponse : userGeoRespList ) {
 						for(DriverVehicleAssociation driverVehicleAssociation : associationList) {
 							if(userGeoResponse.getUserId().intValue() == driverVehicleAssociation.getUser().getId().intValue()) {
@@ -138,10 +141,19 @@ public class MongoTransformer {
 							}
 						}
 					}
-				}						
-			}			
-			return userGeoRespList;
-		}			
+				}
+				
+				if(userGeoRespList != null && userGeoRespList.size() > 0) {
+					Iterator<UserGeoSpatialResponse> iter = userGeoRespList.iterator();
+					while (iter.hasNext()) {
+					    if (!ValidationUtil.isValidString(iter.next().getCabType())) {
+					        iter.remove();
+					}
+				}
+			}	
+		}
+		return userGeoRespList;					
+		}
 	}
 	
 	public UserGeoSpatialResponse getGeoLocationByDriverId(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException{

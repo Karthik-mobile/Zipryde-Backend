@@ -497,11 +497,9 @@ public class UserTransformer {
 		userResponse.setEmailId(user.getEmailId());
 		userResponse.setMobileNumber(String.valueOf(user.getMobileNumber()));
 		userResponse.setIsEnable(user.getIsEnable());
-		
-		if(user.getUserType() != null) {
-			userResponse.setUserType(user.getUserType().getType());
-		}
-			
+		userResponse.setCancellationCount(user.getCancellationCount());
+		userResponse.setUserType(user.getUserType().getType());
+					
 		if(USERTYPE.DRIVER.equalsIgnoreCase(userResponse.getUserType()) && user.getDriverProfile() != null ) {
 			userResponse.setDriverProfileId(user.getDriverProfile().getId());
 			userResponse.setLicenseNo(user.getDriverProfile().getLicenseNo());

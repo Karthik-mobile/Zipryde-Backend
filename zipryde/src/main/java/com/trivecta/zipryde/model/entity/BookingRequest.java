@@ -14,7 +14,8 @@ import javax.persistence.*;
 @Table(name="BOOKING_REQUEST")
 @NamedQueries({
 	@NamedQuery(name="BookingRequest.findAll", query="SELECT b FROM BookingRequest b"),
-	@NamedQuery(name="BookingRequest.findByDriverId", query="SELECT b.booking FROM BookingRequest b where b.user.id = :userId ORDER BY b.id DESC")
+	@NamedQuery(name="BookingRequest.findByDriverId", query="SELECT b.booking FROM BookingRequest b where b.user.id = :userId and isDeleted = 0 ORDER BY b.id DESC"),
+	@NamedQuery(name="BookingRequest.deleteByBookingId", query="UPDATE BookingRequest b SET b.isDeleted = 1 where b.booking.id = :bookingId ")
 })
 public class BookingRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -38,6 +39,8 @@ public class BookingRequest implements Serializable {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
+	
+	private Integer isDeleted;;
 	
 	public BookingRequest() {
 	}
@@ -80,6 +83,14 @@ public class BookingRequest implements Serializable {
 
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 }
