@@ -113,7 +113,7 @@ public class VehicleTransformer {
 				//cabPermit.setPermitValidUntil(dateFormat.parse(cabRequest.getCabPermitRequest().getCabPermitValidUntil()));
 				if(cabRequest.getCabPermitRequest().getCabPermitValidUntil() != null) {
 					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(dateFormat.parse(cabRequest.getInsuranceValidUntil()));
+					calendar.setTime(dateFormat.parse(cabRequest.getCabPermitRequest().getCabPermitValidUntil()));
 					calendar.add(Calendar.HOUR, 23); 
 					calendar.add(Calendar.MINUTE, 59);
 					calendar.add(Calendar.SECOND, 59);
