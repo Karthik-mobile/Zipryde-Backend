@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.procedure.ProcedureCall;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
@@ -329,4 +330,14 @@ public class BookingDAOImpl implements BookingDAO{
 		bookingRequest.setIsDeleted(0);
 		session.save(bookingRequest);
 	}	
+	
+	public void updateBookinStatusUnAnswered(){
+		Session session = this.sessionFactory.getCurrentSession();
+		try {
+			session.createStoredProcedureCall("UPDATE_BOOKING_EXCEEDS_TIME").execute();
+		}
+		catch(Exception e) {
+			//No Data to Processed			
+		}
+	}
 }

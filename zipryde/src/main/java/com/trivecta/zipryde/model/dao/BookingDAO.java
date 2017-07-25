@@ -33,4 +33,6 @@ public interface BookingDAO {
 	public List<Booking> getBookingByDateNotInRequested(Date bookingDate);
 	
 	public Integer getBookingCountByDateAndDriverId(Date bookingDate,Integer driverId);
+	
+	public void updateBookinStatusUnAnswered();
 }

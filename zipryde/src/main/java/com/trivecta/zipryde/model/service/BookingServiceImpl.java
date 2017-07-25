@@ -81,5 +81,8 @@ public class BookingServiceImpl implements BookingService{
 		return bookingDAO.getBookingCountByDateAndDriverId(bookingDate, driverId);
 	}
 	
-	
+	@Transactional
+	public void updateBookinStatusUnAnswered() {
+		bookingDAO.updateBookinStatusUnAnswered();
+	}
 }

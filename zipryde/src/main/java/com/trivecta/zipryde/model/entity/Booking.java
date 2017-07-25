@@ -20,10 +20,10 @@ import java.util.List;
 	@NamedQuery(name="Booking.findByBookingDate", query="SELECT b FROM Booking b where DATE(b.bookingDateTime) = :bookingDate ORDER BY b.id DESC"),
 	@NamedQuery(name="Booking.countByBookingDate", query="SELECT count(b) FROM Booking b where DATE(b.bookingDateTime) = :bookingDate"),
 	@NamedQuery(name="Booking.countByBookingDateAndDriverId", query="SELECT count(b) FROM Booking b where DATE(b.bookingDateTime) = :bookingDate and b.driver.id=:driverId"),
-	@NamedQuery(name="Booking.findByBookingDateNotInRequested", query="SELECT b FROM Booking b where b.bookingStatus.status != 'REQUESTED' and DATE(b.bookingDateTime) = :bookingDate ORDER BY b.id DESC"),
-	@NamedQuery(name="Booking.countByBookingDateNotInRequested", query="SELECT count(b) FROM Booking b where b.bookingStatus.status != 'REQUESTED' and DATE(b.bookingDateTime) = :bookingDate"),
+	@NamedQuery(name="Booking.findByBookingDateNotInRequested", query="SELECT b FROM Booking b where b.bookingStatus.status NOT IN ('REQUESTED','UNANSWERED') and DATE(b.bookingDateTime) = :bookingDate ORDER BY b.id DESC"),
+	@NamedQuery(name="Booking.countByBookingDateNotInRequested", query="SELECT count(b) FROM Booking b where b.bookingStatus.status NOT IN ('REQUESTED','UNANSWERED') and DATE(b.bookingDateTime) = :bookingDate"),
 	@NamedQuery(name="Booking.findByDriverId", query="SELECT b FROM Booking b where b.driver.id=:driverId ORDER BY b.bookingDateTime DESC"),
-	@NamedQuery(name="Booking.findByRiderId", query="SELECT b FROM Booking b where b.rider.id=:riderId ORDER BY b.bookingDateTime DESC")
+	@NamedQuery(name="Booking.findByRiderId", query="SELECT b FROM Booking b where b.rider.id=:riderId and b.bookingStatus.status != 'UNANSWERED' ORDER BY b.bookingDateTime DESC")
 })
 public class Booking implements Serializable {
 	private static final long serialVersionUID = 1L;
