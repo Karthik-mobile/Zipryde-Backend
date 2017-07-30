@@ -30,8 +30,8 @@ public class Utility {
 		}
 	    return null;
 	}
-	/*
+	
 	public static void main(String args[]) {
-		System.out.println(encryptWithMD5("welcome123"));
-	}*/
+		System.out.println(encryptWithMD5("test123"));
+	}
 }

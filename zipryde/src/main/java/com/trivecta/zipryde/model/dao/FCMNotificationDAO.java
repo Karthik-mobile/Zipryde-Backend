@@ -13,6 +13,6 @@ import com.trivecta.zipryde.model.entity.UserType;
 
 public interface FCMNotificationDAO {
 
-	public void pushNotification(String userDeviceToken,String title,Notification notification,boolean isDriver) throws IOException ;
+	public void pushNotification(String userDeviceToken,String title,String notification,boolean isDriver) throws IOException ;
 
 }

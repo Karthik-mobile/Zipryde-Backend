@@ -46,7 +46,8 @@ public class ZipRydeConstants {
 	}
 		
 	public interface NOTIFICATION_TITLE {
-		static String DRIVER_BOOKING_REQUEST = "DRIVER_BOOKING_REQUEST";
+		static String BOOKING_DRIVER_REQUEST = "BOOKING_DRIVER_REQUEST";
+		static String BOOKING_USER_CONFIRMATION = "BOOKING_USER_CONFIRMATION";
 	}
 	
 	public interface NOTIFICATION_TYPE {

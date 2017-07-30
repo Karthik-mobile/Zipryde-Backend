@@ -102,6 +102,8 @@ public class BookingDAOImpl implements BookingDAO{
 		Session session = this.sessionFactory.getCurrentSession();
 		Booking origBooking  = session.find(Booking.class, booking.getId());
 		
+		boolean isDriverAccepted = false;
+
 		if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) || 
 			(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
 			
@@ -126,9 +128,7 @@ public class BookingDAOImpl implements BookingDAO{
 				}
 				session.merge(user);
 				origBooking.setRider(user);	
-				
-				sendBookingConfirmationNotification(booking);
-				deleteAcceptedBookingRequest(origBooking.getId());
+				isDriverAccepted = true;
 			}
 			else {
 				origBooking.setBookingStatus(driverStatus);
@@ -142,6 +142,10 @@ public class BookingDAOImpl implements BookingDAO{
 			}	
 			origBooking.setModifiedDate(new Date());
 			session.merge(origBooking);
+			if(isDriverAccepted) {
+				sendBookingConfirmationNotification(origBooking);
+				deleteAcceptedBookingRequest(origBooking.getId());
+			}
 		}		
 		return origBooking;
 	}
@@ -341,30 +345,30 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	@Async
 	private void sendBookingRequestNotification(Booking booking,User user) {
-		Notification notification = getNotification(booking);
-		notification.setNotificationType(NOTIFICATION_TYPE.BOOKING_REQUEST);
+		/*Notification notification = getNotification(booking);
+		notification.setNotificationType(NOTIFICATION_TYPE.BOOKING_REQUEST);*/
+		String notification = "You have a Booking Request with Id "+booking.getId();
 		try {
-			fCMNotificationDAO.pushNotification(user.getDeviceToken(),ZipRydeConstants.NOTIFICATION_TITLE.DRIVER_BOOKING_REQUEST, notification,true);
+			fCMNotificationDAO.pushNotification(user.getDeviceToken(),ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_USER_CONFIRMATION, notification,true);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO Auto-generated catch block			
 		}
 	}
 	
 	@Async
 	private void sendBookingConfirmationNotification(Booking booking) {
-		Notification notification = getNotification(booking);
+	/*	Notification notification = getNotification(booking);
 		notification.setNotificationType(NOTIFICATION_TYPE.BOOKING_CONFIRMATION);
 		if(booking.getDriver() != null) {
 			notification.setDriverId(booking.getDriver().getId());
 			notification.setDriverName(booking.getDriver().getLastName()+" "+booking.getDriver().getFirstName());
 			notification.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
-		}
+		}*/
 		try {
-			fCMNotificationDAO.pushNotification(booking.getRider().getDeviceToken(),ZipRydeConstants.NOTIFICATION_TITLE.DRIVER_BOOKING_REQUEST, notification,false);
+			String notification = "Your Booking has been Confirmed. Your Booking Id is "+booking.getId();
+			fCMNotificationDAO.pushNotification(booking.getRider().getDeviceToken(),ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_USER_CONFIRMATION, notification,false);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO Auto-generated catch block		
 		}
 	}
 	

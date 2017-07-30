@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.SessionFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -27,36 +28,41 @@ import com.trivecta.zipryde.model.service.AdminService;
 public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 	
 	@Autowired
+	private SessionFactory sessionFactory;
+
+	@Autowired
 	ZiprydeConfigurationDAO ziprydeConfigurationDAO;
 
-	// userDeviceIdKey is the device id you will query from your database     
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 	
 	@Async
-	public void pushNotification(String userDeviceToken,String title,Notification notification,boolean isDriver) throws IOException {
+	public void pushNotification(String userDeviceToken,String title,String notification,boolean isDriver) throws IOException {
 		sendFCMNotification(userDeviceToken,title,notification,isDriver);
 	}
 	
 	@Async
-	private void sendFCMNotification(String userDeviceToken,String title,Notification notification,boolean isDriver) throws IOException {
+	private void sendFCMNotification(String userDeviceToken,String title,String notification,boolean isDriver) throws IOException {
 		//String authKey = AUTH_KEY_FCM;   // You FCM AUTH key
 		//String FMCurl = API_URL_FCM;  
 		String authKey = null;
-		String FMCurl = null;
+		String FMCurl = "https://fcm.googleapis.com/fcm/send";
 		String type  = null;
 		if(isDriver) {
-			type = "NOTIFICATION-DRIVER";
+			type = "NOTIFICATION_DRIVER";
 		}
 		else {
-			type = "NOTIFICATION-RIDER";
+			type = "NOTIFICATION_RIDER";
 		}
 		ZiprydeConfiguration ziprydeConfiguration = ziprydeConfigurationDAO.getZiprydeConfigurationByType(type);
 		if(ziprydeConfiguration != null) {
 			authKey = ziprydeConfiguration.getAccessKey();
 			FMCurl = ziprydeConfiguration.getUrl();
 		}
-		ObjectMapper mapperObj = new ObjectMapper();
+		/*ObjectMapper mapperObj = new ObjectMapper();
 		String notificationJsonStr = mapperObj.writeValueAsString(notification);
-
+*/
 		try {
 			URL url = new URL(FMCurl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -73,7 +79,7 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 			json.put("to",userDeviceToken.trim());
 			JSONObject info = new JSONObject();
 			info.put("title", title);   // Notification title
-			info.put("body", notificationJsonStr); // Notification body
+			info.put("body", notification); // Notification body
 			json.put("notification", info);
 
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -84,7 +90,5 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		catch(Exception e){
 			e.printStackTrace();
 		}
-
 	}
-
 }

@@ -29,6 +29,7 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 		}
 		catch(NoResultException e){
 			//No data found
+			e.printStackTrace();
 		}
 		return ziprydeConfig;
 	}
