@@ -128,7 +128,8 @@ public class UserDAOImpl implements UserDAO {
 		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
 			return getUserByEmailIdPsswdAndUserType(user.getEmailId(),user.getUserType().getType(),user.getPassword());
 		}
-		else {			
+		else {		
+			Session session = this.sessionFactory.getCurrentSession();
 			User newUser =  getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
 			if (USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType())){  
 				if(newUser.getIsEnable() == 0 ) {
@@ -138,6 +139,8 @@ public class UserDAOImpl implements UserDAO {
 					throw new UserValidationException(ErrorMessages.DIVER_NOT_APPROVED);
 				}				
 			}
+			newUser.setDeviceToken(user.getDeviceToken());
+			session.merge(newUser);
 			return newUser;
 		}		
 	}
@@ -275,7 +278,7 @@ public class UserDAOImpl implements UserDAO {
 		origUser.setAlternateNumber(user.getAlternateNumber());
 		origUser.setMobileNumber(user.getMobileNumber());
 		origUser.setEmailId(user.getEmailId());
-
+		origUser.setDeviceToken(user.getDeviceToken());
 		if (user.getIsEnable() == null) {
 			origUser.setIsEnable(0);
 		} else {

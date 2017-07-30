@@ -56,6 +56,7 @@
 				<value>com.trivecta.zipryde.model.entity.UserType</value>
 				<value>com.trivecta.zipryde.model.entity.UserSession</value>
 				<value>com.trivecta.zipryde.model.entity.VehicleDetail</value>
+				<value>com.trivecta.zipryde.model.entity.ZiprydeConfiguration</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

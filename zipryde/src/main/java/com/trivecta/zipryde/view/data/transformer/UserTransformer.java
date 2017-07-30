@@ -194,7 +194,7 @@ public class UserTransformer {
 			user.setLastName(userRequest.getLastName());
 			user.setEmailId(userRequest.getEmailId());
 			user.setAlternateNumber(userRequest.getAlternateNumber());
-				
+			user.setDeviceToken(userRequest.getDeviceToken());		
 			/*if(!USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())){
 				user.setIsEnable(1);
 			}
@@ -296,6 +296,7 @@ public class UserTransformer {
 			user.setPassword(Utility.encryptWithMD5(userRequest.getPassword()));
 			user.setMobileNumber(userRequest.getMobileNumber());
 			user.setEmailId(userRequest.getEmailId());
+			user.setDeviceToken(userRequest.getDeviceToken());
 			UserType userType = new UserType();
 			userType.setType(userRequest.getUserType());
 			user.setUserType(userType);

@@ -18,6 +18,7 @@ import com.trivecta.zipryde.model.entity.Model;
 import com.trivecta.zipryde.model.entity.Nyop;
 import com.trivecta.zipryde.model.entity.PricingMstr;
 import com.trivecta.zipryde.model.entity.PricingType;
+import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 import com.trivecta.zipryde.model.service.AdminService;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.PricingMstrRequest;
@@ -198,6 +199,11 @@ public class AdminTransformer {
 		PricingMstr pricingMstr = setPricingMstrFromRequest(pricingMstrReq);
 		pricingMstr  = adminService.savePricingMstr(pricingMstr);
 		return setPricingMstrResponse(pricingMstr);
+	}
+	
+	public ZiprydeConfiguration getZiprydeConfigurationByType(String type){
+		ZiprydeConfiguration ziprydeConfiguration = adminService.getZiprydeConfigurationByType(type);
+		return ziprydeConfiguration;
 	}
 	
 	private List<PricingMstrResponse>  setPricingMstrResponseFromList(List<PricingMstr> pricingMstrList) {

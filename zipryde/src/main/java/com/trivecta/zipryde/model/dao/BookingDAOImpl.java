@@ -1,6 +1,8 @@
 package com.trivecta.zipryde.model.dao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,17 +11,18 @@ import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.procedure.ProcedureCall;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
+import com.trivecta.zipryde.constants.ZipRydeConstants;
+import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_TYPE;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
+import com.trivecta.zipryde.framework.helper.Notification;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.BookingRequest;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
-import com.trivecta.zipryde.model.entity.PricingMstr;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
@@ -42,6 +45,9 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	@Autowired
 	CommissionDAO commissionDAO;
+	
+	@Autowired
+	FCMNotificationDAO fCMNotificationDAO;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -121,6 +127,7 @@ public class BookingDAOImpl implements BookingDAO{
 				session.merge(user);
 				origBooking.setRider(user);	
 				
+				sendBookingConfirmationNotification(booking);
 				deleteAcceptedBookingRequest(origBooking.getId());
 			}
 			else {
@@ -329,7 +336,54 @@ public class BookingDAOImpl implements BookingDAO{
 		bookingRequest.setCreationDate(new Date());
 		bookingRequest.setIsDeleted(0);
 		session.save(bookingRequest);
+		sendBookingRequestNotification(booking,user);
 	}	
+	
+	@Async
+	private void sendBookingRequestNotification(Booking booking,User user) {
+		Notification notification = getNotification(booking);
+		notification.setNotificationType(NOTIFICATION_TYPE.BOOKING_REQUEST);
+		try {
+			fCMNotificationDAO.pushNotification(user.getDeviceToken(),ZipRydeConstants.NOTIFICATION_TITLE.DRIVER_BOOKING_REQUEST, notification,true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Async
+	private void sendBookingConfirmationNotification(Booking booking) {
+		Notification notification = getNotification(booking);
+		notification.setNotificationType(NOTIFICATION_TYPE.BOOKING_CONFIRMATION);
+		if(booking.getDriver() != null) {
+			notification.setDriverId(booking.getDriver().getId());
+			notification.setDriverName(booking.getDriver().getLastName()+" "+booking.getDriver().getFirstName());
+			notification.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
+		}
+		try {
+			fCMNotificationDAO.pushNotification(booking.getRider().getDeviceToken(),ZipRydeConstants.NOTIFICATION_TITLE.DRIVER_BOOKING_REQUEST, notification,false);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private Notification getNotification(Booking booking) {
+		Notification notification = new Notification();
+		notification.setBookingId(booking.getId());
+		notification.setDistanceInMiles(booking.getDistanceInMiles());
+		notification.setFromLocation(booking.getFrom());
+		notification.setToLocation(booking.getTo());
+		if(booking.getOfferedPrice() != null)
+			notification.setOfferedPrice(booking.getOfferedPrice().setScale(2,RoundingMode.CEILING).doubleValue());
+		if(booking.getSuggestedPrice() != null)
+		notification.setSuggestedPrice(booking.getSuggestedPrice().setScale(2,RoundingMode.CEILING).doubleValue());
+		if(booking.getRider() != null) {
+			notification.setUserId(booking.getRider().getId());
+			notification.setUserName(booking.getRider().getLastName()+" "+booking.getRider().getFirstName());
+		}
+		return notification;
+	}
 	
 	public void updateBookinStatusUnAnswered(){
 		Session session = this.sessionFactory.getCurrentSession();

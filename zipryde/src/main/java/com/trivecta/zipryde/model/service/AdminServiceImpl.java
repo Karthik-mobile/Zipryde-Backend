@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.trivecta.zipryde.model.dao.AdminDAO;
 import com.trivecta.zipryde.model.dao.PricingDAO;
+import com.trivecta.zipryde.model.dao.ZiprydeConfigurationDAO;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
@@ -17,6 +18,7 @@ import com.trivecta.zipryde.model.entity.Nyop;
 import com.trivecta.zipryde.model.entity.PricingMstr;
 import com.trivecta.zipryde.model.entity.PricingType;
 import com.trivecta.zipryde.model.entity.UserType;
+import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 
 @Service("adminService")
 public class AdminServiceImpl implements AdminService {
@@ -25,7 +27,10 @@ public class AdminServiceImpl implements AdminService {
 	AdminDAO adminDAO;
 	
 	@Autowired
-	PricingDAO pricingDAO;
+	PricingDAO pricingDAO;	
+
+	@Autowired
+	ZiprydeConfigurationDAO ziprydeConfigurationDAO;
 	
 	@Transactional
 	public List<Make> getAllMake() {
@@ -80,5 +85,10 @@ public class AdminServiceImpl implements AdminService {
 	@Transactional
 	public PricingMstr savePricingMstr(PricingMstr pricingMstr){
 		return pricingDAO.savePricingMstr(pricingMstr);
+	}
+	
+	@Transactional
+	public ZiprydeConfiguration getZiprydeConfigurationByType(String type) {
+		return ziprydeConfigurationDAO.getZiprydeConfigurationByType(type);
 	}
 }

@@ -11,6 +11,7 @@ import com.trivecta.zipryde.model.entity.Nyop;
 import com.trivecta.zipryde.model.entity.PricingMstr;
 import com.trivecta.zipryde.model.entity.PricingType;
 import com.trivecta.zipryde.model.entity.UserType;
+import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 
 public interface AdminService {
 
@@ -35,4 +36,6 @@ public interface AdminService {
 	public List<PricingMstr> getAllPricingMstr();
 	
 	public PricingMstr savePricingMstr(PricingMstr pricingMstr);
+	
+	public ZiprydeConfiguration getZiprydeConfigurationByType(String type);
 }

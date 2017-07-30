@@ -1,6 +1,7 @@
 package com.trivecta.zipryde.view.data.transformer;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -394,7 +395,7 @@ public class BookingTransformer {
 		if(booking.getAcceptedDateTime() != null) {
 			bookingResponse.setAcceptedDateTime(dateFormat.format(booking.getAcceptedDateTime()));
 			if(booking.getAcceptedPrice() != null){
-				bookingResponse.setAcceptedPrice(booking.getAcceptedPrice().doubleValue());
+				bookingResponse.setAcceptedPrice(booking.getAcceptedPrice().setScale(2,RoundingMode.CEILING).doubleValue());
 			}
 		}
 		
@@ -439,10 +440,10 @@ public class BookingTransformer {
 		bookingResponse.setNoOfPassengers(booking.getNoOfPassengers());
 		
 		if(booking.getSuggestedPrice() != null)
-			bookingResponse.setSuggestedPrice(booking.getSuggestedPrice().doubleValue());
+			bookingResponse.setSuggestedPrice(booking.getSuggestedPrice().setScale(2,RoundingMode.CEILING).doubleValue());
 		
 		if(booking.getOfferedPrice() != null)
-			bookingResponse.setOfferedPrice(booking.getOfferedPrice().doubleValue());
+			bookingResponse.setOfferedPrice(booking.getOfferedPrice().setScale(2,RoundingMode.CEILING).doubleValue());
 		
 		return bookingResponse;
 	}

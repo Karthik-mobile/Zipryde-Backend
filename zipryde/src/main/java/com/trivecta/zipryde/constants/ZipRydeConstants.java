@@ -41,5 +41,16 @@ public class ZipRydeConstants {
 		static String PENDING = "PENDING";
 	}
 	
+	public interface CONFIGURATION {
+		static String FCM = "FCM";
+	}
+		
+	public interface NOTIFICATION_TITLE {
+		static String DRIVER_BOOKING_REQUEST = "DRIVER_BOOKING_REQUEST";
+	}
 	
+	public interface NOTIFICATION_TYPE {
+		static String BOOKING_REQUEST  = "BOOKING_REQUEST";
+		static String BOOKING_CONFIRMATION = "BOOKING_CONFIRMATION";
+	}
 }

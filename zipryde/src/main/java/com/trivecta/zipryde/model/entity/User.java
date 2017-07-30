@@ -122,6 +122,8 @@ public class User implements Serializable {
 	private DriverProfile driverProfile;
 
 	private Integer cancellationCount;
+
+	private String deviceToken;
 	
 	public User() {
 	}
@@ -450,6 +452,14 @@ public class User implements Serializable {
 
 	public void setCancellationCount(Integer cancellationCount) {
 		this.cancellationCount = cancellationCount;
+	}
+
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
 	}
 
 

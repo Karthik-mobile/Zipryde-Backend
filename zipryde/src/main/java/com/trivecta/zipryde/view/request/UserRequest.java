@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "password", "alternateNumber",
 		"emailId", "driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil", "defaultPercentageAccepted",
-		"isEnable", "status", "comments", "restriction", "licenseFrontImage", "licenseBackImage", "userImage", "deviceToken"
+		"isEnable", "status", "comments", "restriction", "deviceToken", "licenseFrontImage", "licenseBackImage", "userImage"
 		// "licenseImages"
 })
 public class UserRequest {
