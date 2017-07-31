@@ -3,13 +3,14 @@ package com.trivecta.zipryde.model.service;
 import java.util.Date;
 import java.util.List;
 
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.Booking;
 
 public interface BookingService {
 
 	public Booking createBooking(Booking booking);
 	
-	public Booking updateBookingDriverStatus(Booking booking);
+	public Booking updateBookingDriverStatus(Booking booking) throws UserValidationException ;
 	
 	public Booking updateBookingStatus(Booking booking);
 	

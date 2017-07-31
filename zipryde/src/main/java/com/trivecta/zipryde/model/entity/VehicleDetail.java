@@ -16,8 +16,8 @@ import java.util.List;
 	@NamedQuery(name="VehicleDetail.findAll", query="SELECT v FROM VehicleDetail v"),
 	@NamedQuery(name="VehicleDetail.findByVIN", query="SELECT v FROM VehicleDetail v where v.vin = :vin"),
 	@NamedQuery(name="VehicleDetail.findByLicensePlateNumber", query="SELECT v FROM VehicleDetail v where v.licensePlateNo = :licensePlateNo"),
-	@NamedQuery(name="VehicleDetail.findAvailableVehicle", query="SELECT v FROM VehicleDetail v where v.isEnable = 1 and v.id not in "
-			+ "(SELECT d.vehicleDetail.id FROM DriverVehicleAssociation d where d.toDate is null or DATE(d.toDate) > DATE(NOW()))")
+	/*@NamedQuery(name="VehicleDetail.findAvailableVehicle", query="SELECT v FROM VehicleDetail v where  v.id not in "
+			+ "(SELECT d.vehicleDetail.id FROM DriverVehicleAssociation d where d.toDate is null or DATE(d.toDate) > DATE(NOW()))")*/
 })
 public class VehicleDetail implements Serializable {
 	private static final long serialVersionUID = 1L;

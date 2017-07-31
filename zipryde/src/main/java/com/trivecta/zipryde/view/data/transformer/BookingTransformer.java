@@ -19,6 +19,7 @@ import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants.PAYMENT;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.CabType;
@@ -135,7 +136,7 @@ public class BookingTransformer {
 		}	
 	}
 	
-	public BookingResponse updateBookingDriverStatus(BookingRequest bookingRequest) throws MandatoryValidationException {
+	public BookingResponse updateBookingDriverStatus(BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		
 		if(bookingRequest.getBookingId() == null) {

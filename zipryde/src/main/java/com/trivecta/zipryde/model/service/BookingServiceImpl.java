@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.dao.BookingDAO;
 import com.trivecta.zipryde.model.entity.Booking;
 
@@ -22,7 +23,7 @@ public class BookingServiceImpl implements BookingService{
 	}
 	
 	@Transactional
-	public Booking updateBookingDriverStatus(Booking booking) {
+	public Booking updateBookingDriverStatus(Booking booking) throws UserValidationException {
 		return bookingDAO.updateBookingDriverStatus(booking);
 	}
 

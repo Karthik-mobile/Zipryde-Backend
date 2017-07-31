@@ -77,11 +77,19 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 
 			JSONObject json = new JSONObject();
 			json.put("to",userDeviceToken.trim());
+			json.put("time_to_live", 180);
+			
 			JSONObject info = new JSONObject();
 			info.put("title", title);   // Notification title
-			info.put("body", notification); // Notification body
+			info.put("body", notification); // Notification body			
+			info.put("click_action", "OPEN_ACTIVITY_1");			
 			json.put("notification", info);
-
+			
+			JSONObject data = new JSONObject();
+			data.put("title", title);   // Notification title
+			data.put("body", notification);
+			json.put("data", data);
+			
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 			wr.write(json.toString());
 			wr.flush();

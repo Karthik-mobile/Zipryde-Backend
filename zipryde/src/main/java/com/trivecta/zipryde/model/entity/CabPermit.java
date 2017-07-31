@@ -11,7 +11,15 @@ import java.util.Date;
  */
 @Entity
 @Table(name="CAB_PERMIT")
-@NamedQuery(name="CabPermit.findAll", query="SELECT c FROM CabPermit c")
+@NamedQueries({
+	@NamedQuery(name="CabPermit.findAll", query="SELECT c FROM CabPermit c"),
+	@NamedQuery(name="VehicleDetail.findAvailableVehicle", query="SELECT c.vehicleDetail FROM CabPermit c where "
+			+ "(DATE(c.vehicleDetail.insuranceValidUntil) >= DATE(NOW()) OR DATE(c.permitValidUntil) >= DATE(NOW()))"
+			+ " and c.vehicleDetail.id not in "
+			+ "(SELECT d.vehicleDetail.id FROM DriverVehicleAssociation d where d.toDate is null or DATE(d.toDate) > DATE(NOW()))"),
+
+})
+	
 public class CabPermit implements Serializable {
 	private static final long serialVersionUID = 1L;
 
