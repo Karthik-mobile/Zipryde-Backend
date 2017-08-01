@@ -475,7 +475,7 @@ public class UserTransformer {
 			driverVehicleResp.setCabType(newAssociation.getVehicleDetail().getCabType().getType());
 			driverVehicleResp.setCabSeatingCapacity(newAssociation.getVehicleDetail().getSeatingCapacity());
 			driverVehicleResp.setVin(newAssociation.getVehicleDetail().getVin());
-			driverVehicleResp.setLicensePlateNumber(newAssociation.getVehicleDetail().getLicensePlateNo());
+			driverVehicleResp.setVehicleNumber(newAssociation.getVehicleDetail().getVehicleNumber());
 			driverVehicleResp.setDriverId(newAssociation.getUser().getId());
 			driverVehicleResp.setDriverName(
 					ValidationUtil.getFullName(newAssociation.getUser().getFirstName(),newAssociation.getUser().getLastName()));
@@ -500,11 +500,11 @@ public class UserTransformer {
 		userResponse.setIsEnable(user.getIsEnable());
 		userResponse.setCancellationCount(user.getCancellationCount());
 		userResponse.setUserType(user.getUserType().getType());
-					
+		
 		if(USERTYPE.DRIVER.equalsIgnoreCase(userResponse.getUserType()) && user.getDriverProfile() != null ) {
 			userResponse.setDriverProfileId(user.getDriverProfile().getId());
 			userResponse.setLicenseNo(user.getDriverProfile().getLicenseNo());
-				
+			userResponse.setVehicleNumber(user.getDriverProfile().getVehicleNumber());		
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 				
 			if(user.getDriverProfile().getLicenseIssuedOn() != null) {

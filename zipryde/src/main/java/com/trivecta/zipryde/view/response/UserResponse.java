@@ -9,8 +9,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "alternateNumber", "emailId",
-		"driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil", "licenseFrontImage", "licenseBackImage",
-		"defaultPercentageAccepted", "isLoggedIn", "isEnable","cancellationCount", "status", "comments", "restriction", "userImage" })
+		"driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil","licenseFrontImage", "licenseBackImage",
+		"defaultPercentageAccepted", "isLoggedIn", "isEnable","cancellationCount", "status", "comments", "restriction", "vehicleNumber",
+		"licenseFrontImage", "licenseBackImage", "userImage" })
 
 public class UserResponse {
 
@@ -77,6 +78,9 @@ public class UserResponse {
 	
 	@JsonProperty("cancellationCount")
 	private Integer cancellationCount;
+	
+	@JsonProperty("vehicleNumber")
+	private String vehicleNumber;
 
 	public Number getUserId() {
 		return userId;
@@ -244,6 +248,14 @@ public class UserResponse {
 
 	public void setCancellationCount(Integer cancellationCount) {
 		this.cancellationCount = cancellationCount;
+	}
+
+	public String getVehicleNumber() {
+		return vehicleNumber;
+	}
+
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
 	}
 
 }

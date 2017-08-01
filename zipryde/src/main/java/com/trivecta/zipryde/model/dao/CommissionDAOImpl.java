@@ -67,8 +67,7 @@ public class CommissionDAOImpl implements CommissionDAO{
 	
 	@Override
 	@Async
-	public void updateCommision(Booking booking){
-		
+	public void updateCommision(Booking booking){		
 		Session session = this.sessionFactory.getCurrentSession();
 		CommissionMstr commissionMstr = (CommissionMstr)session.getNamedQuery("CommissionMstr.getCommissionMstrForDate")
 				.getSingleResult();
@@ -77,10 +76,7 @@ public class CommissionDAOImpl implements CommissionDAO{
 			commission = (Commission)session.getNamedQuery("Commission.getLatest")
 					.setParameter("driverId",booking.getDriver().getId()).getSingleResult();
 		}catch(NoResultException nre) {
-			System.out.println("New Commission rowto be created");
-		}
-				
-		
+		}					
 		if(commission == null) {
 			commission = getNewCommissionObject();
 		}
@@ -93,8 +89,7 @@ public class CommissionDAOImpl implements CommissionDAO{
 		if(commission.getNoOfMiles() >= commissionMstr.getNoOfMiles() || commission.getNoOfTrips() >= commissionMstr.getNoOfTrips()) {
 			commission.setCalculatedDate(new Date());
 			commission.setStatus(PAYMENT.PENDING);
-		}
-		
+		}		
 		session.saveOrUpdate(commission);		
 	}
 

@@ -16,7 +16,7 @@ public class DriverVehicleAssociationResponse {
 	
 	private String  vin;
 	
-	private String licensePlateNumber;
+	private String vehicleNumber;
 	
 	private Number driverId;
 	
@@ -81,15 +81,7 @@ public class DriverVehicleAssociationResponse {
 	public void setToDate(String toDate) {
 		this.toDate = toDate;
 	}
-
-	public String getLicensePlateNumber() {
-		return licensePlateNumber;
-	}
-
-	public void setLicensePlateNumber(String licensePlateNumber) {
-		this.licensePlateNumber = licensePlateNumber;
-	}
-
+	
 	public String getCabType() {
 		return cabType;
 	}
@@ -104,6 +96,14 @@ public class DriverVehicleAssociationResponse {
 
 	public void setCabSeatingCapacity(Number cabSeatingCapacity) {
 		this.cabSeatingCapacity = cabSeatingCapacity;
+	}
+
+	public String getVehicleNumber() {
+		return vehicleNumber;
+	}
+
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
 	}
 
 }

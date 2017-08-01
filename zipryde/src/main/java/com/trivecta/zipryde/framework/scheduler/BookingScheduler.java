@@ -16,6 +16,11 @@ public class BookingScheduler {
 	
 	@Scheduled(fixedRate = 300000) // 5 Minutes
     public void updateBookinStatusUnAnswered() {
-		bookingService.updateBookinStatusUnAnswered();
+		try {
+			bookingService.updateBookinStatusUnAnswered();
+		}
+		catch(Exception e){
+			//
+		}
     }
 }

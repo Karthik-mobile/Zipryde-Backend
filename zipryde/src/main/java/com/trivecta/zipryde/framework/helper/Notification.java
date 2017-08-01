@@ -1,129 +1,18 @@
 package com.trivecta.zipryde.framework.helper;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ 
-	"notificationType",
-	"bookingId",
-	"offeredPrice",
-	"suggestedPrice",
-	"fromLocation",
-	"toLocation",
-	"distanceInMiles",
-	"userName",
-	"driverName",
-	"driverId",
-	"userId",
-	"vehicleNumber"
-})
 public class Notification {
 	
 	private String notificationType;
 
-	private  Integer bookingId;
+	private Integer bookingId;
 	
-	private double offeredPrice;
+	private String title;
 	
-	private double suggestedPrice;
+	private String body;
 	
-	private String fromLocation;
+	private boolean isDriver;
 	
-	private String toLocation;
-	
-	private double distanceInMiles;
-	
-	private String userName;
-	
-	private String driverName;
-	
-	private Integer  driverId;
-	
-	private Integer userId;
-
-	private String vehicleNumber;
-
-	
-	public Integer getBookingId() {
-		return bookingId;
-	}
-
-	public void setBookingId(Integer bookingId) {
-		this.bookingId = bookingId;
-	}
-
-	public double getOfferedPrice() {
-		return offeredPrice;
-	}
-
-	public void setOfferedPrice(double offeredPrice) {
-		this.offeredPrice = offeredPrice;
-	}
-
-	public double getSuggestedPrice() {
-		return suggestedPrice;
-	}
-
-	public void setSuggestedPrice(double suggestedPrice) {
-		this.suggestedPrice = suggestedPrice;
-	}
-
-	public String getFromLocation() {
-		return fromLocation;
-	}
-
-	public void setFromLocation(String fromLocation) {
-		this.fromLocation = fromLocation;
-	}
-
-	public String getToLocation() {
-		return toLocation;
-	}
-
-	public void setToLocation(String toLocation) {
-		this.toLocation = toLocation;
-	}
-
-	public double getDistanceInMiles() {
-		return distanceInMiles;
-	}
-
-	public void setDistanceInMiles(double distanceInMiles) {
-		this.distanceInMiles = distanceInMiles;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getDriverName() {
-		return driverName;
-	}
-
-	public void setDriverName(String driverName) {
-		this.driverName = driverName;
-	}
-
-	public Integer getDriverId() {
-		return driverId;
-	}
-
-	public void setDriverId(Integer driverId) {
-		this.driverId = driverId;
-	}
-
-	public Integer getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
+	private String ziprydeConfigType;
 
 	public String getNotificationType() {
 		return notificationType;
@@ -133,13 +22,44 @@ public class Notification {
 		this.notificationType = notificationType;
 	}
 
-	public String getVehicleNumber() {
-		return vehicleNumber;
+	public Integer getBookingId() {
+		return bookingId;
 	}
 
-	public void setVehicleNumber(String vehicleNumber) {
-		this.vehicleNumber = vehicleNumber;
+	public void setBookingId(Integer bookingId) {
+		this.bookingId = bookingId;
 	}
-	
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public boolean isDriver() {
+		return isDriver;
+	}
+
+	public void setDriver(boolean isDriver) {
+		this.isDriver = isDriver;
+	}
+
+	public String getZiprydeConfigType() {
+		return ziprydeConfigType;
+	}
+
+	public void setZiprydeConfigType(String ziprydeConfigType) {
+		this.ziprydeConfigType = ziprydeConfigType;
+	}
 	
 }

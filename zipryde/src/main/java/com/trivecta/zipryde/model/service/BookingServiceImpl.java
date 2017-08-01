@@ -28,7 +28,7 @@ public class BookingServiceImpl implements BookingService{
 	}
 
 	@Transactional
-	public Booking updateBookingStatus(Booking booking) {
+	public Booking updateBookingStatus(Booking booking) throws UserValidationException {
 		return bookingDAO.updateBookingStatus(booking);
 	}
 

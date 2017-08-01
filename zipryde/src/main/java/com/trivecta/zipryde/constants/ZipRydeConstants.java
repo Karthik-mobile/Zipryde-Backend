@@ -46,12 +46,19 @@ public class ZipRydeConstants {
 	}
 		
 	public interface NOTIFICATION_TITLE {
-		static String BOOKING_DRIVER_REQUEST = "BOOKING_DRIVER_REQUEST";
-		static String BOOKING_USER_CONFIRMATION = "BOOKING_USER_CONFIRMATION";
+		static String BOOKING_DRIVER_REQUEST = "ZIPRYDE DRIVER REQUEST";
+		static String BOOKING_USER_CONFIRMATION = "ZIPRYDE USER CONFIRMATION";
+		static String BOOKING_DRIVER_ONTRIP = "ZIPRYDE BOOKING ON TRIP";
+		static String BOOKING_DRIVER_COMPLETED = "ZIPRYDE BOOKING COMPLETED";
+		static String BOOKING_PAYMENT_SUCCESS = "ZIPRYDE PAYMENT SUCCESS";
+		static String BOOKING_CANCELLED = "ZIPRYDE BOOKING CANCELLED";
 	}
 	
-	public interface NOTIFICATION_TYPE {
-		static String BOOKING_REQUEST  = "BOOKING_REQUEST";
-		static String BOOKING_CONFIRMATION = "BOOKING_CONFIRMATION";
+	public interface NOTIFICATION_MESSAGE {
+		static String BOOKING_DRIVER_REQUEST = "You have a Booking Request with Id ";
+		static String BOOKING_USER_CONFIRMATION = "Your Booking has been Confirmed. Your Booking Id is ";
+		static String BOOKING_STATUS_CHANGE = "Booking status changed for Id is ";
+		static String BOOKING_PAYMENT_SUCCESS="Payment Success for Booking Id ";
+		static String BOOKING_CANCELLED = "Your Booking has been Cancelled";
 	}
 }

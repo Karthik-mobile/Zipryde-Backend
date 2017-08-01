@@ -1,3 +1,4 @@
+
 package com.trivecta.zipryde.model.dao;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ public interface BookingDAO {
 	
 	public Booking updateBookingDriverStatus(Booking booking) throws UserValidationException;
 	
-	public Booking updateBookingStatus(Booking booking);
+	public Booking updateBookingStatus(Booking booking) throws UserValidationException;
 	
 	public Booking getBookingById(int bookingId);
 	

@@ -95,4 +95,6 @@ public interface ErrorMessages {
 	static String BOOKING_ACCEPTED_ALREADY = "Booking has been Accepted Already";
 	
 	static String BOOKING_CANCELLED = "Booking hs been Cancelled";
+	
+	static String BOOKING_CANNOT_CANCEL = "Booking cannot get cancel";
 }

@@ -18,6 +18,9 @@ public class PaymentDAOImpl implements PaymentDAO {
 	
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	FCMNotificationDAO fCMNotificationDAO;
 
 	@Override
 	public void savePayment(Payment payment) {		
@@ -25,6 +28,7 @@ public class PaymentDAOImpl implements PaymentDAO {
 		Booking origBooking = session.find(Booking.class, payment.getBooking().getId());
 		payment.setBooking(origBooking);
 		session.saveOrUpdate(payment);
+		fCMNotificationDAO.sendBookingStatusNotification(origBooking);
 	}
 
 	@Override

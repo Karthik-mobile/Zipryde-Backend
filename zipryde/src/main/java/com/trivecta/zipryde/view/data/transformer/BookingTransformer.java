@@ -169,7 +169,7 @@ public class BookingTransformer {
 		}
 	}
 	
-	public BookingResponse updateBookingStatus(BookingRequest bookingRequest) throws MandatoryValidationException {
+	public BookingResponse updateBookingStatus(BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		
 		if(bookingRequest.getBookingId() == null) {
