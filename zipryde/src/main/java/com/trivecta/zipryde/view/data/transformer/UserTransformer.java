@@ -521,6 +521,7 @@ public class UserTransformer {
 			userResponse.setIsLoggedIn(0);
 			userResponse.setDefaultPercentageAccepted(user.getDriverProfile().getDefaultPercentage());
 				
+			userResponse.setStatusCode(user.getDriverProfile().getStatus().getStatus());
 			userResponse.setStatus(user.getDriverProfile().getStatus().getStatusValue());
 			userResponse.setComments(user.getDriverProfile().getComments());
 			

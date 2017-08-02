@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"suggestedPrice",
 	"offeredPrice",
 	"acceptedPrice", 
+	"bookingStatusCode", 
+	"driverStatusCode",
 	"bookingStatus", 
 	"driverStatus",
 	"noOfPassengers"
@@ -67,6 +69,12 @@ public class BookingResponse {
 	
 	@JsonProperty("acceptedPrice")
 	private Double acceptedPrice;
+	
+	@JsonProperty("bookingStatusCode")
+	private String bookingStatusCode;
+	
+	@JsonProperty("driverStatusCode")
+	private String driverStatusCode;
 	
 	@JsonProperty("bookingStatus")
 	private String bookingStatus;
@@ -308,6 +316,22 @@ public class BookingResponse {
 
 	public void setDriverImage(String driverImage) {
 		this.driverImage = driverImage;
+	}
+
+	public String getBookingStatusCode() {
+		return bookingStatusCode;
+	}
+
+	public void setBookingStatusCode(String bookingStatusCode) {
+		this.bookingStatusCode = bookingStatusCode;
+	}
+
+	public String getDriverStatusCode() {
+		return driverStatusCode;
+	}
+
+	public void setDriverStatusCode(String driverStatusCode) {
+		this.driverStatusCode = driverStatusCode;
 	}
 
 	

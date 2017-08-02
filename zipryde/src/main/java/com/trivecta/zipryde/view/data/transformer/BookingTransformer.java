@@ -402,6 +402,7 @@ public class BookingTransformer {
 		}
 		
 		if(booking.getBookingStatus() != null) {
+			bookingResponse.setBookingStatusCode(booking.getBookingStatus().getStatus());
 			bookingResponse.setBookingStatus(booking.getBookingStatus().getStatusValue());
 		}
 		
@@ -410,8 +411,10 @@ public class BookingTransformer {
 			bookingResponse.setCabType(booking.getCabType().getType());
 		}
 		
-		if(booking.getDriverStatus() != null)
+		if(booking.getDriverStatus() != null){
+			bookingResponse.setDriverStatusCode(booking.getDriverStatus().getStatus());
 			bookingResponse.setDriverStatus(booking.getDriverStatus().getStatusValue());
+		}
 		
 		if(booking.getBookingDateTime() != null) 
 			bookingResponse.setBookingDateTime(dateFormat.format(booking.getBookingDateTime()));
