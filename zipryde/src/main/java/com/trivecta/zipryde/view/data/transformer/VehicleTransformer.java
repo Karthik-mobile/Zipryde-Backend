@@ -203,7 +203,7 @@ public class VehicleTransformer {
 		cabResponse.setVin(vehicleDetail.getVin());
 		cabResponse.setVehicleNumber(vehicleDetail.getVehicleNumber());
 		cabResponse.setYearOfManufactured(dateFormat.format(vehicleDetail.getManufacturedYear()));
-		cabResponse.setStatus(vehicleDetail.getStatus().getStatus());
+		cabResponse.setStatus(vehicleDetail.getStatus().getStatusValue());
 		cabResponse.setComments(vehicleDetail.getComments());
 		return cabResponse;
 	}

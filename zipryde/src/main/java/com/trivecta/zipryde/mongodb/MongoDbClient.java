@@ -1,7 +1,15 @@
 package com.trivecta.zipryde.mongodb;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,9 +59,12 @@ public class MongoDbClient {
 		circle.add(coordinates);
 		circle.add(noOfMiles);
 		
-		FindIterable<Document> findIterable = mongoCollection.find(new Document("isActive",1).append("loc", 
-				new Document("$geoWithin", 
-						 new Document("$centerSphere",circle))));
+	/*	Instant nextInstant = LocalDateTime.of(LocalDate.parse(""), LocalTime.MIDNIGHT).atZone(ZoneId.systemDefault()).toInstant();
+		Instant startInstant = nextInstant.minus(5, ChronoUnit.MINUTES);*/
+			
+		FindIterable<Document> findIterable = mongoCollection.find(new Document("isActive",1)
+				//.append("lastUpdatedTime", new Document("$gte", startInstant).append("$lte",nextInstant)
+				.append("loc",new Document("$geoWithin",new Document("$centerSphere",circle))));
 		findIterable.forEach(new Block<Document>() {
 			public void apply(final Document document) {
 				Document geoDoc = (Document) document.get("loc");
@@ -62,6 +73,7 @@ public class MongoDbClient {
 				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));
 				userResponse.setLongitude(new BigDecimal(geoDoc.get("lon").toString()));
 				userResponseList.add(userResponse);
+				System.out.println(document.get("userId") + "--->"+document.get("lastUpdatedTime"));
 				/*System.out.println(document.get("userId") + "--->" + document.get("loc"));
 				System.out.println(geoDoc.get("lon")+" -- > "+geoDoc.get("lat"));*/
 			}			
@@ -70,24 +82,24 @@ public class MongoDbClient {
 		return userResponseList;
 	}
 	
-	@Async
+/*	@Async
 	public void insertDriverSession(String userId,Double longitude,Double latitude) {
 		// insert a document
 		Document document = new Document("userId", userId).append("isActive", 1).append("loc", new Document("lon",longitude).append("lat", latitude));
 		mongoCollection.insertOne(document);
-	}
+	}*/
 	
 	@Async
 	public void updateDriverOnlineStatus(String userId,int isActive) {
 		Bson filter = Filters.eq("userId", userId);
-		mongoCollection.updateOne(filter, new Document("$set", new Document("isActive", isActive)));
+		mongoCollection.updateOne(filter, new Document("$set", new Document("isActive", isActive).append("lastUpdatedTime", new Date())));
 	}
 	
 	@Async
 	public void updateDriverSession(String userId,Double longitude,Double latitude) {
 		
 		Bson filter = Filters.eq("userId", userId);
-		Bson toUpdate = new Document("loc",new Document("lon",longitude).append("lat", latitude));
+		Bson toUpdate = new Document("loc",new Document("lon",longitude).append("lat", latitude)).append("lastUpdatedTime", new Date());
 		Bson toInsert = new Document("isActive",1);
 		UpdateOptions options = new UpdateOptions().upsert(true);
 		mongoCollection.updateOne(filter, new Document("$set",toUpdate).append("$setOnInsert",toInsert),options);

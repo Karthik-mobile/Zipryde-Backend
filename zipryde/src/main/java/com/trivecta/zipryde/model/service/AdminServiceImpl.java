@@ -91,4 +91,9 @@ public class AdminServiceImpl implements AdminService {
 	public ZiprydeConfiguration getZiprydeConfigurationByType(String type) {
 		return ziprydeConfigurationDAO.getZiprydeConfigurationByType(type);
 	}
+	
+	@Transactional
+	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) {
+		return ziprydeConfigurationDAO.saveZiprydeConfiguration(ziprydeConfiguration);
+	}
 }

@@ -319,8 +319,8 @@ public class ZiprydeController {
     }
 	
 	@RequestMapping(value = "/payCommission")  
-    public @ResponseStatus(value = HttpStatus.OK)  void payCommission(@RequestBody CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {
-		paymentTransformer.saveCommission(commonRequest);
+    public @ResponseBody CommissionResponse payCommission(@RequestBody CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {
+		return paymentTransformer.saveCommission(commonRequest);
     }
 	
 	@RequestMapping(value = "/getAllCommission")  

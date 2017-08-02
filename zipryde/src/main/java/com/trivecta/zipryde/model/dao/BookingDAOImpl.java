@@ -153,7 +153,6 @@ public class BookingDAOImpl implements BookingDAO{
 					deleteAcceptedBookingRequest(origBooking.getId());
 				}
 				else {
-					System.out.println(" Inside Status Update");
 					fCMNotificationDAO.sendBookingStatusNotification(origBooking);
 				}
 			}

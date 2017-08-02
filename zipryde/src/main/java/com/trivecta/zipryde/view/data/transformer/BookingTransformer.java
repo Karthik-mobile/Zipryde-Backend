@@ -382,10 +382,11 @@ public class BookingTransformer {
 		bookingResponse.setBookingId(booking.getId());
 		bookingResponse.setCustomerId(booking.getRider().getId());
 		bookingResponse.setCustomerName(booking.getRider().getFirstName()+" "+booking.getRider().getLastName());
-	
+		bookingResponse.setCustomerMobileNumber(booking.getRider().getMobileNumber());
 		if(booking.getDriver() != null) {
 			bookingResponse.setDriverId(booking.getDriver().getId());
 			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
+			bookingResponse.setDriverMobileNumber(booking.getDriver().getMobileNumber());
 			if(booking.getDriver().getDriverProfile() != null) {
 				bookingResponse.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
 				if(booking.getDriver().getDriverProfile().getDriverProfileImage() != null)
@@ -401,7 +402,7 @@ public class BookingTransformer {
 		}
 		
 		if(booking.getBookingStatus() != null) {
-			bookingResponse.setBookingStatus(booking.getBookingStatus().getStatus());
+			bookingResponse.setBookingStatus(booking.getBookingStatus().getStatusValue());
 		}
 		
 		if(booking.getCabType() != null) {
@@ -410,7 +411,7 @@ public class BookingTransformer {
 		}
 		
 		if(booking.getDriverStatus() != null)
-			bookingResponse.setDriverStatus(booking.getDriverStatus().getStatus());
+			bookingResponse.setDriverStatus(booking.getDriverStatus().getStatusValue());
 		
 		if(booking.getBookingDateTime() != null) 
 			bookingResponse.setBookingDateTime(dateFormat.format(booking.getBookingDateTime()));

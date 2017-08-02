@@ -26,30 +26,35 @@ public class CommissionDAOImpl implements CommissionDAO{
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void payCommission(Commission commission) throws NoResultEntityException {
-		Session session = this.sessionFactory.getCurrentSession();
-		
-		Commission commissionOrg = session.find(Commission.class, commission.getId());
-		if(commissionOrg == null)
+	public Commission payCommission(Commission commission) throws NoResultEntityException {
+		Session session = this.sessionFactory.getCurrentSession();		
+		Commission commissionOrg = null;
+		try {
+			commissionOrg = session.find(Commission.class, commission.getId());
+		}
+		catch(Exception e){
 			throw new NoResultEntityException(ErrorMessages.COMMISSION_ID_INVALID);
+		}
 		commissionOrg.setStatus(PAYMENT.PAID);
 		commissionOrg.setPaidDate(new Date());
 		session.merge(commissionOrg);
+		return commissionOrg;
 	}
 
 	@Override
-	public void saveCommissionMaster(CommissionMstr commissionMstr) {
+	public CommissionMstr saveCommissionMaster(CommissionMstr commissionMstr) {
 		Session session = this.sessionFactory.getCurrentSession();
 		CommissionMstr orgCommissionMstr = getCommissionMstr();
 		if(orgCommissionMstr == null) {
 			commissionMstr.setFromDate(new Date());
-			session.save(commissionMstr);
+			commissionMstr = (CommissionMstr)session.save(commissionMstr);
+			return commissionMstr;
 		}else {
 			orgCommissionMstr.setCommisionPercentage(commissionMstr.getCommisionPercentage());
 			orgCommissionMstr.setNoOfMiles(commissionMstr.getNoOfMiles());
 			orgCommissionMstr.setNoOfTrips(commissionMstr.getNoOfTrips());
-			session.merge(orgCommissionMstr);
-			commissionMstr = orgCommissionMstr;
+			orgCommissionMstr = (CommissionMstr) session.merge(orgCommissionMstr);
+			return orgCommissionMstr;
 		}		
 	}
 

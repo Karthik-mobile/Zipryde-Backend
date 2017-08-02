@@ -21,8 +21,8 @@ public class CommissionServiceImpl implements CommissionService {
 	
 	@Override
 	@Transactional
-	public void payCommission(Commission commission) throws NoResultEntityException {
-		commissionDAO.payCommission(commission);
+	public Commission payCommission(Commission commission) throws NoResultEntityException {
+		return commissionDAO.payCommission(commission);
 	}
 
 
@@ -42,8 +42,8 @@ public class CommissionServiceImpl implements CommissionService {
 
 	@Override
 	@Transactional
-	public void saveCommissionMaster(CommissionMstr commissionMstr) {
-		commissionDAO.saveCommissionMaster(commissionMstr);
+	public CommissionMstr saveCommissionMaster(CommissionMstr commissionMstr) {
+		return commissionDAO.saveCommissionMaster(commissionMstr);
 		
 	}
 

@@ -115,13 +115,6 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		}
 	}
 	
-	
-  /*@Async
-	public void pushNotification(String userDeviceToken,String title,String notification,boolean isDriver) throws IOException {
-		sendFCMNotification(userDeviceToken,title,notification,isDriver);
-	}*/
-	
-	@Async
 	private void sendFCMNotification(String userDeviceToken,Notification notification) throws IOException {
 		String authKey = null;
 		String FMCurl = "https://fcm.googleapis.com/fcm/send";

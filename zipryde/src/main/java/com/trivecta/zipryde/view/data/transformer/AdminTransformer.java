@@ -142,7 +142,8 @@ public class AdminTransformer {
 			    NYOPResponse nyopResponse = new NYOPResponse();
 			    nyopResponse.setPercentage(entry.getKey());
 			    nyopResponse.setPrice(String.valueOf(entry.getValue()));
-			    
+			    nyopResponse.setStatus(true);
+			    nyopResponse.setErrorMessage("");
 			    nyopResponseList.add(nyopResponse);
 			}
 			

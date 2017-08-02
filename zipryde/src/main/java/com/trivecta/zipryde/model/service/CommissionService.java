@@ -9,10 +9,10 @@ import com.trivecta.zipryde.model.entity.CommissionMstr;
 
 public interface CommissionService {
 	
-	public void payCommission(Commission commission) throws NoResultEntityException;
+	public Commission payCommission(Commission commission) throws NoResultEntityException;
 	public Commission getCommission(int commissionId);
 	public List getAllCommission();
-	public void saveCommissionMaster(CommissionMstr commissionMstr);
+	public CommissionMstr saveCommissionMaster(CommissionMstr commissionMstr);
 	public CommissionMstr getCommissionMstr();
 	public BigDecimal getCommissionByStatus(String status);
 }

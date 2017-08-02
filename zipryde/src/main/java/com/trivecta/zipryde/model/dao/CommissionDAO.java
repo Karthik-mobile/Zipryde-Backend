@@ -11,8 +11,8 @@ import com.trivecta.zipryde.model.entity.CommissionMstr;
 
 public interface CommissionDAO {
 
-	public void payCommission(Commission commission) throws NoResultEntityException;
-	public void saveCommissionMaster(CommissionMstr commissionMstr);
+	public Commission payCommission(Commission commission) throws NoResultEntityException;
+	public CommissionMstr saveCommissionMaster(CommissionMstr commissionMstr);
 	public Commission getCommission(int commissionId);
 	public List getAllCommissions();
 	public void updateCommision(Booking booking);

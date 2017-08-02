@@ -23,6 +23,8 @@ public class Status implements Serializable {
 	private Integer id;
 
 	private String status;
+	
+	private String statusValue;
 
 	//bi-directional many-to-one association to Booking
 	@OneToMany(mappedBy="bookingStatus")
@@ -183,6 +185,14 @@ public class Status implements Serializable {
 
 	public void setDriverProfiles(List<DriverProfile> driverProfiles) {
 		this.driverProfiles = driverProfiles;
+	}
+
+	public String getStatusValue() {
+		return statusValue;
+	}
+
+	public void setStatusValue(String statusValue) {
+		this.statusValue = statusValue;
 	}
 
 }

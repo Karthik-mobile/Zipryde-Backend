@@ -98,33 +98,23 @@ public class PaymentTransformer {
   		}
   	}
 
-	public void saveCommission(CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {		
+	public CommissionResponse saveCommission(CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {		
 		if(commonRequest.getCommissionId() != null) {
 			Commission commission = new Commission();
 			commission.setId(commonRequest.getCommissionId().intValue());
-			commissionService.payCommission(commission);
-		}else
+			Commission newCommission = commissionService.payCommission(commission);
+			return setCommissionResponse(newCommission);
+		}
+		else
 			throw new UserValidationException(ErrorMessages.COMMISSION_ID_EMPTY);		
 	}
 	
-	public List<CommissionResponse> getAllCommissionsAvailable() {
-		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+	public List<CommissionResponse> getAllCommissionsAvailable() {		
 		List<CommissionResponse> commissionList = new ArrayList<CommissionResponse>();
 		List objectList = commissionService.getAllCommission();
 		for(Object object : objectList) {
-			CommissionResponse commissionResponse = new CommissionResponse();
 			Commission commission = (Commission)object;
-			commissionResponse.setCommissionId(commission.getId());
-			if(commission.getCalculatedDate() != null)
-				commissionResponse.setCalcualtedDate(dateFormat.format(commission.getCalculatedDate()));
-			if(commission.getPaidDate() != null)
-				commissionResponse.setPaidDate(dateFormat.format(commission.getPaidDate()));
-			commissionResponse.setCommissionAmount(commission.getCommisionAmount().doubleValue());
-			commissionResponse.setDriverName(commission.getUser().getFirstName());
-			commissionResponse.setStatus(commission.getStatus());
-			commissionResponse.setNoOfMiles(commission.getNoOfMiles());
-			commissionResponse.setNoOfTrips(commission.getNoOfTrips());
-			commissionList.add(commissionResponse);
+			commissionList.add(setCommissionResponse(commission));
 		}
 		return commissionList;
 	}
@@ -136,26 +126,14 @@ public class PaymentTransformer {
 		
 		commissionMstr.setNoOfMiles(commissionMstrRequest.getNoOfMiles());
 		commissionMstr.setNoOfTrips(commissionMstrRequest.getNoOfTrips());
-		commissionMstr.setCommisionPercentage(BigDecimal.valueOf(commissionMstrRequest.getCommissionPercentage()));
-		
-		commissionService.saveCommissionMaster(commissionMstr);
-		CommissionMasterResponse commissionMasterResponse = new CommissionMasterResponse();
-		commissionMasterResponse.setNoOfMiles(commissionMstrRequest.getNoOfMiles());
-		commissionMasterResponse.setNoOfTrips(commissionMstrRequest.getNoOfTrips());
-		commissionMasterResponse.setCommissionPercentage(commissionMstrRequest.getCommissionPercentage());
-		commissionMasterResponse.setId(commissionMstr.getId());
-		return commissionMasterResponse;
+		commissionMstr.setCommisionPercentage(BigDecimal.valueOf(commissionMstrRequest.getCommissionPercentage()));		
+		commissionMstr = commissionService.saveCommissionMaster(commissionMstr);
+		return setCommissionMstrResponse(commissionMstr);
 	}
 
 	public CommissionMasterResponse getCommissionMstr() {
-		CommissionMasterResponse commissionMasterResponse = new CommissionMasterResponse();
-		CommissionMstr commissionMstr = commissionService.getCommissionMstr();
-		if(commissionMstr != null) {
-			commissionMasterResponse.setCommissionPercentage(commissionMstr.getCommisionPercentage().doubleValue());
-			commissionMasterResponse.setNoOfMiles(commissionMstr.getNoOfMiles());
-			commissionMasterResponse.setNoOfTrips(commissionMstr.getNoOfTrips());
-		}
-		return commissionMasterResponse;
+		CommissionMstr commissionMstr = commissionService.getCommissionMstr();		
+		return setCommissionMstrResponse(commissionMstr);
 	}
 	
 	public CommonResponse getCommissionAmountByStatus(CommonRequest commonRequest) throws MandatoryValidationException {
@@ -164,8 +142,32 @@ public class PaymentTransformer {
 		Double amount = commissionService.getCommissionByStatus(commonRequest.getStatus().trim().toUpperCase()).doubleValue();
 		CommonResponse commonResponse = new CommonResponse();
 		commonResponse.setRevenueAmount(amount);
-		return commonResponse;
-		
+		return commonResponse;		
 	}
 	
+	private CommissionMasterResponse setCommissionMstrResponse(CommissionMstr commissionMstr) {
+		CommissionMasterResponse commissionMasterResponse = new CommissionMasterResponse();
+		if(commissionMstr != null) {
+			commissionMasterResponse.setCommissionPercentage(commissionMstr.getCommisionPercentage().doubleValue());
+			commissionMasterResponse.setNoOfMiles(commissionMstr.getNoOfMiles());
+			commissionMasterResponse.setNoOfTrips(commissionMstr.getNoOfTrips());
+			commissionMasterResponse.setId(commissionMstr.getId());
+		}
+		return commissionMasterResponse;
+	}
+	private CommissionResponse setCommissionResponse(Commission commission) {
+		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		CommissionResponse commissionResponse = new CommissionResponse();
+		commissionResponse.setCommissionId(commission.getId());
+		if(commission.getCalculatedDate() != null)
+			commissionResponse.setCalcualtedDate(dateFormat.format(commission.getCalculatedDate()));
+		if(commission.getPaidDate() != null)
+			commissionResponse.setPaidDate(dateFormat.format(commission.getPaidDate()));
+		commissionResponse.setCommissionAmount(commission.getCommisionAmount().doubleValue());
+		commissionResponse.setDriverName(commission.getUser().getFirstName());
+		commissionResponse.setStatus(commission.getStatus());
+		commissionResponse.setNoOfMiles(commission.getNoOfMiles());
+		commissionResponse.setNoOfTrips(commission.getNoOfTrips());
+		return commissionResponse;
+	}
 }

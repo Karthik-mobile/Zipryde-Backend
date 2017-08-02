@@ -195,10 +195,7 @@ public class UserTransformer {
 			user.setEmailId(userRequest.getEmailId());
 			user.setAlternateNumber(userRequest.getAlternateNumber());
 			user.setDeviceToken(userRequest.getDeviceToken());		
-			/*if(!USERTYPE.DRIVER.equalsIgnoreCase(userRequest.getUserType())){
-				user.setIsEnable(1);
-			}
-			else*/ 
+			 
 			if(userRequest.getIsEnable() != null) {
 				user.setIsEnable(userRequest.getIsEnable().intValue());
 			}
@@ -524,7 +521,7 @@ public class UserTransformer {
 			userResponse.setIsLoggedIn(0);
 			userResponse.setDefaultPercentageAccepted(user.getDriverProfile().getDefaultPercentage());
 				
-			userResponse.setStatus(user.getDriverProfile().getStatus().getStatus());
+			userResponse.setStatus(user.getDriverProfile().getStatus().getStatusValue());
 			userResponse.setComments(user.getDriverProfile().getComments());
 			
 			if(loadImage) {
