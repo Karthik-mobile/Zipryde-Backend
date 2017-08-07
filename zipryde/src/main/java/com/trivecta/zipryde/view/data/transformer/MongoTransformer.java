@@ -26,9 +26,6 @@ public class MongoTransformer {
 	MongoDbClient mongoDbClient;
 	
 	@Autowired
-	UserTransformer userTransformer;
-	
-	@Autowired
 	UserService userService;
 	
 	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
@@ -60,7 +57,7 @@ public class MongoTransformer {
 				userSession.setIsActive(1);
 			}
 			userSession.setUserId(geoLocationRequest.getUserId().intValue());
-			userTransformer.saveUserSession(userSession);
+			userService.saveUserSession(userSession);
 		}
 	}
 	
@@ -104,7 +101,7 @@ public class MongoTransformer {
 			UserSession userSession = new UserSession();
 			userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
 			userSession.setUserId(geoLocationRequest.getUserId().intValue());
-			userTransformer.saveUserSession(userSession);
+			userService.saveUserSession(userSession);
 		}
 	}
 	

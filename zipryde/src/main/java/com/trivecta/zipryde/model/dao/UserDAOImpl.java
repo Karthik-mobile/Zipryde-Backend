@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
@@ -27,6 +28,7 @@ import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.model.entity.UserType;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
+import com.trivecta.zipryde.mongodb.MongoDbClient;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -36,6 +38,9 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Autowired
 	AdminDAO adminDAO;
+	
+	@Autowired
+	MongoDbClient mongoDbClient;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -482,9 +487,10 @@ public class UserDAOImpl implements UserDAO {
 		if (vehicle.getInsuranceValidUntil() != null) {
 			if (vehicle.getCabPermits() != null && vehicle.getCabPermits().size() > 0 && vehicle.getCabPermits().get(0)
 					.getPermitValidUntil().compareTo(vehicle.getInsuranceValidUntil()) > 0) {
-				driverVehicle.setToDate(vehicle.getCabPermits().get(0).getPermitValidUntil());
-			} else {
 				driverVehicle.setToDate(vehicle.getInsuranceValidUntil());
+			} else {
+				driverVehicle.setToDate(vehicle.getCabPermits().get(0).getPermitValidUntil());
+
 			}
 		}
 		session.save(driverVehicle);
@@ -585,4 +591,22 @@ public class UserDAOImpl implements UserDAO {
 		return driverVehicleAssociationList;
 	}
 	
+	@Async
+	public void updateIdleDriverToOffline() {
+		try {
+			mongoDbClient.updateIdleDriverToOffline();
+			List<Integer> driverIds = mongoDbClient.findDriversByActive(0);
+			if(driverIds != null && driverIds.size() > 0) {
+				Session session = this.sessionFactory.getCurrentSession();
+				List<UserSession> userSessions = session.getNamedQuery("UserSession.findByActiveUserIds").setParameter("userIds", driverIds).getResultList();
+				for(UserSession userSession : userSessions){
+					userSession.setIsActive(0);
+					session.merge(userSession);
+				}
+			}
+		}
+		catch(Exception e){
+			//Error in Updatng to Offline
+		}		
+	}
 }

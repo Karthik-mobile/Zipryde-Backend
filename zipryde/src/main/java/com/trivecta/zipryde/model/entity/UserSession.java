@@ -12,7 +12,8 @@ import java.util.Date;
 @Table(name="USER_SESSION")
 @NamedQueries({
 	@NamedQuery(name="UserSession.findAll", query="SELECT u FROM UserSession u"),
-	@NamedQuery(name="UserSession.findByUserId", query="SELECT u FROM UserSession u where u.userId = :userId")
+	@NamedQuery(name="UserSession.findByUserId", query="SELECT u FROM UserSession u where u.userId = :userId"),
+	@NamedQuery(name="UserSession.findByActiveUserIds", query="SELECT u FROM UserSession u where u.isActive = 1 and u.userId in :userIds")
 })
 public class UserSession implements Serializable {
 	private static final long serialVersionUID = 1L;

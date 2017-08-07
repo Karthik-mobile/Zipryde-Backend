@@ -124,7 +124,7 @@ public class User implements Serializable {
 	private Integer cancellationCount;
 
 	private String deviceToken;
-	
+		
 	public User() {
 	}
 
@@ -461,6 +461,4 @@ public class User implements Serializable {
 	public void setDeviceToken(String deviceToken) {
 		this.deviceToken = deviceToken;
 	}
-
-
 }

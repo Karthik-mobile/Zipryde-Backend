@@ -48,4 +48,6 @@ public interface UserDAO {
 	public User updatePasswordByUserAndType(User user) throws NoResultEntityException ;
 	
 	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList);
+	
+	public void updateIdleDriverToOffline();
 }

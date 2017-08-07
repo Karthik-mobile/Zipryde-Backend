@@ -116,4 +116,9 @@ public class UserServiceImpl implements UserService{
 	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList) {
 		return userDAO.getDriverVehcileAssociationByDriverIds(userIdList);
 	}
+	
+	@Transactional
+	public void updateIdleDriverToOffline() {
+		userDAO.updateIdleDriverToOffline();
+	}
 }
