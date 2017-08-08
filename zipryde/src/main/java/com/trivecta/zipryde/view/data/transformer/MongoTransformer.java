@@ -43,28 +43,16 @@ public class MongoTransformer {
 			throw new MandatoryValidationException(errorMsg.toString());
 		}
 		else {			
-			/*mongoDbClient.insertDriverSession(String.valueOf(geoLocationRequest.getUserId()), 
-					Double.valueOf(geoLocationRequest.getFromLongitude()), 
-					Double.valueOf(geoLocationRequest.getFromLatitude()));*/
+			
 			mongoDbClient.updateDriverSession(String.valueOf(geoLocationRequest.getUserId()), 
 					Double.valueOf(geoLocationRequest.getFromLongitude()), 
 					Double.valueOf(geoLocationRequest.getFromLatitude()));
 			
-			//Mysql change online Status
-			UserSession userSession = new UserSession();
-			userSession.setIsActive(1);
-			/*if(geoLocationRequest.getIsOnline() != null) {
-				userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
-			}
-			else {
-				userSession.setIsActive(1);
-			}*/
-			userSession.setUserId(geoLocationRequest.getUserId().intValue());
-			userService.saveUserSession(userSession);
+			saveUserSession(geoLocationRequest.getUserId().intValue(),1);
 		}
 	}
 	
-	public void updateDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+	public void updateDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		if(geoLocationRequest.getUserId() == null) {
 			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
@@ -81,6 +69,7 @@ public class MongoTransformer {
 			mongoDbClient.updateDriverSession(String.valueOf(geoLocationRequest.getUserId()), 
 					Double.valueOf(geoLocationRequest.getFromLongitude()), 
 					Double.valueOf(geoLocationRequest.getFromLatitude()));
+			saveUserSession(geoLocationRequest.getUserId().intValue(),1);
 		}
 	}
 	
@@ -100,12 +89,22 @@ public class MongoTransformer {
 			mongoDbClient.updateDriverOnlineStatus(String.valueOf(geoLocationRequest.getUserId()), 
 					geoLocationRequest.getIsOnline().intValue());
 			
-			//Mysql change online Status
-			UserSession userSession = new UserSession();
-			userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
-			userSession.setUserId(geoLocationRequest.getUserId().intValue());
-			userService.saveUserSession(userSession);
+			saveUserSession(geoLocationRequest.getUserId().intValue(),geoLocationRequest.getIsOnline().intValue());
 		}
+	}
+	
+	private void saveUserSession(int userId,int isOnline) throws UserValidationException {
+		//Mysql change online Status
+		UserSession userSession = new UserSession();
+		userSession.setIsActive(isOnline);
+		/*if(geoLocationRequest.getIsOnline() != null) {
+			userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
+		}
+		else {
+			userSession.setIsActive(1);
+		}*/
+		userSession.setUserId(userId);
+		userService.saveUserSession(userSession);
 	}
 	
 	public List<UserGeoSpatialResponse> getNearByActiveDrivers(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException

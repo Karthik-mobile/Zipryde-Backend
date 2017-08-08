@@ -45,6 +45,16 @@ public class ZipRydeConstants {
 		static String FCM = "FCM";
 	}
 		
+	public interface NOTIFICATION_TYPE {
+		static String BOOKING_DRIVER_REQUEST = "BOOKING_DRIVER_REQUEST";
+		static String BOOKING_USER_CONFIRMATION = "BOOKING_USER_CONFIRMATION";
+		static String BOOKING_DRIVER_ONTRIP = "BOOKING_DRIVER_ONTRIP";
+		static String BOOKING_DRIVER_COMPLETED = "BOOKING_DRIVER_COMPLETED";
+		static String BOOKING_PAYMENT_SUCCESS = "BOOKING_PAYMENT_SUCCESS";
+		static String BOOKING_CANCELLED = "BOOKING_CANCELLED";
+		static String DRIVER_ONLINE_STATUS = "DRIVER_ONLINE_STATUS";
+	}
+	
 	public interface NOTIFICATION_TITLE {
 		static String BOOKING_DRIVER_REQUEST = "ZIPRYDE DRIVER REQUEST";
 		static String BOOKING_USER_CONFIRMATION = "ZIPRYDE USER CONFIRMATION";
@@ -52,6 +62,7 @@ public class ZipRydeConstants {
 		static String BOOKING_DRIVER_COMPLETED = "ZIPRYDE BOOKING COMPLETED";
 		static String BOOKING_PAYMENT_SUCCESS = "ZIPRYDE PAYMENT SUCCESS";
 		static String BOOKING_CANCELLED = "ZIPRYDE BOOKING CANCELLED";
+		static String DRIVER_ONLINE_STATUS = "DRIVER ONLINE STATUS";
 	}
 	
 	public interface NOTIFICATION_MESSAGE {
@@ -60,5 +71,11 @@ public class ZipRydeConstants {
 		static String BOOKING_STATUS_CHANGE = "Booking status changed for Id is ";
 		static String BOOKING_PAYMENT_SUCCESS="Payment Success for Booking Id ";
 		static String BOOKING_CANCELLED = "Your Booking has been Cancelled";
+		static String DRIVER_ONLINE_STATUS = "DRIVER ONLINE STATUS";
+	}
+		
+	public interface NOTIFICATION_CONFIG_TYPE {
+		static String NOTIFICATION_DRIVER = "NOTIFICATION_DRIVER";
+		static String NOTIFICATION_RIDER = "NOTIFICATION_RIDER";
 	}
 }

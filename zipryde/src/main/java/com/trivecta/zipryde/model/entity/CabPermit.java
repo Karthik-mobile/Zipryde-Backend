@@ -13,8 +13,8 @@ import java.util.Date;
 @Table(name="CAB_PERMIT")
 @NamedQueries({
 	@NamedQuery(name="CabPermit.findAll", query="SELECT c FROM CabPermit c"),
-	@NamedQuery(name="VehicleDetail.findAvailableVehicle", query="SELECT c.vehicleDetail FROM CabPermit c where "
-			+ "(DATE(c.vehicleDetail.insuranceValidUntil) >= DATE(NOW()) OR DATE(c.permitValidUntil) >= DATE(NOW()))"
+	@NamedQuery(name="CabPermit.findAvailableVehicle", query="SELECT c.vehicleDetail FROM CabPermit c where "
+			+ "(DATE(c.vehicleDetail.insuranceValidUntil) >= DATE(NOW()) AND DATE(c.permitValidUntil) >= DATE(NOW()))"
 			+ " and c.vehicleDetail.id not in "
 			+ "(SELECT d.vehicleDetail.id FROM DriverVehicleAssociation d where d.toDate is null or DATE(d.toDate) > DATE(NOW()))"),
 

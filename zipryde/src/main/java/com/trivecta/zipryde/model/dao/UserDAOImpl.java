@@ -46,6 +46,9 @@ public class UserDAOImpl implements UserDAO {
 	@Autowired
 	BookingDAO bookingDAO;
 	
+	@Autowired
+	FCMNotificationDAO fCMNotificationDAO;
+	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -555,6 +558,8 @@ public class UserDAOImpl implements UserDAO {
 		
 		UserSession origUserSession = getUserSessionByUserId(userSession.getUserId());
 		
+		User user = getUserByUserId(userSession.getUserId());
+		
 		if(origUserSession != null) {
 			origUserSession.setIsActive(userSession.getIsActive());			
 			session.merge(origUserSession);
@@ -624,7 +629,6 @@ public class UserDAOImpl implements UserDAO {
 				Session session = this.sessionFactory.getCurrentSession();
 				List<UserSession> userSessions = session.getNamedQuery("UserSession.findByActiveUserIds").setParameter("userIds", driverIds).getResultList();
 				for(UserSession userSession : userSessions){
-					System.out.println(" User Session : "+userSession.getUserId());
 					userSession.setIsActive(0);
 					session.merge(userSession);
 				}

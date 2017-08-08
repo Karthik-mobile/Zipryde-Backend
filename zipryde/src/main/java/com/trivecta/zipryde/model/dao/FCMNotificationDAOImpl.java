@@ -3,29 +3,23 @@ package com.trivecta.zipryde.model.dao;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.velocity.app.VelocityEngine;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.SessionFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.trivecta.zipryde.constants.ZipRydeConstants;
+import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_CONFIG_TYPE;
 import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_MESSAGE;
+import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_TITLE;
+import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_TYPE;
 import com.trivecta.zipryde.framework.helper.Notification;
-import com.trivecta.zipryde.model.dao.ZiprydeConfigurationDAO;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
-import com.trivecta.zipryde.model.service.AdminService;
 
 @Repository
 public class FCMNotificationDAOImpl implements FCMNotificationDAO{
@@ -40,16 +34,31 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		this.sessionFactory = sessionFactory;
 	}
 	
+	/*@Async
+	public void sendDriverOnlineStatusNotification(String userDeviceToken) {
+		try {
+			Notification notifcation = new Notification();
+			notifcation.setBody(NOTIFICATION_MESSAGE.DRIVER_ONLINE_STATUS);
+			notifcation.setTitle(NOTIFICATION_TITLE.DRIVER_ONLINE_STATUS);
+			notifcation.setNotificationType(NOTIFICATION_TYPE.DRIVER_ONLINE_STATUS);
+			notifcation.setDriver(false);
+			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
+			sendFCMNotification(userDeviceToken,notifcation);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block			
+		}
+	}
+	*/
 	@Async
 	public void sendBookingRequestNotification(Booking booking,User user) {
 		try {
 			Notification notifcation = new Notification();
 			notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_DRIVER_REQUEST+booking.getId());
-			notifcation.setTitle(ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_DRIVER_REQUEST);
-			notifcation.setNotificationType("BOOKING_DRIVER_REQUEST");
+			notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_DRIVER_REQUEST);
+			notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_DRIVER_REQUEST);
 			notifcation.setBookingId(booking.getId());
 			notifcation.setDriver(true);
-			notifcation.setZiprydeConfigType("NOTIFICATION_DRIVER");
+			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_DRIVER);
 			sendFCMNotification(user.getDeviceToken(),notifcation);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block			
@@ -61,11 +70,11 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		try {
 			Notification notifcation = new Notification();
 			notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_USER_CONFIRMATION+booking.getId());
-			notifcation.setTitle(ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_USER_CONFIRMATION);
-			notifcation.setNotificationType("BOOKING_USER_CONFIRMATION");
+			notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_USER_CONFIRMATION);
+			notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_USER_CONFIRMATION);
 			notifcation.setBookingId(booking.getId());
 			notifcation.setDriver(false);
-			notifcation.setZiprydeConfigType("NOTIFICATION_RIDER");
+			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
 			sendFCMNotification(booking.getRider().getDeviceToken(),notifcation);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block		
@@ -78,21 +87,21 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 			Notification notifcation = new Notification();
 			notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_STATUS_CHANGE+booking.getId());
 			if(ZipRydeConstants.STATUS.ON_TRIP.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
-				notifcation.setTitle(ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_DRIVER_ONTRIP);
-				notifcation.setNotificationType("BOOKING_DRIVER_ONTRIP");
+				notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_DRIVER_ONTRIP);
+				notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_DRIVER_ONTRIP);
 			}
 			else if(ZipRydeConstants.STATUS.COMPLETED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
-				notifcation.setTitle(ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_DRIVER_COMPLETED);
-				notifcation.setNotificationType("BOOKING_DRIVER_COMPLETED");
+				notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_DRIVER_COMPLETED);
+				notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_DRIVER_COMPLETED);
 			}
 			else if(ZipRydeConstants.STATUS.CANCELLED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
-				notifcation.setTitle(ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_CANCELLED);
-				notifcation.setNotificationType("BOOKING_CANCELLED");
+				notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_CANCELLED);
+				notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_CANCELLED);
 				notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_CANCELLED);
 			}
 			notifcation.setBookingId(booking.getId());
 			notifcation.setDriver(false);
-			notifcation.setZiprydeConfigType("NOTIFICATION_RIDER");
+			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
 			sendFCMNotification(booking.getRider().getDeviceToken(),notifcation);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block		
@@ -104,11 +113,11 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		try {
 			Notification notifcation = new Notification();
 			notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_PAYMENT_SUCCESS+booking.getId());
-			notifcation.setTitle(ZipRydeConstants.NOTIFICATION_TITLE.BOOKING_PAYMENT_SUCCESS);
-			notifcation.setNotificationType("BOOKING_PAYMENT_SUCCESS");
+			notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_PAYMENT_SUCCESS);
+			notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_PAYMENT_SUCCESS);
 			notifcation.setBookingId(booking.getId());
 			notifcation.setDriver(false);
-			notifcation.setZiprydeConfigType("NOTIFICATION_RIDER");
+			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
 			sendFCMNotification(booking.getRider().getDeviceToken(),notifcation);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block		
@@ -122,7 +131,7 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 			type = "NOTIFICATION_DRIVER";
 		}
 		else {
-			type = "NOTIFICATION_RIDER";
+			type = NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER;
 		}*/
 		ZiprydeConfiguration ziprydeConfiguration = ziprydeConfigurationDAO.getZiprydeConfigurationByType(notification.getZiprydeConfigType());
 		if(ziprydeConfiguration != null) {
@@ -147,7 +156,7 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 			JSONObject json = new JSONObject();
 			json.put("to",userDeviceToken.trim());
 			if(notification.isDriver()) {
-				json.put("time_to_live", 180);
+				json.put("time_to_live", 180);//in seconds
 			}			
 			JSONObject info = new JSONObject();
 			info.put("title", notification.getTitle());   // Notification title
@@ -159,7 +168,8 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 			data.put("title", notification.getTitle());   // Notification title
 			data.put("body", notification.getBody());
 			data.put("notificationType", notification.getNotificationType());
-			data.put("bookingId", notification.getBookingId());
+			if(notification.getBookingId() != null)
+				data.put("bookingId", notification.getBookingId());
 			json.put("data", data);
 			
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());

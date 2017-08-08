@@ -177,7 +177,7 @@ public class VehicleDAOImpl implements VehicleDAO{
 				CabPermit origCabPermit = session.find(CabPermit.class,cabPermit.getId());
 				origCabPermit.setPermitNumber(cabPermit.getPermitNumber());
 				origCabPermit.setPermitValidUntil(cabPermit.getPermitValidUntil());
-				origCabPermit.setVehicleDetail(vehicleDetail);
+				origCabPermit.setVehicleDetail(origVehicle);
 				session.merge(origCabPermit);			
 			}		
 			return getVehicleDetailById(origVehicle.getId());	
@@ -211,7 +211,7 @@ public class VehicleDAOImpl implements VehicleDAO{
 	public List<VehicleDetail> getAllAvailableVehicles() {
 		Session session = this.sessionFactory.getCurrentSession();	
 		List<VehicleDetail>  vehicleDetailsList =				
-				session.getNamedQuery("VehicleDetail.findAvailableVehicle").getResultList();		
+				session.getNamedQuery("CabPermit.findAvailableVehicle").getResultList();		
 		for(VehicleDetail vehicleDetail : vehicleDetailsList) {
 			fetchLazyInitialisation(vehicleDetail);
 		}		
