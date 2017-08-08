@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "alternateNumber", "emailId",
 		"driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil","licenseFrontImage", "licenseBackImage",
-		"defaultPercentageAccepted", "isLoggedIn", "isEnable","cancellationCount","statusCode", "status", "comments", "restriction", "vehicleNumber",
+		"defaultPercentageAccepted", "isOnline", "isEnable","cancellationCount","statusCode", "status", "comments", "restriction", "vehicleNumber",
 		"licenseFrontImage", "licenseBackImage", "userImage" })
 
 public class UserResponse {
@@ -52,8 +52,8 @@ public class UserResponse {
 	@JsonProperty("defaultPercentageAccepted")
 	private Number defaultPercentageAccepted;
 
-	@JsonProperty("isLoggedIn")
-	private Number isLoggedIn;
+	@JsonProperty("isOnline")
+	private Integer isOnline;
 
 	@JsonProperty("isEnable")
 	private Number isEnable;
@@ -165,14 +165,6 @@ public class UserResponse {
 		this.defaultPercentageAccepted = defaultPercentageAccepted;
 	}
 
-	public Number getIsLoggedIn() {
-		return isLoggedIn;
-	}
-
-	public void setIsLoggedIn(Number isLoggedIn) {
-		this.isLoggedIn = isLoggedIn;
-	}
-
 	public String getAlternateNumber() {
 		return alternateNumber;
 	}
@@ -267,6 +259,14 @@ public class UserResponse {
 
 	public void setStatusCode(String statusCode) {
 		this.statusCode = statusCode;
+	}
+
+	public Integer getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(Integer isOnline) {
+		this.isOnline = isOnline;
 	}
 
 }

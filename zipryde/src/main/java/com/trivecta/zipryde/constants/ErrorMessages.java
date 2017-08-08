@@ -97,4 +97,6 @@ public interface ErrorMessages {
 	static String BOOKING_CANCELLED = "Booking hs been Cancelled";
 	
 	static String BOOKING_CANNOT_CANCEL = "Booking cannot get cancel";
+	
+	static String DRIVER_ACTIVE_BOOKING ="You have Active Booking and you cannot go offline";
 }

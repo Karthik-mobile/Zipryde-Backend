@@ -20,6 +20,7 @@ import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.constants.ZipRydeConstants.USERTYPE;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
+import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.DriverProfile;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
@@ -41,6 +42,9 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Autowired
 	MongoDbClient mongoDbClient;
+	
+	@Autowired
+	BookingDAO bookingDAO;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -532,8 +536,23 @@ public class UserDAOImpl implements UserDAO {
 	}
 	
 	
-	public UserSession saveUserSession(UserSession userSession) {
+	public UserSession saveUserSession(UserSession userSession) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
+		if(userSession.getIsActive() == 0) {
+			List<String> status = new ArrayList<String>();
+			status.add(STATUS.SCHEDULED);
+			status.add(STATUS.ON_TRIP);
+			Booking booking = null;
+			try {
+				booking = (Booking) session.getNamedQuery("Booking.findByBookingStatusAndDriverId").
+						setParameter("status", status).setParameter("driverId", userSession.getUserId()).setMaxResults(1).getSingleResult();
+				throw new UserValidationException(ErrorMessages.DRIVER_ACTIVE_BOOKING);
+			}
+			catch(NoResultException e){
+				//Nothing to do
+			}
+		}
+		
 		UserSession origUserSession = getUserSessionByUserId(userSession.getUserId());
 		
 		if(origUserSession != null) {
@@ -581,6 +600,11 @@ public class UserDAOImpl implements UserDAO {
 			if(user.getCommissions() != null && user.getCommissions().size() > 0) {
 				user.getCommissions().size();
 			}
+			
+			UserSession userSession = getUserSessionByUserId(user.getId());
+			if(userSession  != null) {
+				user.setIsOnline(userSession.getIsActive());
+			}
 		}		
 	}
 	
@@ -600,13 +624,15 @@ public class UserDAOImpl implements UserDAO {
 				Session session = this.sessionFactory.getCurrentSession();
 				List<UserSession> userSessions = session.getNamedQuery("UserSession.findByActiveUserIds").setParameter("userIds", driverIds).getResultList();
 				for(UserSession userSession : userSessions){
+					System.out.println(" User Session : "+userSession.getUserId());
 					userSession.setIsActive(0);
 					session.merge(userSession);
 				}
+				bookingDAO.cancelBookingByDriversInOffline(driverIds);				
 			}
 		}
 		catch(Exception e){
-			//Error in Updatng to Offline
+			e.printStackTrace();
 		}		
 	}
 }

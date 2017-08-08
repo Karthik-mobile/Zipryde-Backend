@@ -457,11 +457,7 @@ public class UserTransformer {
 			return driverVehicleResponseList;
 		}
 	}
-	
-	public void saveUserSession(UserSession userSession) {
-		userService.saveUserSession(userSession);
-	}
-	
+		
 	private DriverVehicleAssociationResponse setDriverVehicleResponse(DriverVehicleAssociation newAssociation) {
 		DriverVehicleAssociationResponse driverVehicleResp = new DriverVehicleAssociationResponse();
 		if(newAssociation != null) {		
@@ -518,7 +514,7 @@ public class UserTransformer {
 			userResponse.setRestriction(user.getDriverProfile().getRestrictions());
 
 			// Need to get From User Session
-			userResponse.setIsLoggedIn(0);
+			userResponse.setIsOnline(user.getIsOnline());
 			userResponse.setDefaultPercentageAccepted(user.getDriverProfile().getDefaultPercentage());
 				
 			userResponse.setStatusCode(user.getDriverProfile().getStatus().getStatus());

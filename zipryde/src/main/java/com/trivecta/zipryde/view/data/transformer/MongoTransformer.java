@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.UserSession;
@@ -28,7 +29,7 @@ public class MongoTransformer {
 	@Autowired
 	UserService userService;
 	
-	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		if(geoLocationRequest.getUserId() == null) {
 			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
@@ -48,14 +49,16 @@ public class MongoTransformer {
 			mongoDbClient.updateDriverSession(String.valueOf(geoLocationRequest.getUserId()), 
 					Double.valueOf(geoLocationRequest.getFromLongitude()), 
 					Double.valueOf(geoLocationRequest.getFromLatitude()));
+			
 			//Mysql change online Status
 			UserSession userSession = new UserSession();
-			if(geoLocationRequest.getIsOnline() != null) {
+			userSession.setIsActive(1);
+			/*if(geoLocationRequest.getIsOnline() != null) {
 				userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
 			}
 			else {
 				userSession.setIsActive(1);
-			}
+			}*/
 			userSession.setUserId(geoLocationRequest.getUserId().intValue());
 			userService.saveUserSession(userSession);
 		}
@@ -81,7 +84,7 @@ public class MongoTransformer {
 		}
 	}
 	
-	public void updateDriverOnlineStatus(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+	public void updateDriverOnlineStatus(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		if(geoLocationRequest.getUserId() == null) {
 			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);

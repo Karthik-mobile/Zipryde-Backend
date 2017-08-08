@@ -356,7 +356,7 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/insertDriverSession")
-	public void insertDriverSession(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+	public void insertDriverSession(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
 		mongoTransfomer.insertDriverSession(geoLocationRequest);
 	}
 	
@@ -366,7 +366,7 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/updateDriverStatus")
-	public void updateDriverOnlineStatus(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
+	public void updateDriverStatus(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
 		mongoTransfomer.updateDriverOnlineStatus(geoLocationRequest);
 	}
 

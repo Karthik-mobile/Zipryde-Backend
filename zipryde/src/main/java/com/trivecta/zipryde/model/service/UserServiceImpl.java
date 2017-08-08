@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Transactional
-	public UserSession saveUserSession(UserSession userSession) {
+	public UserSession saveUserSession(UserSession userSession) throws UserValidationException {
 		return userDAO.saveUserSession(userSession);
 	}
 	

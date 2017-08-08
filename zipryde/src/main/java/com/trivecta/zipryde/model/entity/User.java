@@ -124,6 +124,9 @@ public class User implements Serializable {
 	private Integer cancellationCount;
 
 	private String deviceToken;
+	
+	@Transient 
+	private int isOnline;
 		
 	public User() {
 	}
@@ -460,5 +463,13 @@ public class User implements Serializable {
 
 	public void setDeviceToken(String deviceToken) {
 		this.deviceToken = deviceToken;
+	}
+
+	public int getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(int isOnline) {
+		this.isOnline = isOnline;
 	}
 }

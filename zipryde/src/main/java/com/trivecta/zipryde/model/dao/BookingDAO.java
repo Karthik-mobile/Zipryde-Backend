@@ -37,4 +37,6 @@ public interface BookingDAO {
 	public Integer getBookingCountByDateAndDriverId(Date bookingDate,Integer driverId);
 	
 	public void updateBookinStatusUnAnswered();
+	
+	public void cancelBookingByDriversInOffline(List<Integer> driverIds);
 }

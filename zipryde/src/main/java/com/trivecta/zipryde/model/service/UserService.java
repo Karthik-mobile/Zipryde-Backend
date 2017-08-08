@@ -29,7 +29,7 @@ public interface UserService {
 	
 	public DriverVehicleAssociation unassignDriverVehicleAssociation(DriverVehicleAssociation driverVehicle)  throws UserValidationException;
 	
-	public UserSession saveUserSession(UserSession userSession);
+	public UserSession saveUserSession(UserSession userSession)  throws UserValidationException ; 
 	
 	public DriverVehicleAssociation getActiveDriverVehicleAssociationByDriverId(int userId) ;
 	

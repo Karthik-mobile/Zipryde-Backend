@@ -3,6 +3,7 @@ package com.trivecta.zipryde.model.dao;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -164,7 +165,7 @@ public class BookingDAOImpl implements BookingDAO{
 	}
 	
 	/*
-	 * Booking Status - SCHEDULED / REJECTED / COMPLETED
+	 * Booking Status -  CANCELLED
 	 */	
 	public Booking updateBookingStatus(Booking booking) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
@@ -195,6 +196,21 @@ public class BookingDAOImpl implements BookingDAO{
 			fCMNotificationDAO.sendBookingStatusNotification(origBooking);
 		}		
 		return origBooking;
+	}
+	
+	public void cancelBookingByDriversInOffline(List<Integer> driverIds) {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<Booking> bookings = session.getNamedQuery("Booking.findByBookingStatusAndDriverIds").
+				setParameter("status", STATUS.SCHEDULED).setParameter("driverIds", driverIds).getResultList();
+		if(bookings != null && bookings.size() > 0) {
+			for(Booking booking : bookings) {
+				Status bookingStatus = 	adminDAO.findByStatus(STATUS.CANCELLED);
+				booking.setBookingStatus(bookingStatus);
+				session.merge(booking);
+				deleteAcceptedBookingRequest(booking.getId());
+				fCMNotificationDAO.sendBookingStatusNotification(booking);
+			}
+		}		
 	}
 	
 	public Integer getBookingCountByDate(Date bookingDate) {
@@ -330,16 +346,28 @@ public class BookingDAOImpl implements BookingDAO{
 	private void assignBookingToNearBYDrivers(Booking booking) {
 		Session session = this.sessionFactory.getCurrentSession();
 		List<UserGeoSpatialResponse> nearByDriversList = mongoDbClient.getNearByActiveDrivers(booking.getFromLongitude().doubleValue(), booking.getFromLatitude().doubleValue());
+		
 		if(nearByDriversList != null && nearByDriversList.size() > 0) {
 			List<Integer> userIdList = nearByDriversList.stream()
 	                .map(UserGeoSpatialResponse::getUserId)
 	                .collect(Collectors.toList());
-			List<DriverVehicleAssociation> driverVehicleAssociationList = 
-					session.getNamedQuery("DriverVehicleAssociation.findByCabTypeAndUserIds")
-					.setParameter("cabTypeId", booking.getCabType().getId())
-					.setParameter("userIds", userIdList).getResultList();
-			for(DriverVehicleAssociation driverVehicleAssociation : driverVehicleAssociationList)	{
-				createBookingRequest(booking,driverVehicleAssociation.getUser());
+			/*List<String> status = new ArrayList<String>();
+			status.add(STATUS.SCHEDULED);
+			status.add(STATUS.ON_TRIP);
+			
+			System.out.println(" userIdList : "+userIdList);
+			List<Integer> driverIdList = session.getNamedQuery("Booking.findUnAssignedDriverIds").
+					setParameter("status", status).setParameter("driverIds", userIdList).getResultList();
+			
+			System.out.println(" driverIdList : "+driverIdList);*/
+			if(userIdList != null && userIdList.size() > 0) {
+				List<DriverVehicleAssociation> driverVehicleAssociationList = 
+						session.getNamedQuery("DriverVehicleAssociation.findByCabTypeAndUserIds")
+						.setParameter("cabTypeId", booking.getCabType().getId())
+						.setParameter("userIds", userIdList).getResultList();
+				for(DriverVehicleAssociation driverVehicleAssociation : driverVehicleAssociationList)	{
+					createBookingRequest(booking,driverVehicleAssociation.getUser());
+				}
 			}
 		}
 	}
@@ -347,7 +375,12 @@ public class BookingDAOImpl implements BookingDAO{
 	@Async
 	private void deleteAcceptedBookingRequest(Integer bookingId){
 		Session session = this.sessionFactory.getCurrentSession();
-		session.getNamedQuery("BookingRequest.deleteByBookingId").setParameter("bookingId", bookingId).executeUpdate();
+		try {
+			session.getNamedQuery("BookingRequest.deleteByBookingId").setParameter("bookingId", bookingId).executeUpdate();
+		}
+		catch(Exception e){
+			//Delete the Accepted Booking Request
+		}
 	}
 	
 	@Async

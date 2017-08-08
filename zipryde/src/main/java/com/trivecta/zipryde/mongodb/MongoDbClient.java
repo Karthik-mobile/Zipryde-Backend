@@ -105,15 +105,18 @@ public class MongoDbClient {
 	}
 
 	public List<Integer> findDriversByActive(int isActive) {
-		List<Integer> userIds = new ArrayList<Integer>();
-		
+		List<Integer> userIds = new ArrayList<Integer>();		
 		Bson filter = Filters.eq("isActive", isActive);
 		FindIterable<Document> findIterable = mongoCollection.find(filter);
-		findIterable.forEach(new Block<Document>() {
-			public void apply(final Document document) {
-				userIds.add(Integer.parseInt(document.get("userId").toString()));
-		}});		
-		return userIds;		
+		if(findIterable !=null) {
+			findIterable.forEach(new Block<Document>() {
+				public void apply(final Document document) {
+					if(document != null) 
+						userIds.add(Integer.parseInt(document.get("userId").toString()));
+			}});	
+		}
+		return userIds;	
+			
 	}
 	
 	@Async
@@ -124,8 +127,7 @@ public class MongoDbClient {
 	}
 	
 	@Async
-	public void updateDriverSession(String userId,Double longitude,Double latitude) {
-		
+	public void updateDriverSession(String userId,Double longitude,Double latitude) {		
 		Bson filter = Filters.eq("userId", userId);
 		Bson toUpdate = new Document("loc",new Document("lon",longitude).append("lat", latitude))
 				.append("isActive", 1).append("lastUpdatedTime", ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
