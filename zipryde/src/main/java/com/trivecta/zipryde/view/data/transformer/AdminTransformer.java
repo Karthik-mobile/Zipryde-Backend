@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
+import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_CONFIG_TYPE;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
@@ -21,8 +23,10 @@ import com.trivecta.zipryde.model.entity.PricingType;
 import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 import com.trivecta.zipryde.model.service.AdminService;
 import com.trivecta.zipryde.view.request.CommonRequest;
+import com.trivecta.zipryde.view.request.ConfigurationRequest;
 import com.trivecta.zipryde.view.request.PricingMstrRequest;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
+import com.trivecta.zipryde.view.response.ConfigurationResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
 import com.trivecta.zipryde.view.response.PricingMstrResponse;
@@ -202,9 +206,39 @@ public class AdminTransformer {
 		return setPricingMstrResponse(pricingMstr);
 	}
 	
-	public ZiprydeConfiguration getZiprydeConfigurationByType(String type){
-		ZiprydeConfiguration ziprydeConfiguration = adminService.getZiprydeConfigurationByType(type);
-		return ziprydeConfiguration;
+	public ConfigurationResponse getZiprydeConfigurationByType(ConfigurationRequest configurationRequest){
+		ZiprydeConfiguration ziprydeConfiguration = adminService.getZiprydeConfigurationByType(configurationRequest.getType());
+		return setConfigurationResponse(ziprydeConfiguration);
+	}
+	
+	public ConfigurationResponse saveZiprydeConfiguration(ConfigurationRequest configurationRequest) throws UserValidationException {
+		ZiprydeConfiguration ziprydeConfiguration = new ZiprydeConfiguration();
+		ziprydeConfiguration.setType(configurationRequest.getType());
+		ziprydeConfiguration.setAccessKey(configurationRequest.getAccessKey());
+		ziprydeConfiguration.setUrl(configurationRequest.getUrl());
+		ziprydeConfiguration.setId(configurationRequest.getId());
+		ZiprydeConfiguration newZipRydeConfiguration = adminService.saveZiprydeConfiguration(ziprydeConfiguration);
+		return setConfigurationResponse(newZipRydeConfiguration);		
+	}
+	
+	public  List<ConfigurationResponse> getAllZiprydeConfigurations() {
+		List<ConfigurationResponse> configurationResponseList = new ArrayList<ConfigurationResponse>();
+		List<ZiprydeConfiguration> zipRydeConfigList = adminService.getAllZiprydeConfigurations();
+		if(zipRydeConfigList != null && zipRydeConfigList.size() > 0 ) {
+			for(ZiprydeConfiguration ziprydeConfig : zipRydeConfigList) {
+				configurationResponseList.add(setConfigurationResponse(ziprydeConfig));
+			}
+		}
+		return configurationResponseList;
+	}
+	
+	private ConfigurationResponse setConfigurationResponse(ZiprydeConfiguration ziprydeConfiguration) {
+		ConfigurationResponse configurationResponse= new ConfigurationResponse();
+		configurationResponse.setId(ziprydeConfiguration.getId());
+		configurationResponse.setUrl(ziprydeConfiguration.getUrl());
+		configurationResponse.setType(ziprydeConfiguration.getType());
+		configurationResponse.setAccessKey(ziprydeConfiguration.getAccessKey());
+		return configurationResponse;	
 	}
 	
 	private List<PricingMstrResponse>  setPricingMstrResponseFromList(List<PricingMstr> pricingMstrList) {
@@ -273,4 +307,6 @@ public class AdminTransformer {
 		pricingMstr.setPrice(new BigDecimal(pricingMstrReq.getPrice()).setScale(2,RoundingMode.CEILING));
 		return pricingMstr;
 	}
+	
+	
 }

@@ -26,6 +26,7 @@ import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.CabRequest;
 import com.trivecta.zipryde.view.request.CommissionMasterRequest;
 import com.trivecta.zipryde.view.request.CommonRequest;
+import com.trivecta.zipryde.view.request.ConfigurationRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
@@ -38,6 +39,7 @@ import com.trivecta.zipryde.view.response.CabTypeResponse;
 import com.trivecta.zipryde.view.response.CommissionMasterResponse;
 import com.trivecta.zipryde.view.response.CommissionResponse;
 import com.trivecta.zipryde.view.response.CommonResponse;
+import com.trivecta.zipryde.view.response.ConfigurationResponse;
 import com.trivecta.zipryde.view.response.DriverVehicleAssociationResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
@@ -309,8 +311,6 @@ public class ZiprydeController {
 		return bookingTranssformer.getBookingRequestedByDriverId(bookingRequest);
 	}
 	
-	//TODO
-	//2. GET BOOKINGS BY USER TYPE AND USER ID
 	
 	/** ----------- PAYMENT -------------------- */
 	@RequestMapping(value = "/savePayment")  
@@ -341,6 +341,22 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getCommissionAmountByStatus")
 	public @ResponseBody CommonResponse getCommissionAmountByStatus(@RequestBody CommonRequest commonRequest)throws MandatoryValidationException{
 		return paymentTransformer.getCommissionAmountByStatus(commonRequest);
+	}
+	
+	/** ------------ CONFIGURATIONS -----------------------*/
+	@RequestMapping(value = "/getZiprydeConfigurationByType")  
+	public @ResponseBody ConfigurationResponse getZiprydeConfigurationByType(@RequestBody ConfigurationRequest configurationRequest) {
+		return adminTransformer.getZiprydeConfigurationByType(configurationRequest);
+	}
+	
+	@RequestMapping(value = "/saveZiprydeConfiguration")  
+	public @ResponseBody ConfigurationResponse saveZiprydeConfiguration(@RequestBody ConfigurationRequest configurationRequest) throws UserValidationException {
+		return adminTransformer.saveZiprydeConfiguration(configurationRequest);
+	}
+	
+	@RequestMapping(value = "/getAllZiprydeConfigurations")  
+	public @ResponseBody List<ConfigurationResponse> getAllZiprydeConfigurations() {
+		return adminTransformer.getAllZiprydeConfigurations();
 	}
 		
 	/** --------- MONGO DB SERVICE -------------------- */

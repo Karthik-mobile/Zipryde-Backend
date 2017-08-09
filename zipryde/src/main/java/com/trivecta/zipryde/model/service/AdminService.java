@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
@@ -38,4 +39,8 @@ public interface AdminService {
 	public PricingMstr savePricingMstr(PricingMstr pricingMstr);
 	
 	public ZiprydeConfiguration getZiprydeConfigurationByType(String type);
+	
+	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) throws UserValidationException ;
+	
+	public List<ZiprydeConfiguration> getAllZiprydeConfigurations();
 }

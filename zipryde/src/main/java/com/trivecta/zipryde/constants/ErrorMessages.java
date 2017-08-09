@@ -92,11 +92,13 @@ public interface ErrorMessages {
 
 	static String STATUS_REQUERIED = "Status is required for getting Commissionn Amount";
 	
-	static String BOOKING_ACCEPTED_ALREADY = "Booking has been Accepted Already";
+	static String BOOKING_ACCEPTED_ALREADY = "Zipryde has been Accepted Already";
 	
-	static String BOOKING_CANCELLED = "Booking hs been Cancelled";
+	static String BOOKING_CANCELLED = "Your ZipRyde has been cancelled";
 	
-	static String BOOKING_CANNOT_CANCEL = "Booking cannot get cancel";
+	static String BOOKING_CANNOT_CANCEL = "Your Zipryde Cannot get cancel";
 	
-	static String DRIVER_ACTIVE_BOOKING ="You have Active Booking and you cannot go offline";
+	static String DRIVER_ACTIVE_BOOKING ="You have Active Zipryde and you cannot go offline";
+	
+	static String CONFIGURATION_TYPE_ALREADY_EXISTS = "Configuration Type Already Exists";
 }

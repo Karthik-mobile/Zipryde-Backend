@@ -86,7 +86,11 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		try {
 			Notification notifcation = new Notification();
 			notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_STATUS_CHANGE+booking.getId());
-			if(ZipRydeConstants.STATUS.ON_TRIP.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+			if(ZipRydeConstants.STATUS.ON_SITE.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+				notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_DRIVER_ONSITE);
+				notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_DRIVER_ONSITE);
+			}
+			else if(ZipRydeConstants.STATUS.ON_TRIP.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
 				notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_DRIVER_ONTRIP);
 				notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_DRIVER_ONTRIP);
 			}

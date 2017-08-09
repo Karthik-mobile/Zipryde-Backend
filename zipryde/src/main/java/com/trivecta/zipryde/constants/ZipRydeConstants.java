@@ -1,3 +1,4 @@
+
 package com.trivecta.zipryde.constants;
 
 public class ZipRydeConstants {
@@ -22,6 +23,7 @@ public class ZipRydeConstants {
 		
 		static String REQUESTED = "REQUESTED";
 		static String ON_TRIP =  "ON_TRIP";
+		static String ON_SITE =  "ON_SITE";
 		static String SCHEDULED = "SCHEDULED";
 		static String COMPLETED = "COMPLETED";
 		static String CANCELLED = "CANCELLED";
@@ -49,29 +51,28 @@ public class ZipRydeConstants {
 		static String BOOKING_DRIVER_REQUEST = "BOOKING_DRIVER_REQUEST";
 		static String BOOKING_USER_CONFIRMATION = "BOOKING_USER_CONFIRMATION";
 		static String BOOKING_DRIVER_ONTRIP = "BOOKING_DRIVER_ONTRIP";
+		static String BOOKING_DRIVER_ONSITE = "BOOKING_DRIVER_ONSITE";
 		static String BOOKING_DRIVER_COMPLETED = "BOOKING_DRIVER_COMPLETED";
 		static String BOOKING_PAYMENT_SUCCESS = "BOOKING_PAYMENT_SUCCESS";
 		static String BOOKING_CANCELLED = "BOOKING_CANCELLED";
-		static String DRIVER_ONLINE_STATUS = "DRIVER_ONLINE_STATUS";
 	}
 	
 	public interface NOTIFICATION_TITLE {
 		static String BOOKING_DRIVER_REQUEST = "ZIPRYDE DRIVER REQUEST";
 		static String BOOKING_USER_CONFIRMATION = "ZIPRYDE USER CONFIRMATION";
 		static String BOOKING_DRIVER_ONTRIP = "ZIPRYDE BOOKING ON TRIP";
+		static String BOOKING_DRIVER_ONSITE = "ZIPRYDE DRIVER REACHED";
 		static String BOOKING_DRIVER_COMPLETED = "ZIPRYDE BOOKING COMPLETED";
 		static String BOOKING_PAYMENT_SUCCESS = "ZIPRYDE PAYMENT SUCCESS";
 		static String BOOKING_CANCELLED = "ZIPRYDE BOOKING CANCELLED";
-		static String DRIVER_ONLINE_STATUS = "DRIVER ONLINE STATUS";
 	}
 	
 	public interface NOTIFICATION_MESSAGE {
-		static String BOOKING_DRIVER_REQUEST = "You have a Booking Request with Id ";
-		static String BOOKING_USER_CONFIRMATION = "Your Booking has been Confirmed. Your Booking Id is ";
-		static String BOOKING_STATUS_CHANGE = "Booking status changed for Id is ";
+		static String BOOKING_DRIVER_REQUEST = "You have a Zipryde Request with Id ";
+		static String BOOKING_USER_CONFIRMATION = "Your Zipryde has been Confirmed. Your Zipryde Id is ";
+		static String BOOKING_STATUS_CHANGE = "Zipryde status changed for Id is ";
 		static String BOOKING_PAYMENT_SUCCESS="Payment Success for Booking Id ";
-		static String BOOKING_CANCELLED = "Your Booking has been Cancelled";
-		static String DRIVER_ONLINE_STATUS = "DRIVER ONLINE STATUS";
+		static String BOOKING_CANCELLED = "Your Zipryde has been Cancelled";
 	}
 		
 	public interface NOTIFICATION_CONFIG_TYPE {

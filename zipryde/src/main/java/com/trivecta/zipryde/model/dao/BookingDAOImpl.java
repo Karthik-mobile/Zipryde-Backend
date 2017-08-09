@@ -28,6 +28,7 @@ import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
+import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.mongodb.UserGeoSpatialResponse;
 
@@ -134,16 +135,19 @@ public class BookingDAOImpl implements BookingDAO{
 						user.setCancellationCount(user.getCancellationCount()+1);
 					}
 					session.merge(user);
-					origBooking.setRider(user);	
+					origBooking.setRider(user);						
+					updateUserSessionStatus( booking.getDriver().getId(),STATUS.ACCEPTED);
 					isDriverAccepted = true;
 				}
 				else {
 					origBooking.setBookingStatus(driverStatus);
 					if(STATUS.ON_TRIP.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 						origBooking.setStartDateTime(new Date());
+						updateUserSessionStatus( booking.getDriver().getId(),STATUS.ON_TRIP);						
 					}
 					else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 						origBooking.setEndDateTime(new Date());
+						updateUserSessionStatus(booking.getDriver().getId(),null);	
 						commissionDAO.updateCommision(origBooking);
 					}			
 				}	
@@ -162,6 +166,14 @@ public class BookingDAOImpl implements BookingDAO{
 			}
 			return origBooking;
 		}
+	}
+	
+	private void updateUserSessionStatus(int userId,String status) {
+		Session session = this.sessionFactory.getCurrentSession();
+		UserSession userSession = (UserSession)session.getNamedQuery("UserSession.findByUserId").
+				setParameter("userId", userId).getSingleResult();
+		userSession.setStatus(status);
+		session.merge(userSession);
 	}
 	
 	/*
@@ -185,7 +197,8 @@ public class BookingDAOImpl implements BookingDAO{
 					user.setCancellationCount(user.getCancellationCount()+1);
 				}
 				session.merge(user);
-				origBooking.setRider(user);				
+				origBooking.setRider(user);		
+				updateUserSessionStatus(booking.getDriver().getId(),null);
 				deleteAcceptedBookingRequest(origBooking.getId());
 			}
 		}
@@ -207,6 +220,7 @@ public class BookingDAOImpl implements BookingDAO{
 				Status bookingStatus = 	adminDAO.findByStatus(STATUS.CANCELLED);
 				booking.setBookingStatus(bookingStatus);
 				session.merge(booking);
+				updateUserSessionStatus(booking.getDriver().getId(),null);	
 				deleteAcceptedBookingRequest(booking.getId());
 				fCMNotificationDAO.sendBookingStatusNotification(booking);
 			}
@@ -351,20 +365,16 @@ public class BookingDAOImpl implements BookingDAO{
 			List<Integer> userIdList = nearByDriversList.stream()
 	                .map(UserGeoSpatialResponse::getUserId)
 	                .collect(Collectors.toList());
-			/*List<String> status = new ArrayList<String>();
-			status.add(STATUS.SCHEDULED);
-			status.add(STATUS.ON_TRIP);
 			
-			System.out.println(" userIdList : "+userIdList);
-			List<Integer> driverIdList = session.getNamedQuery("Booking.findUnAssignedDriverIds").
-					setParameter("status", status).setParameter("driverIds", userIdList).getResultList();
+			List<Integer> driverIdList = session.getNamedQuery("UserSession.findByUserIdsAndNoStatus")
+					.setParameter("userIds", userIdList).getResultList();			
+			System.out.println(" driverIdList : "+driverIdList);
 			
-			System.out.println(" driverIdList : "+driverIdList);*/
 			if(userIdList != null && userIdList.size() > 0) {
 				List<DriverVehicleAssociation> driverVehicleAssociationList = 
 						session.getNamedQuery("DriverVehicleAssociation.findByCabTypeAndUserIds")
 						.setParameter("cabTypeId", booking.getCabType().getId())
-						.setParameter("userIds", userIdList).getResultList();
+						.setParameter("userIds", driverIdList).getResultList();
 				for(DriverVehicleAssociation driverVehicleAssociation : driverVehicleAssociationList)	{
 					createBookingRequest(booking,driverVehicleAssociation.getUser());
 				}

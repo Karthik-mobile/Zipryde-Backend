@@ -1,6 +1,7 @@
 package com.trivecta.zipryde.model.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 
@@ -9,6 +10,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.trivecta.zipryde.constants.ErrorMessages;
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 
 @Repository
@@ -34,9 +37,13 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 		return ziprydeConfig;
 	}
 	
-	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) {
+	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		if(ziprydeConfiguration.getId() == null) {
+			ZiprydeConfiguration origConfiguration = getZiprydeConfigurationByType(ziprydeConfiguration.getType());
+			if(origConfiguration != null) {
+				throw new UserValidationException(ErrorMessages.CONFIGURATION_TYPE_ALREADY_EXISTS);
+			}
 			ziprydeConfiguration.setCreationDate(new Date());
 			session.save(ziprydeConfiguration);
 			return ziprydeConfiguration;
@@ -49,5 +56,12 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 			origConfig = (ZiprydeConfiguration) session.merge(origConfig);
 			return origConfig;
 		}
+	}
+	
+	public List<ZiprydeConfiguration> getAllZiprydeConfigurations() {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<ZiprydeConfiguration> ziprydeConfigList = 
+				session.getNamedQuery("ZiprydeConfiguration.findAll").getResultList();
+		return ziprydeConfigList;
 	}
 }

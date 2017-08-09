@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.dao.AdminDAO;
 import com.trivecta.zipryde.model.dao.PricingDAO;
 import com.trivecta.zipryde.model.dao.ZiprydeConfigurationDAO;
@@ -93,7 +94,12 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Transactional
-	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) {
+	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) throws UserValidationException {
 		return ziprydeConfigurationDAO.saveZiprydeConfiguration(ziprydeConfiguration);
+	}
+	
+	@Transactional
+	public List<ZiprydeConfiguration> getAllZiprydeConfigurations() {
+		return ziprydeConfigurationDAO.getAllZiprydeConfigurations();
 	}
 }

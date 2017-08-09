@@ -74,28 +74,38 @@ public class CommissionDAOImpl implements CommissionDAO{
 	@Async
 	public void updateCommision(Booking booking){		
 		Session session = this.sessionFactory.getCurrentSession();
-		CommissionMstr commissionMstr = (CommissionMstr)session.getNamedQuery("CommissionMstr.getCommissionMstrForDate")
-				.getSingleResult();
+		CommissionMstr commissionMstr = null;
 		Commission commission = null;
-		try{
-			commission = (Commission)session.getNamedQuery("Commission.getLatest")
-					.setParameter("driverId",booking.getDriver().getId()).getSingleResult();
-		}catch(NoResultException nre) {
-		}					
-		if(commission == null) {
-			commission = getNewCommissionObject();
+		try {
+			commissionMstr = (CommissionMstr)session.getNamedQuery("CommissionMstr.getCommissionMstrForDate").getSingleResult();
 		}
-		
-		commission.setUser(booking.getDriver());
-		commission.setNoOfMiles(commission.getNoOfMiles() + booking.getDistanceInMiles());
-		commission.setNoOfTrips(commission.getNoOfTrips() + 1);
-		Double commissionAmount = calculateCommissionAmount(booking.getAcceptedPrice(),commissionMstr.getCommisionPercentage());
-		commission.setCommisionAmount(BigDecimal.valueOf(commission.getCommisionAmount().doubleValue() + commissionAmount));
-		if(commission.getNoOfMiles() >= commissionMstr.getNoOfMiles() || commission.getNoOfTrips() >= commissionMstr.getNoOfTrips()) {
-			commission.setCalculatedDate(new Date());
-			commission.setStatus(PAYMENT.PENDING);
+		catch(NoResultException nre) {
+			//No Commiission Mstr
+		}				
+			
+		if(commissionMstr != null) {
+			try {
+				commission = (Commission)session.getNamedQuery("Commission.getLatest")
+						.setParameter("driverId",booking.getDriver().getId()).getSingleResult();
+			}
+			catch(NoResultException nre) {
+				//No Commiission
+			}	
+			if(commission == null) {
+				commission = getNewCommissionObject();
+			}
+			
+			commission.setUser(booking.getDriver());
+			commission.setNoOfMiles(commission.getNoOfMiles() + booking.getDistanceInMiles());
+			commission.setNoOfTrips(commission.getNoOfTrips() + 1);
+			Double commissionAmount = calculateCommissionAmount(booking.getAcceptedPrice(),commissionMstr.getCommisionPercentage());
+			commission.setCommisionAmount(BigDecimal.valueOf(commission.getCommisionAmount().doubleValue() + commissionAmount));
+			if(commission.getNoOfMiles() >= commissionMstr.getNoOfMiles() || commission.getNoOfTrips() >= commissionMstr.getNoOfTrips()) {
+				commission.setCalculatedDate(new Date());
+				commission.setStatus(PAYMENT.PENDING);
+			}		
+			session.saveOrUpdate(commission);	
 		}		
-		session.saveOrUpdate(commission);		
 	}
 
 	private Commission getNewCommissionObject() {
