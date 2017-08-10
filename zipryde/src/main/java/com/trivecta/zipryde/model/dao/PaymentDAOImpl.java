@@ -1,3 +1,4 @@
+
 package com.trivecta.zipryde.model.dao;
 
 import java.math.BigDecimal;
@@ -28,7 +29,7 @@ public class PaymentDAOImpl implements PaymentDAO {
 		Booking origBooking = session.find(Booking.class, payment.getBooking().getId());
 		payment.setBooking(origBooking);
 		session.saveOrUpdate(payment);
-		fCMNotificationDAO.sendBookingStatusNotification(origBooking);
+		fCMNotificationDAO.sendBookingStatusNotification(origBooking,false);
 	}
 
 	@Override

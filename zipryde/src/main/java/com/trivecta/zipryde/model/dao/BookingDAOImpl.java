@@ -158,7 +158,7 @@ public class BookingDAOImpl implements BookingDAO{
 					deleteAcceptedBookingRequest(origBooking.getId());
 				}
 				else {
-					fCMNotificationDAO.sendBookingStatusNotification(origBooking);
+					fCMNotificationDAO.sendBookingStatusNotification(origBooking,false);
 				}
 			}
 			else {
@@ -206,7 +206,7 @@ public class BookingDAOImpl implements BookingDAO{
 		origBooking.setBookingStatus(bookingStatus);
 		session.merge(origBooking);
 		if(!STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
-			fCMNotificationDAO.sendBookingStatusNotification(origBooking);
+			fCMNotificationDAO.sendBookingStatusNotification(origBooking,true);
 		}		
 		return origBooking;
 	}
@@ -222,7 +222,7 @@ public class BookingDAOImpl implements BookingDAO{
 				session.merge(booking);
 				updateUserSessionStatus(booking.getDriver().getId(),null);	
 				deleteAcceptedBookingRequest(booking.getId());
-				fCMNotificationDAO.sendBookingStatusNotification(booking);
+				fCMNotificationDAO.sendBookingStatusNotification(booking,false);
 			}
 		}		
 	}
