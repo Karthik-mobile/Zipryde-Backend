@@ -136,18 +136,18 @@ public class BookingDAOImpl implements BookingDAO{
 					}
 					session.merge(user);
 					origBooking.setRider(user);						
-					updateUserSessionStatus( booking.getDriver().getId(),STATUS.ACCEPTED);
+					updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ACCEPTED);
 					isDriverAccepted = true;
 				}
 				else {
 					origBooking.setBookingStatus(driverStatus);
 					if(STATUS.ON_TRIP.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 						origBooking.setStartDateTime(new Date());
-						updateUserSessionStatus( booking.getDriver().getId(),STATUS.ON_TRIP);						
+						updateUserSessionStatus( origBooking.getDriver().getId(),STATUS.ON_TRIP);						
 					}
 					else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 						origBooking.setEndDateTime(new Date());
-						updateUserSessionStatus(booking.getDriver().getId(),null);	
+						updateUserSessionStatus(origBooking.getDriver().getId(),null);	
 						commissionDAO.updateCommision(origBooking);
 					}			
 				}	
@@ -198,7 +198,7 @@ public class BookingDAOImpl implements BookingDAO{
 				}
 				session.merge(user);
 				origBooking.setRider(user);		
-				updateUserSessionStatus(booking.getDriver().getId(),null);
+				updateUserSessionStatus(origBooking.getDriver().getId(),null);
 				deleteAcceptedBookingRequest(origBooking.getId());
 			}
 		}
