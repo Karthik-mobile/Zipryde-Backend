@@ -21,6 +21,8 @@ public interface FCMNotificationDAO {
 	
 	public void sendBookingStatusNotification(Booking booking,boolean toDriver);
 	
+	public void sendPaymentSuccessNotification(Booking booking);
+	
 	//public void sendDriverOnlineStatusNotification();
 
 }

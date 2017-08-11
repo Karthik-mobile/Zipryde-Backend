@@ -182,7 +182,7 @@ public class BookingDAOImpl implements BookingDAO{
 	public Booking updateBookingStatus(Booking booking) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		Booking origBooking  = session.find(Booking.class, booking.getId());
-		
+		boolean isDriver = true;
 		if(STATUS.CANCELLED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {		
 			if((STATUS.ON_TRIP.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()) || 
 				STATUS.COMPLETED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()))) {
@@ -197,8 +197,13 @@ public class BookingDAOImpl implements BookingDAO{
 					user.setCancellationCount(user.getCancellationCount()+1);
 				}
 				session.merge(user);
-				origBooking.setRider(user);		
-				updateUserSessionStatus(origBooking.getDriver().getId(),null);
+				origBooking.setRider(user);	
+				if(origBooking.getDriver() != null) {
+					updateUserSessionStatus(origBooking.getDriver().getId(),null);
+				}
+				else {
+					isDriver = false;
+				}
 				deleteAcceptedBookingRequest(origBooking.getId());
 			}
 		}
@@ -206,7 +211,7 @@ public class BookingDAOImpl implements BookingDAO{
 		origBooking.setBookingStatus(bookingStatus);
 		session.merge(origBooking);
 		if(!STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
-			fCMNotificationDAO.sendBookingStatusNotification(origBooking,true);
+			fCMNotificationDAO.sendBookingStatusNotification(origBooking,isDriver);
 		}		
 		return origBooking;
 	}

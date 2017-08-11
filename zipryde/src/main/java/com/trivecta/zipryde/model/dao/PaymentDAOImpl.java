@@ -29,7 +29,7 @@ public class PaymentDAOImpl implements PaymentDAO {
 		Booking origBooking = session.find(Booking.class, payment.getBooking().getId());
 		payment.setBooking(origBooking);
 		session.saveOrUpdate(payment);
-		fCMNotificationDAO.sendBookingStatusNotification(origBooking,false);
+		fCMNotificationDAO.sendPaymentSuccessNotification(origBooking);
 	}
 
 	@Override
