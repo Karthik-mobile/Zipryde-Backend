@@ -128,6 +128,9 @@ public class User implements Serializable {
 	@Transient 
 	private int isOnline;
 		
+	@Transient 
+	private int bookingId;
+	
 	public User() {
 	}
 
@@ -471,5 +474,13 @@ public class User implements Serializable {
 
 	public void setIsOnline(int isOnline) {
 		this.isOnline = isOnline;
+	}
+
+	public int getBookingId() {
+		return bookingId;
+	}
+
+	public void setBookingId(int bookingId) {
+		this.bookingId = bookingId;
 	}
 }

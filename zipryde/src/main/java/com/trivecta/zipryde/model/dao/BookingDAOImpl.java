@@ -94,6 +94,7 @@ public class BookingDAOImpl implements BookingDAO{
 		booking.setCrnNumber(generateUniqueCRN());
 		booking.setCreationDate(new Date());
 		session.save(booking);
+		updateUserSessionStatus(booking.getRider().getId(),STATUS.REQUESTED,booking.getId());
 		assignBookingToNearBYDrivers(booking);
 		return booking;		
 	}
@@ -136,18 +137,22 @@ public class BookingDAOImpl implements BookingDAO{
 					}
 					session.merge(user);
 					origBooking.setRider(user);						
-					updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ACCEPTED);
+					updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ACCEPTED,origBooking.getId());
+					updateUserSessionStatus(origBooking.getRider().getId(),STATUS.SCHEDULED,origBooking.getId());
+
 					isDriverAccepted = true;
 				}
 				else {
 					origBooking.setBookingStatus(driverStatus);
 					if(STATUS.ON_TRIP.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 						origBooking.setStartDateTime(new Date());
-						updateUserSessionStatus( origBooking.getDriver().getId(),STATUS.ON_TRIP);						
+						updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ON_TRIP,origBooking.getId());
+						updateUserSessionStatus(origBooking.getRider().getId(),STATUS.ON_TRIP,origBooking.getId());
 					}
 					else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 						origBooking.setEndDateTime(new Date());
-						updateUserSessionStatus(origBooking.getDriver().getId(),null);	
+						updateUserSessionStatus(origBooking.getDriver().getId(),null,null);
+						updateUserSessionStatus(origBooking.getRider().getId(),null,null);
 						commissionDAO.updateCommision(origBooking);
 					}			
 				}	
@@ -168,11 +173,12 @@ public class BookingDAOImpl implements BookingDAO{
 		}
 	}
 	
-	private void updateUserSessionStatus(int userId,String status) {
+	private void updateUserSessionStatus(int userId,String status,Integer bookingId) {
 		Session session = this.sessionFactory.getCurrentSession();
 		UserSession userSession = (UserSession)session.getNamedQuery("UserSession.findByUserId").
 				setParameter("userId", userId).getSingleResult();
 		userSession.setStatus(status);
+		userSession.setBookingId(bookingId);
 		session.merge(userSession);
 	}
 	
@@ -198,8 +204,9 @@ public class BookingDAOImpl implements BookingDAO{
 				}
 				session.merge(user);
 				origBooking.setRider(user);	
+				updateUserSessionStatus(origBooking.getRider().getId(),null,null);
 				if(origBooking.getDriver() != null) {
-					updateUserSessionStatus(origBooking.getDriver().getId(),null);
+					updateUserSessionStatus(origBooking.getDriver().getId(),null,null);
 				}
 				else {
 					isDriver = false;
@@ -225,7 +232,8 @@ public class BookingDAOImpl implements BookingDAO{
 				Status bookingStatus = 	adminDAO.findByStatus(STATUS.CANCELLED);
 				booking.setBookingStatus(bookingStatus);
 				session.merge(booking);
-				updateUserSessionStatus(booking.getDriver().getId(),null);	
+				updateUserSessionStatus(booking.getDriver().getId(),null,null);	
+				updateUserSessionStatus(booking.getRider().getId(),null,null);
 				deleteAcceptedBookingRequest(booking.getId());
 				fCMNotificationDAO.sendBookingStatusNotification(booking,false);
 			}

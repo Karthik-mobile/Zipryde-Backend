@@ -233,8 +233,7 @@ public class UserTransformer {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}     
-			     
+				}     			     
 				user.setDriverProfile(driverProfile);			
 			}
 			User savedUser = userService.saveUser(user);
@@ -494,6 +493,9 @@ public class UserTransformer {
 		userResponse.setCancellationCount(user.getCancellationCount());
 		userResponse.setUserType(user.getUserType().getType());
 		
+		userResponse.setIsOnline(user.getIsOnline());
+		userResponse.setBookingId(user.getBookingId());
+		
 		if(USERTYPE.DRIVER.equalsIgnoreCase(userResponse.getUserType()) && user.getDriverProfile() != null ) {
 			userResponse.setDriverProfileId(user.getDriverProfile().getId());
 			userResponse.setLicenseNo(user.getDriverProfile().getLicenseNo());
@@ -512,9 +514,7 @@ public class UserTransformer {
 					
 			userResponse.setLicenseValidUntil(licenseValidUntil);
 			userResponse.setRestriction(user.getDriverProfile().getRestrictions());
-
-			// Need to get From User Session
-			userResponse.setIsOnline(user.getIsOnline());
+			
 			userResponse.setDefaultPercentageAccepted(user.getDriverProfile().getDefaultPercentage());
 				
 			userResponse.setStatusCode(user.getDriverProfile().getStatus().getStatus());

@@ -17,7 +17,6 @@ import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.model.service.UserService;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
-import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.UserGeoSpatialResponse;
 
 @Component
@@ -93,7 +92,7 @@ public class MongoTransformer {
 		}
 	}
 	
-	private void saveUserSession(int userId,int isOnline) throws UserValidationException {
+	public void saveUserSession(int userId,int isOnline) throws UserValidationException {
 		//Mysql change online Status
 		UserSession userSession = new UserSession();
 		userSession.setIsActive(isOnline);

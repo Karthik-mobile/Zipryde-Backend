@@ -15,7 +15,9 @@ import java.util.Date;
 	@NamedQuery(name="UserSession.findByUserId", query="SELECT u FROM UserSession u where u.userId = :userId and u.logOutDateTime is NULL"),
 	@NamedQuery(name="UserSession.findByActiveUserIds", query="SELECT u FROM UserSession u where u.isActive = 1 and u.logOutDateTime is NULL and u.userId in :userIds"),
 	@NamedQuery(name="UserSession.findByUserIdsAndNoStatus", 
-		query="SELECT u.userId FROM UserSession u where u.isActive = 1 and u.logOutDateTime is NULL and u.status is NULL and u.userId in :userIds")
+		query="SELECT u.userId FROM UserSession u where u.isActive = 1 and u.logOutDateTime is NULL and u.status is NULL and u.userId in :userIds"),
+	@NamedQuery(name="UserSession.findByUserIdAndStatusNotNull", 
+	query="SELECT u.userId FROM UserSession u where u.isActive = 1 and u.logOutDateTime is NULL and u.status is NOT NULL and u.userId = :userId")
 })
 public class UserSession implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +37,8 @@ public class UserSession implements Serializable {
 	private String status;
 
 	private Integer userId;
+	
+	private Integer bookingId;
 
 	public UserSession() {
 	}
@@ -85,6 +89,14 @@ public class UserSession implements Serializable {
 
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+
+	public Integer getBookingId() {
+		return bookingId;
+	}
+
+	public void setBookingId(Integer bookingId) {
+		this.bookingId = bookingId;
 	}
 
 }

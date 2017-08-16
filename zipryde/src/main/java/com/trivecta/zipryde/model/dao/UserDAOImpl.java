@@ -152,6 +152,10 @@ public class UserDAOImpl implements UserDAO {
 			}
 			newUser.setDeviceToken(user.getDeviceToken());
 			session.merge(newUser);
+			if (USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())) {
+				saveUserSession(newUser.getId(),1);
+			}
+			fetchLazyInitialisation(newUser);
 			return newUser;
 		}		
 	}
@@ -263,11 +267,22 @@ public class UserDAOImpl implements UserDAO {
 				}
 				user.getDriverProfile().setStatus(status);				
 				session.save(user.getDriverProfile());
+				user.getDriverProfile();
 			}			
-			user.getDriverProfile();
+			else if(USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())){
+				saveUserSession(user.getId(),1);
+			}
+			
 			return user;
 		}
 		return user;		
+	}
+	
+	private void saveUserSession(int userId,int isActive) throws UserValidationException {
+		UserSession userSession = new UserSession();
+		userSession.setUserId(userId);
+		userSession.setIsActive(isActive);
+		saveUserSession(userSession);
 	}
 	
 	public User updateUser(User user) throws NoResultEntityException, UserValidationException {
@@ -332,12 +347,9 @@ public class UserDAOImpl implements UserDAO {
 		}
 
 		User newUser = (User) session.merge(origUser);
-
-		return newUser;
-		
+		return newUser;		
 	}
-	
-	
+		
 	public void deleteUser(User user) throws NoResultEntityException, UserValidationException{
 		Session session = this.sessionFactory.getCurrentSession();
 		User origUser = null;
@@ -542,13 +554,9 @@ public class UserDAOImpl implements UserDAO {
 	public UserSession saveUserSession(UserSession userSession) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		if(userSession.getIsActive() == 0) {
-			List<String> status = new ArrayList<String>();
-			status.add(STATUS.SCHEDULED);
-			status.add(STATUS.ON_TRIP);
-			Booking booking = null;
 			try {
-				booking = (Booking) session.getNamedQuery("Booking.findByBookingStatusAndDriverId").
-						setParameter("status", status).setParameter("driverId", userSession.getUserId()).setMaxResults(1).getSingleResult();
+				UserSession activeUserSession = (UserSession) session.getNamedQuery("UserSession.findByUserIdAndStatusNotNull")
+						.setParameter("userId", userSession.getUserId()).setMaxResults(1).getSingleResult();
 				throw new UserValidationException(ErrorMessages.DRIVER_ACTIVE_BOOKING);
 			}
 			catch(NoResultException e){
@@ -557,8 +565,6 @@ public class UserDAOImpl implements UserDAO {
 		}
 		
 		UserSession origUserSession = getUserSessionByUserId(userSession.getUserId());
-		
-		User user = getUserByUserId(userSession.getUserId());
 		
 		if(origUserSession != null) {
 			origUserSession.setIsActive(userSession.getIsActive());			
@@ -589,6 +595,14 @@ public class UserDAOImpl implements UserDAO {
 		user.getBookingHistories1();
 		user.getCommissions();
 		
+		UserSession userSession = getUserSessionByUserId(user.getId());
+		if(userSession  != null) {
+			user.setIsOnline(userSession.getIsActive());
+			if(userSession.getBookingId() != null) {
+					user.setBookingId(userSession.getBookingId());
+			}
+		}
+		
 		if(USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())){
 			if(user.getUserPreferedLocations() != null && user.getUserPreferedLocations().size() > 0) {
 				user.getUserPreferedLocations().size();
@@ -604,12 +618,7 @@ public class UserDAOImpl implements UserDAO {
 			
 			if(user.getCommissions() != null && user.getCommissions().size() > 0) {
 				user.getCommissions().size();
-			}
-			
-			UserSession userSession = getUserSessionByUserId(user.getId());
-			if(userSession  != null) {
-				user.setIsOnline(userSession.getIsActive());
-			}
+			}			
 		}		
 	}
 	
