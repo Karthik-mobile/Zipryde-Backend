@@ -187,9 +187,8 @@ public class BookingTransformer {
 			
 			Status status = new Status();
 			status.setStatus(bookingRequest.getBookingStatus());
-			booking.setBookingStatus(status);
-			
-			Booking updatedBooking = bookingService.updateBookingStatus(booking);
+			booking.setBookingStatus(status);			
+			Booking updatedBooking = bookingService.updateBookingStatus(booking,null);
 			return setBookingResponseFromBooking(updatedBooking,false);
 		}
 	}
@@ -374,7 +373,7 @@ public class BookingTransformer {
 	}
 
 	
-	private BookingResponse setBookingResponseFromBooking(Booking booking,boolean loadImages) {
+	public BookingResponse setBookingResponseFromBooking(Booking booking,boolean loadImages) {
 		BookingResponse bookingResponse = new BookingResponse();
 		
 		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");

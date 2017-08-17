@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants.PAYMENT;
+import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
@@ -22,11 +23,14 @@ import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.Commission;
 import com.trivecta.zipryde.model.entity.CommissionMstr;
 import com.trivecta.zipryde.model.entity.Payment;
+import com.trivecta.zipryde.model.entity.Status;
+import com.trivecta.zipryde.model.service.BookingService;
 import com.trivecta.zipryde.model.service.CommissionService;
 import com.trivecta.zipryde.model.service.PaymentService;
 import com.trivecta.zipryde.view.request.CommissionMasterRequest;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.PaymentRequest;
+import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CommissionMasterResponse;
 import com.trivecta.zipryde.view.response.CommissionResponse;
 import com.trivecta.zipryde.view.response.CommonResponse;
@@ -40,7 +44,10 @@ public class PaymentTransformer {
     @Autowired
     CommissionService commissionService;
     
-    public void savePayment(PaymentRequest paymentRequest) throws MandatoryValidationException {
+    @Autowired
+    BookingService bookingService;
+    
+    public void savePayment(PaymentRequest paymentRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		if(paymentRequest.getBookingId() == null) {
 			errorMsg.append(ErrorMessages.BOOKING_ID_REQUIRED);
@@ -62,7 +69,13 @@ public class PaymentTransformer {
 	        payment.setAmountPaid(BigDecimal.valueOf(paymentRequest.getAmountPaid()));
 	        payment.setPaymentType(paymentRequest.getPaymentType() != null ? paymentRequest.getPaymentType() : PAYMENT.CASH);
 	        payment.setPaidDateTime(new Date());
-	        paymentService.savePayment(payment);
+	        
+	        Status status = new Status();
+			status.setStatus(STATUS.PAID);
+			booking.setBookingStatus(status);			
+			Booking updatedBooking = bookingService.updateBookingStatus(booking,payment);
+			//return setBookingResponseFromBooking(updatedBooking,false);
+	       // paymentService.savePayment(payment);
 		}
 	}
     

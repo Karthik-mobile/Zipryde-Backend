@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.dao.BookingDAO;
 import com.trivecta.zipryde.model.entity.Booking;
+import com.trivecta.zipryde.model.entity.Payment;
 
 @Service("bookingService")
 public class BookingServiceImpl implements BookingService{
@@ -28,8 +29,8 @@ public class BookingServiceImpl implements BookingService{
 	}
 
 	@Transactional
-	public Booking updateBookingStatus(Booking booking) throws UserValidationException {
-		return bookingDAO.updateBookingStatus(booking);
+	public Booking updateBookingStatus(Booking booking,Payment payment) throws UserValidationException {
+		return bookingDAO.updateBookingStatus(booking,payment);
 	}
 
 	@Transactional

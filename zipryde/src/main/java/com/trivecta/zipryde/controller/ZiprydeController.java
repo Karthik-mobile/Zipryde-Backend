@@ -312,9 +312,10 @@ public class ZiprydeController {
 	}
 	
 	
-	/** ----------- PAYMENT -------------------- */
+	/** ----------- PAYMENT -------------------- 
+	 * @throws UserValidationException */
 	@RequestMapping(value = "/savePayment")  
-    public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException{
+    public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException, UserValidationException{
            paymentTransformer.savePayment(paymentRequest);
     }
 	

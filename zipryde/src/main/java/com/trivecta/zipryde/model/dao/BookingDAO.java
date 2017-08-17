@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.Booking;
+import com.trivecta.zipryde.model.entity.Payment;
 
 public interface BookingDAO {
 	
@@ -14,7 +15,7 @@ public interface BookingDAO {
 	
 	public Booking updateBookingDriverStatus(Booking booking) throws UserValidationException;
 	
-	public Booking updateBookingStatus(Booking booking) throws UserValidationException;
+	public Booking updateBookingStatus(Booking booking,Payment payment) throws UserValidationException;
 	
 	public Booking getBookingById(int bookingId);
 	

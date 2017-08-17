@@ -26,6 +26,7 @@ import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.BookingRequest;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
+import com.trivecta.zipryde.model.entity.Payment;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.entity.UserSession;
@@ -49,6 +50,9 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	@Autowired
 	CommissionDAO commissionDAO;
+	
+	@Autowired
+	PaymentDAO paymentDAO;
 	
 	@Autowired
 	FCMNotificationDAO fCMNotificationDAO;
@@ -151,9 +155,9 @@ public class BookingDAOImpl implements BookingDAO{
 					}
 					else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 						origBooking.setEndDateTime(new Date());
-						updateUserSessionStatus(origBooking.getDriver().getId(),null,null);
-						updateUserSessionStatus(origBooking.getRider().getId(),null,null);
-						commissionDAO.updateCommision(origBooking);
+						updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.COMPLETED,origBooking.getId());
+						updateUserSessionStatus(origBooking.getRider().getId(),STATUS.COMPLETED,origBooking.getId());
+					//	commissionDAO.updateCommision(origBooking);
 					}			
 				}	
 				origBooking.setModifiedDate(new Date());
@@ -175,17 +179,22 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	private void updateUserSessionStatus(int userId,String status,Integer bookingId) {
 		Session session = this.sessionFactory.getCurrentSession();
-		UserSession userSession = (UserSession)session.getNamedQuery("UserSession.findByUserId").
-				setParameter("userId", userId).getSingleResult();
-		userSession.setStatus(status);
-		userSession.setBookingId(bookingId);
-		session.merge(userSession);
+		try {
+			UserSession userSession = (UserSession)session.getNamedQuery("UserSession.findByUserId").
+					setParameter("userId", userId).getSingleResult();
+			userSession.setStatus(status);
+			userSession.setBookingId(bookingId);
+			session.merge(userSession);
+		}
+		catch(Exception e){
+			//No result
+		}
 	}
 	
 	/*
-	 * Booking Status -  CANCELLED
+	 * Booking Status -  CANCELLED / PAID
 	 */	
-	public Booking updateBookingStatus(Booking booking) throws UserValidationException {
+	public Booking updateBookingStatus(Booking booking,Payment payment) throws UserValidationException {
 		Session session = this.sessionFactory.getCurrentSession();
 		Booking origBooking  = session.find(Booking.class, booking.getId());
 		boolean isDriver = true;
@@ -217,7 +226,14 @@ public class BookingDAOImpl implements BookingDAO{
 		Status bookingStatus = 	adminDAO.findByStatus(booking.getBookingStatus().getStatus());
 		origBooking.setBookingStatus(bookingStatus);
 		session.merge(origBooking);
-		if(!STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
+		//IF PAID, THEN UPDATE USER SESSION STATUS AND SAVE PAYMENT
+		if(STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+			updateUserSessionStatus(origBooking.getDriver().getId(),null,null);
+			updateUserSessionStatus(origBooking.getRider().getId(),null,null);
+			commissionDAO.updateCommision(origBooking);			
+			paymentDAO.savePayment(payment);
+		}	
+		else if(!STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
 			fCMNotificationDAO.sendBookingStatusNotification(origBooking,isDriver);
 		}		
 		return origBooking;
@@ -381,9 +397,8 @@ public class BookingDAOImpl implements BookingDAO{
 			
 			List<Integer> driverIdList = session.getNamedQuery("UserSession.findByUserIdsAndNoStatus")
 					.setParameter("userIds", userIdList).getResultList();			
-			System.out.println(" driverIdList : "+driverIdList);
 			
-			if(userIdList != null && userIdList.size() > 0) {
+			if(driverIdList != null && driverIdList.size() > 0) {
 				List<DriverVehicleAssociation> driverVehicleAssociationList = 
 						session.getNamedQuery("DriverVehicleAssociation.findByCabTypeAndUserIds")
 						.setParameter("cabTypeId", booking.getCabType().getId())

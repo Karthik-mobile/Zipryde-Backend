@@ -28,6 +28,7 @@ public class ZipRydeConstants {
 		static String COMPLETED = "COMPLETED";
 		static String CANCELLED = "CANCELLED";
 		static String ACCEPTED = "ACCEPTED";
+		static String PAID = "PAID";
 	}
 	
 	
