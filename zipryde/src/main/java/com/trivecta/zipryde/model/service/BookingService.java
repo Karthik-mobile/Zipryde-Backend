@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.Booking;
+import com.trivecta.zipryde.model.entity.LostItem;
 import com.trivecta.zipryde.model.entity.Payment;
 
 public interface BookingService {
@@ -36,5 +37,12 @@ public interface BookingService {
 	public Integer getBookingCountByDateAndDriverId(Date bookingDate,Integer driverId);
 	
 	public void updateBookinStatusUnAnswered();
+	
+	
+	
+	/**----------- Lost Items ----------------- */
+	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException;
+	public LostItem getLostItemByBookingId(int bookingId) ;
+	public List<LostItem> getAllLostItem();
 
 }

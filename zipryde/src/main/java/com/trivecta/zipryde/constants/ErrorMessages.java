@@ -101,4 +101,6 @@ public interface ErrorMessages {
 	static String DRIVER_ACTIVE_BOOKING ="You have Active Zipryde and you cannot go offline";
 	
 	static String CONFIGURATION_TYPE_ALREADY_EXISTS = "Configuration Type Already Exists";
+	
+	static String  NO_BOOKING_FOUND = "No Zipryde found for this Id";
 }

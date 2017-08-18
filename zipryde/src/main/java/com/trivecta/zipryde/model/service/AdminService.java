@@ -37,10 +37,4 @@ public interface AdminService {
 	public List<PricingMstr> getAllPricingMstr();
 	
 	public PricingMstr savePricingMstr(PricingMstr pricingMstr);
-	
-	public ZiprydeConfiguration getZiprydeConfigurationByType(String type);
-	
-	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) throws UserValidationException ;
-	
-	public List<ZiprydeConfiguration> getAllZiprydeConfigurations();
 }

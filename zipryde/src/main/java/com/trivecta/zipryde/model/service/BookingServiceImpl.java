@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.dao.BookingDAO;
 import com.trivecta.zipryde.model.entity.Booking;
+import com.trivecta.zipryde.model.entity.LostItem;
 import com.trivecta.zipryde.model.entity.Payment;
 
 @Service("bookingService")
@@ -86,5 +87,20 @@ public class BookingServiceImpl implements BookingService{
 	@Transactional
 	public void updateBookinStatusUnAnswered() {
 		bookingDAO.updateBookinStatusUnAnswered();
+	}
+	
+	@Transactional
+	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException {
+		return bookingDAO.saveLostItem(newLostItem);
+	}
+	
+	@Transactional
+	public LostItem getLostItemByBookingId(int bookingId){
+		return bookingDAO.getLostItemByBookingId(bookingId);
+	}
+	
+	@Transactional
+	public List<LostItem> getAllLostItem(){
+		return bookingDAO.getAllLostItem();
 	}
 }

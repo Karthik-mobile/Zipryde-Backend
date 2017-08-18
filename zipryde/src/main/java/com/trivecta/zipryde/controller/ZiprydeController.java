@@ -29,6 +29,7 @@ import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.ConfigurationRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
+import com.trivecta.zipryde.view.request.LostItemRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.PaymentRequest;
 import com.trivecta.zipryde.view.request.PricingMstrRequest;
@@ -42,6 +43,7 @@ import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.ConfigurationResponse;
 import com.trivecta.zipryde.view.response.DriverVehicleAssociationResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
+import com.trivecta.zipryde.view.response.LostItemResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
 import com.trivecta.zipryde.view.response.OTPResponse;
@@ -360,6 +362,23 @@ public class ZiprydeController {
 		return adminTransformer.getAllZiprydeConfigurations();
 	}
 		
+	/** ------------Lost Item ------------- */
+	
+	@RequestMapping(value = "/saveLostItem")  
+	public @ResponseBody LostItemResponse saveLostItem(@RequestBody LostItemRequest lostItemRequest) throws UserValidationException, MandatoryValidationException {
+		return bookingTranssformer.saveLostItem(lostItemRequest);
+	}
+	
+	@RequestMapping(value = "/getLostItemByBookingId")  
+	public @ResponseBody LostItemResponse getLostItemByBookingId(@RequestBody LostItemRequest lostItemRequest) throws MandatoryValidationException {
+		return bookingTranssformer.getLostItemByBookingId(lostItemRequest);
+	}
+
+	@RequestMapping(value = "/getAllLostItems")  
+	public @ResponseBody List<LostItemResponse> getAllLostItems() {
+		return bookingTranssformer.getAllLostItems();
+	}
+	
 	/** --------- MONGO DB SERVICE -------------------- */
 	
 	@RequestMapping(value = "/getGeoLocationByDriverId")

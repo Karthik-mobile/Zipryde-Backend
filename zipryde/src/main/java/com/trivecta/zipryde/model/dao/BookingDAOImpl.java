@@ -26,6 +26,7 @@ import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.BookingRequest;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
+import com.trivecta.zipryde.model.entity.LostItem;
 import com.trivecta.zipryde.model.entity.Payment;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
@@ -442,5 +443,53 @@ public class BookingDAOImpl implements BookingDAO{
 		catch(Exception e) {
 			//No Data to Processed			
 		}
+	}
+	
+	
+	/**----------- Lost Items ----------------- */
+	
+	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException {
+		Session session = this.sessionFactory.getCurrentSession();
+		LostItem lostItem = getLostItemByBookingId(newLostItem.getBookingId());
+		
+		if(lostItem == null) {
+			Booking booking = getBookingById(newLostItem.getBookingId());
+			if(booking != null) {
+				newLostItem.setCrnNumber(booking.getCrnNumber());
+				if(booking.getDriver() != null)
+					newLostItem.setDriverMobileNumber(booking.getDriver().getMobileNumber());
+				newLostItem.setUserMobileNumber(booking.getRider().getMobileNumber());
+				session.save(newLostItem);
+				return newLostItem;
+			}
+			else {
+				throw new UserValidationException(ErrorMessages.NO_BOOKING_FOUND);
+			}
+		}
+		else{
+			lostItem.setComments(newLostItem.getComments());
+			lostItem.setModifiedDate(new Date());
+			session.merge(lostItem);
+			return lostItem;
+		}
+	}
+	
+	public LostItem getLostItemByBookingId(int bookingId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		LostItem lostItem = null;
+		try {
+			lostItem = (LostItem)session.getNamedQuery("LostItem.findByBookingId").
+					setParameter("bookingId", bookingId).getSingleResult();
+		}
+		catch(NoResultException e){
+			//no data
+		}
+		return lostItem;
+	}
+	
+	public List<LostItem> getAllLostItem() {
+		Session session = this.sessionFactory.getCurrentSession();
+		List<LostItem> lostItems = session.getNamedQuery("LostItem.findAll").getResultList();
+		return lostItems;
 	}
 }

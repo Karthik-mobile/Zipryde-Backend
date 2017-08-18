@@ -80,4 +80,8 @@ public class ZipRydeConstants {
 		static String NOTIFICATION_DRIVER = "NOTIFICATION_DRIVER";
 		static String NOTIFICATION_RIDER = "NOTIFICATION_RIDER";
 	}
+	
+	public interface ZIPRYDE_CONFIGURATION {
+		static String NO_OF_MILES_TO_SEARCH = "NO_OF_MILES_TO_SEARCH";
+	}
 }

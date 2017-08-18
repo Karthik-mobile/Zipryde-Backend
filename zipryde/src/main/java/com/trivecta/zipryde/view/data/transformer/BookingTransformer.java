@@ -23,6 +23,7 @@ import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.CabType;
+import com.trivecta.zipryde.model.entity.LostItem;
 import com.trivecta.zipryde.model.entity.Payment;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
@@ -31,10 +32,12 @@ import com.trivecta.zipryde.model.service.PaymentService;
 import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
+import com.trivecta.zipryde.view.request.LostItemRequest;
 import com.trivecta.zipryde.view.request.PaymentRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
+import com.trivecta.zipryde.view.response.LostItemResponse;
 
 @Component
 public class BookingTransformer {
@@ -192,8 +195,7 @@ public class BookingTransformer {
 			return setBookingResponseFromBooking(updatedBooking,false);
 		}
 	}
-	
-	
+		
 	public BookingResponse updateBooking(BookingRequest bookingRequest) throws ParseException {
 		
 		Booking booking = new Booking();		
@@ -452,4 +454,52 @@ public class BookingTransformer {
 		return bookingResponse;
 	}
 	
+	
+	/** -------------------- LOST ITEM ---- ------------*/
+	
+	public LostItemResponse saveLostItem(LostItemRequest lostItemRequest) throws UserValidationException, MandatoryValidationException {
+		if(lostItemRequest.getBookingId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+			
+		LostItem lostItem = new LostItem();
+		lostItem.setBookingId(lostItemRequest.getBookingId());
+		lostItem.setComments(lostItemRequest.getComments());
+		
+		LostItem newLostItem = bookingService.saveLostItem(lostItem);
+		return setLostItemResponse(newLostItem);
+	}
+
+	public LostItemResponse getLostItemByBookingId(LostItemRequest lostItemRequest) throws MandatoryValidationException {
+		if(lostItemRequest.getBookingId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+		LostItem newLostItem = bookingService.getLostItemByBookingId(lostItemRequest.getBookingId());
+		return setLostItemResponse(newLostItem);
+	}
+	
+	public List<LostItemResponse> getAllLostItems() {
+		List<LostItemResponse> lostItemResponseList = new ArrayList<LostItemResponse>();
+		List<LostItem> lostItems = bookingService.getAllLostItem();
+		if(lostItems != null && lostItems.size() > 0) {
+			for(LostItem lostItem : lostItems) {
+				lostItemResponseList.add(setLostItemResponse(lostItem));
+			}
+		}
+		return lostItemResponseList;
+	}
+	
+	private LostItemResponse setLostItemResponse(LostItem lostItem){
+		LostItemResponse lostItemResponse  = new LostItemResponse();
+		if(lostItem != null) {
+			lostItemResponse.setBookingId(lostItem.getBookingId());
+			lostItemResponse.setComments(lostItem.getComments());
+			lostItemResponse.setCrnNumber(lostItem.getCrnNumber());
+			lostItemResponse.setDriverMobileNumber(lostItem.getDriverMobileNumber());
+			lostItemResponse.setLostItemId(lostItem.getId());
+			lostItemResponse.setUserMobileNumber(lostItem.getUserMobileNumber());
+		}
+		return lostItemResponse;
+	}
 }
+

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
-import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_CONFIG_TYPE;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.CabType;
@@ -22,6 +21,7 @@ import com.trivecta.zipryde.model.entity.PricingMstr;
 import com.trivecta.zipryde.model.entity.PricingType;
 import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 import com.trivecta.zipryde.model.service.AdminService;
+import com.trivecta.zipryde.model.service.ZiprydeConfigService;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.ConfigurationRequest;
 import com.trivecta.zipryde.view.request.PricingMstrRequest;
@@ -37,6 +37,9 @@ public class AdminTransformer {
 
 	@Autowired
 	AdminService adminService;
+	
+	@Autowired
+	ZiprydeConfigService ziprydeConfigService;
 	
 	public List<CabTypeResponse> getAllCabTypes() {
 		List<CabTypeResponse> cabTypeResponseList = 
@@ -207,7 +210,7 @@ public class AdminTransformer {
 	}
 	
 	public ConfigurationResponse getZiprydeConfigurationByType(ConfigurationRequest configurationRequest){
-		ZiprydeConfiguration ziprydeConfiguration = adminService.getZiprydeConfigurationByType(configurationRequest.getType());
+		ZiprydeConfiguration ziprydeConfiguration = ziprydeConfigService.getZiprydeConfigurationByType(configurationRequest.getType());
 		return setConfigurationResponse(ziprydeConfiguration);
 	}
 	
@@ -217,13 +220,13 @@ public class AdminTransformer {
 		ziprydeConfiguration.setAccessKey(configurationRequest.getAccessKey());
 		ziprydeConfiguration.setUrl(configurationRequest.getUrl());
 		ziprydeConfiguration.setId(configurationRequest.getId());
-		ZiprydeConfiguration newZipRydeConfiguration = adminService.saveZiprydeConfiguration(ziprydeConfiguration);
+		ZiprydeConfiguration newZipRydeConfiguration = ziprydeConfigService.saveZiprydeConfiguration(ziprydeConfiguration);
 		return setConfigurationResponse(newZipRydeConfiguration);		
 	}
 	
 	public  List<ConfigurationResponse> getAllZiprydeConfigurations() {
 		List<ConfigurationResponse> configurationResponseList = new ArrayList<ConfigurationResponse>();
-		List<ZiprydeConfiguration> zipRydeConfigList = adminService.getAllZiprydeConfigurations();
+		List<ZiprydeConfiguration> zipRydeConfigList = ziprydeConfigService.getAllZiprydeConfigurations();
 		if(zipRydeConfigList != null && zipRydeConfigList.size() > 0 ) {
 			for(ZiprydeConfiguration ziprydeConfig : zipRydeConfigList) {
 				configurationResponseList.add(setConfigurationResponse(ziprydeConfig));

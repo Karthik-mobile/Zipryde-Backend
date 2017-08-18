@@ -20,6 +20,7 @@ import java.util.TimeZone;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -30,16 +31,20 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.trivecta.zipryde.constants.ZipRydeConstants.ZIPRYDE_CONFIGURATION;
+import com.trivecta.zipryde.model.entity.ZiprydeMstr;
+import com.trivecta.zipryde.model.service.ZiprydeConfigService;
 
 @Component
 public class MongoDbClient {
 
+	@Autowired
+	ZiprydeConfigService ziprydeConfigService;
+	
 	static MongoClient mongoClient = new MongoClient("localhost", 27017);
 	static MongoDatabase mongoDatabase = mongoClient.getDatabase("ZIPRYDE");
 	static MongoCollection<Document> mongoCollection = mongoDatabase.getCollection("driversession");
 	
-	private static Double noOfMiles = 5 / 3963.2 ;
-		
 	public UserGeoSpatialResponse getGeoLocationByDriverId(String userId) {
 		UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
 		FindIterable<Document> findIterable = mongoCollection.find(new Document("userId",userId).append("isActive",1));
@@ -55,6 +60,13 @@ public class MongoDbClient {
 	}
 	
 	public List<UserGeoSpatialResponse> getNearByActiveDrivers(Double longitude,Double latitude){
+		int noOfMilesToSearch = 40;
+		ZiprydeMstr ziprydeMstr = ziprydeConfigService.getZiprydeMstrByType(ZIPRYDE_CONFIGURATION.NO_OF_MILES_TO_SEARCH);
+		if(ziprydeMstr != null) {
+			noOfMilesToSearch = Integer.parseInt(ziprydeMstr.getValue());
+		}
+		Double noOfMiles = noOfMilesToSearch / 3963.2 ;
+		
 		final List<UserGeoSpatialResponse> userResponseList = new ArrayList<UserGeoSpatialResponse>();
 		List<Double> coordinates = new LinkedList<Double>();
 		coordinates.add(longitude);

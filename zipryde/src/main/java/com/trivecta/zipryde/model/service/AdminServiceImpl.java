@@ -30,9 +30,6 @@ public class AdminServiceImpl implements AdminService {
 	@Autowired
 	PricingDAO pricingDAO;	
 
-	@Autowired
-	ZiprydeConfigurationDAO ziprydeConfigurationDAO;
-	
 	@Transactional
 	public List<Make> getAllMake() {
 		return adminDAO.getAllMake();
@@ -86,20 +83,5 @@ public class AdminServiceImpl implements AdminService {
 	@Transactional
 	public PricingMstr savePricingMstr(PricingMstr pricingMstr){
 		return pricingDAO.savePricingMstr(pricingMstr);
-	}
-	
-	@Transactional
-	public ZiprydeConfiguration getZiprydeConfigurationByType(String type) {
-		return ziprydeConfigurationDAO.getZiprydeConfigurationByType(type);
-	}
-	
-	@Transactional
-	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration) throws UserValidationException {
-		return ziprydeConfigurationDAO.saveZiprydeConfiguration(ziprydeConfiguration);
-	}
-	
-	@Transactional
-	public List<ZiprydeConfiguration> getAllZiprydeConfigurations() {
-		return ziprydeConfigurationDAO.getAllZiprydeConfigurations();
 	}
 }

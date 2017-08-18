@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
+import com.trivecta.zipryde.model.entity.ZiprydeMstr;
 
 @Repository
 public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
@@ -63,5 +64,18 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 		List<ZiprydeConfiguration> ziprydeConfigList = 
 				session.getNamedQuery("ZiprydeConfiguration.findAll").getResultList();
 		return ziprydeConfigList;
+	}
+	
+	public ZiprydeMstr  getZiprydeMstrByType(String type){
+		Session session = this.sessionFactory.getCurrentSession();
+		ZiprydeMstr ziprydeMstr = null;
+		try{
+			ziprydeMstr = (ZiprydeMstr) session.getNamedQuery("ZiprydeMstr.findByType").
+					setParameter("type", type).getSingleResult();
+		}
+		catch(NoResultException e){
+			//No Result
+		}
+		return ziprydeMstr;		
 	}
 }
