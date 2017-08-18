@@ -188,6 +188,11 @@ public class ZiprydeController {
 		return bookingTranssformer.getBookingCountByDateAndDriverId(bookingRequest);
 	}
 	
+	@RequestMapping(value = "/getCommissionAmountByStatus")
+	public @ResponseBody CommonResponse getCommissionAmountByStatus(@RequestBody CommonRequest commonRequest)throws MandatoryValidationException{
+		return paymentTransformer.getCommissionAmountByStatus(commonRequest);
+	}
+	
 	/** ----------------- VEHICLE  --------------------- */
 	
 	@RequestMapping(value = "/saveVehicle")
@@ -275,8 +280,7 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateBookingStatus")
 	public @ResponseBody BookingResponse updateBookingStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException {
 		return bookingTranssformer.updateBookingStatus(bookingRequest);
-	}
-	
+	}	
 	
 	@RequestMapping(value = "/getBookingByBookingId")
 	public @ResponseBody BookingResponse getBookingByBookingId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
@@ -314,13 +318,13 @@ public class ZiprydeController {
 	}
 	
 	
-	/** ----------- PAYMENT -------------------- 
-	 * @throws UserValidationException */
+	/** ----------- PAYMENT -------------------- */
 	@RequestMapping(value = "/savePayment")  
     public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException, UserValidationException{
            paymentTransformer.savePayment(paymentRequest);
     }
 	
+	/** -------- COMMISSION ----------------- */
 	@RequestMapping(value = "/payCommission")  
     public @ResponseBody CommissionResponse payCommission(@RequestBody CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {
 		return paymentTransformer.saveCommission(commonRequest);
@@ -340,10 +344,10 @@ public class ZiprydeController {
     public @ResponseBody CommissionMasterResponse getCommissionMaster() throws MandatoryValidationException{
 		return paymentTransformer.getCommissionMstr();
     }
-	
-	@RequestMapping(value = "/getCommissionAmountByStatus")
-	public @ResponseBody CommonResponse getCommissionAmountByStatus(@RequestBody CommonRequest commonRequest)throws MandatoryValidationException{
-		return paymentTransformer.getCommissionAmountByStatus(commonRequest);
+		
+	@RequestMapping(value = "/getCommissionByDriverIdAndStatus")  
+	public @ResponseBody List<CommissionResponse> getCommissionByDriverIdAndStatus(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
+		return paymentTransformer.getCommissionByDriverIdAndStatus(commonRequest);
 	}
 	
 	/** ------------ CONFIGURATIONS -----------------------*/

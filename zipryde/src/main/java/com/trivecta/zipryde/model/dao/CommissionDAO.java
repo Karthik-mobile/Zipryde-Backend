@@ -18,4 +18,5 @@ public interface CommissionDAO {
 	public void updateCommision(Booking booking);
 	public CommissionMstr getCommissionMstr();
 	public BigDecimal getCommissionByStatus(String status);
+	public List<Commission> getCommissionByDriverIdAndStatus(int driverId,String status);
 }

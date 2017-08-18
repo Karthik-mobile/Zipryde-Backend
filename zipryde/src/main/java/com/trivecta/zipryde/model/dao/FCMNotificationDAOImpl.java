@@ -34,21 +34,6 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		this.sessionFactory = sessionFactory;
 	}
 	
-	/*@Async
-	public void sendDriverOnlineStatusNotification(String userDeviceToken) {
-		try {
-			Notification notifcation = new Notification();
-			notifcation.setBody(NOTIFICATION_MESSAGE.DRIVER_ONLINE_STATUS);
-			notifcation.setTitle(NOTIFICATION_TITLE.DRIVER_ONLINE_STATUS);
-			notifcation.setNotificationType(NOTIFICATION_TYPE.DRIVER_ONLINE_STATUS);
-			notifcation.setDriver(false);
-			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
-			sendFCMNotification(userDeviceToken,notifcation);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block			
-		}
-	}
-	*/
 	@Async
 	public void sendBookingRequestNotification(Booking booking,User user) {
 		try {
@@ -131,6 +116,21 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 			notifcation.setDriver(false);
 			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
 			sendFCMNotification(booking.getRider().getDeviceToken(),notifcation);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block		
+		}
+	}
+	
+	@Async
+	public void sendCommissionPendingNotification(Booking booking) {
+		try {
+			Notification notifcation = new Notification();
+			notifcation.setBody(NOTIFICATION_MESSAGE.COMMISSION_PENDING);
+			notifcation.setTitle(NOTIFICATION_TITLE.COMMISSION_PENDING);
+			notifcation.setNotificationType(NOTIFICATION_TYPE.COMMISSION_PENDING);
+			notifcation.setDriver(false);
+			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_DRIVER);
+			sendFCMNotification(booking.getDriver().getDeviceToken(),notifcation);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block		
 		}

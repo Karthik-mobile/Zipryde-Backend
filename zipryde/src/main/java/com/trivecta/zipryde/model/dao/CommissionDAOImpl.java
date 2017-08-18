@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants.PAYMENT;
+import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.Commission;
@@ -35,7 +36,7 @@ public class CommissionDAOImpl implements CommissionDAO{
 		catch(Exception e){
 			throw new NoResultEntityException(ErrorMessages.COMMISSION_ID_INVALID);
 		}
-		commissionOrg.setStatus(PAYMENT.PAID);
+		commissionOrg.setStatus(STATUS.PAID);
 		commissionOrg.setPaidDate(new Date());
 		session.merge(commissionOrg);
 		return commissionOrg;
@@ -68,6 +69,13 @@ public class CommissionDAOImpl implements CommissionDAO{
 	public List getAllCommissions() {
 		Session session = this.sessionFactory.getCurrentSession();
 		return session.getNamedQuery("Commission.findAll").getResultList();
+	}
+	
+	@Override
+	public List<Commission> getCommissionByDriverIdAndStatus(int driverId,String status){
+		Session session = this.sessionFactory.getCurrentSession();
+		List<Commission> commissionList = session.getNamedQuery("Commission.getByDriverIdAndStatus").setParameter("driverId", driverId) .setParameter("status",status).getResultList();
+		return commissionList;
 	}
 	
 	@Override

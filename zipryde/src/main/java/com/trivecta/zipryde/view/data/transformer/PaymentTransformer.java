@@ -132,6 +132,28 @@ public class PaymentTransformer {
 		return commissionList;
 	}
 	
+	public List<CommissionResponse> getCommissionByDriverIdAndStatus(CommonRequest commonRequest) throws MandatoryValidationException {	
+		StringBuffer errorMsg = new StringBuffer();
+		if(commonRequest.getUserId() == null) {
+			errorMsg.append(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		if(commonRequest.getStatus() == null) {
+			errorMsg.append(ErrorMessages.STATUS_REQUERIED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {	
+			List<CommissionResponse> commissionResponseList = new ArrayList<CommissionResponse>();
+			List<Commission> commissionList = commissionService.getCommissionByDriverIdAndStatus(commonRequest.getUserId().intValue(),commonRequest.getStatus());
+			for(Commission commission : commissionList) {
+				commissionResponseList.add(setCommissionResponse(commission));
+			}
+			return commissionResponseList;
+		}
+	}
+	
 	public CommissionMasterResponse saveCommissionMstr(CommissionMasterRequest commissionMstrRequest) throws MandatoryValidationException{
 		CommissionMstr commissionMstr = new CommissionMstr();
 		if(commissionMstrRequest.getNoOfMiles() == null && commissionMstrRequest.getNoOfTrips() == null)

@@ -90,7 +90,7 @@ public interface ErrorMessages {
 
 	static String COMMISSION_MSTR_REQUEST_EXCEPTION_MESSAGE = "Send Either No of Miles or No of Trips in request";
 
-	static String STATUS_REQUERIED = "Status is required for getting Commissionn Amount";
+	static String STATUS_REQUERIED = "Status Required";
 	
 	static String BOOKING_ACCEPTED_ALREADY = "Zipryde has been Accepted Already";
 	

@@ -15,4 +15,5 @@ public interface CommissionService {
 	public CommissionMstr saveCommissionMaster(CommissionMstr commissionMstr);
 	public CommissionMstr getCommissionMstr();
 	public BigDecimal getCommissionByStatus(String status);
+	public List<Commission> getCommissionByDriverIdAndStatus(int driverId,String status);
 }

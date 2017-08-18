@@ -17,14 +17,12 @@ public class CommissionServiceImpl implements CommissionService {
 	
 	@Autowired
 	CommissionDAO commissionDAO;
-	
-	
+		
 	@Override
 	@Transactional
 	public Commission payCommission(Commission commission) throws NoResultEntityException {
 		return commissionDAO.payCommission(commission);
 	}
-
 
 	@Override
 	@Transactional
@@ -32,13 +30,11 @@ public class CommissionServiceImpl implements CommissionService {
 		return commissionDAO.getCommission(commissionId);		
 	}
 
-
 	@Override
 	@Transactional
 	public List getAllCommission() {
 		return commissionDAO.getAllCommissions();
 	}
-
 
 	@Override
 	@Transactional
@@ -47,18 +43,21 @@ public class CommissionServiceImpl implements CommissionService {
 		
 	}
 
-
 	@Override
 	@Transactional
 	public CommissionMstr getCommissionMstr() {
 		return commissionDAO.getCommissionMstr();
 	}
 
-
 	@Override
 	@Transactional
 	public BigDecimal getCommissionByStatus(String status) {
 		return commissionDAO.getCommissionByStatus(status);
+	}
+	
+	@Transactional
+	public List<Commission> getCommissionByDriverIdAndStatus(int driverId,String status) {
+		return commissionDAO.getCommissionByDriverIdAndStatus(driverId, status);
 	}
 
 }

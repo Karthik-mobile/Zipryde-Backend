@@ -40,7 +40,6 @@ public class ZipRydeConstants {
 	
 	public interface PAYMENT {
 		static String CASH = "CASH";
-		static String PAID = "PAID";
 		static String PENDING = "PENDING";
 	}
 	
@@ -56,6 +55,8 @@ public class ZipRydeConstants {
 		static String BOOKING_DRIVER_COMPLETED = "BOOKING_DRIVER_COMPLETED";
 		static String BOOKING_PAYMENT_SUCCESS = "BOOKING_PAYMENT_SUCCESS";
 		static String BOOKING_CANCELLED = "BOOKING_CANCELLED";
+		static String COMMISSION_PENDING = "COMMISSION_PENDING";
+		static String COMMISSION_PAID = "COMMISSION_PAID";
 	}
 	
 	public interface NOTIFICATION_TITLE {
@@ -66,6 +67,8 @@ public class ZipRydeConstants {
 		static String BOOKING_DRIVER_COMPLETED = "ZIPRYDE BOOKING COMPLETED";
 		static String BOOKING_PAYMENT_SUCCESS = "ZIPRYDE PAYMENT SUCCESS";
 		static String BOOKING_CANCELLED = "ZIPRYDE BOOKING CANCELLED";
+		static String COMMISSION_PENDING = "ZIPRYDE COMMISSION PENDING";
+		static String COMMISSION_PAID = "ZIPRYDE COMMISSION PAID";
 	}
 	
 	public interface NOTIFICATION_MESSAGE {
@@ -74,6 +77,8 @@ public class ZipRydeConstants {
 		static String BOOKING_STATUS_CHANGE = "Zipryde status changed for Id is ";
 		static String BOOKING_PAYMENT_SUCCESS="Payment Success for Booking Id ";
 		static String BOOKING_CANCELLED = "Your Zipryde has been Cancelled";
+		static String COMMISSION_PENDING = "Your Zipryde  Commission is Pending";
+		static String COMMISSION_PAID = "Your Zipryde  Commission Paid";
 	}
 		
 	public interface NOTIFICATION_CONFIG_TYPE {
