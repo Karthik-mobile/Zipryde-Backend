@@ -115,65 +115,76 @@ public class BookingDAOImpl implements BookingDAO{
 		if(STATUS.CANCELLED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
 			throw new UserValidationException(ErrorMessages.BOOKING_CANCELLED);
 		}
-		else {
-			boolean isDriverAccepted = false;
-	
-			if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) || 
-				(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
+		else {			
+			boolean updateBooking = true;
+			if(STATUS.ON_SITE.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+				Integer driverId = mongoDbClient.checkDriverNearByBookingLocation(
+						String.valueOf(origBooking.getDriver().getId()), origBooking.getFromLongitude().doubleValue(), origBooking.getFromLatitude().doubleValue());
+				if(driverId == null) {
+					updateBooking = false;
+				}
+			}
+			if(updateBooking) {
+				boolean isDriverAccepted = false;
 				
-				Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
-				origBooking.setDriverStatus(driverStatus);			
-				
-				if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
-					User driver = session.find(User.class, booking.getDriver().getId());
-					origBooking.setDriver(driver);
+				if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) || 
+					(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
 					
-					Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
-					origBooking.setBookingStatus(bookingStatus);	
-					origBooking.setAcceptedDateTime(new Date());
-					origBooking.setAcceptedPrice(origBooking.getOfferedPrice());				
-	
-					User user = session.find(User.class,origBooking.getRider().getId());
-					if(user.getCancellationCount() == null) {
-						user.setCancellationCount(0);
+					Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
+					origBooking.setDriverStatus(driverStatus);			
+					
+					if(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+						User driver = session.find(User.class, booking.getDriver().getId());
+						origBooking.setDriver(driver);
+						
+						Status bookingStatus = adminDAO.findByStatus(STATUS.SCHEDULED);
+						origBooking.setBookingStatus(bookingStatus);	
+						origBooking.setAcceptedDateTime(new Date());
+						origBooking.setAcceptedPrice(origBooking.getOfferedPrice());				
+		
+						User user = session.find(User.class,origBooking.getRider().getId());
+						if(user.getCancellationCount() == null) {
+							user.setCancellationCount(0);
+						}
+						else {
+							user.setCancellationCount(user.getCancellationCount()+1);
+						}
+						session.merge(user);
+						origBooking.setRider(user);						
+						updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ACCEPTED,origBooking.getId());
+						updateUserSessionStatus(origBooking.getRider().getId(),STATUS.SCHEDULED,origBooking.getId());
+
+						isDriverAccepted = true;
 					}
 					else {
-						user.setCancellationCount(user.getCancellationCount()+1);
+						origBooking.setBookingStatus(driverStatus);
+						if(STATUS.ON_TRIP.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+							origBooking.setStartDateTime(new Date());
+							updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ON_TRIP,origBooking.getId());
+							updateUserSessionStatus(origBooking.getRider().getId(),STATUS.ON_TRIP,origBooking.getId());
+						}
+						else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+							origBooking.setEndDateTime(new Date());
+							updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.COMPLETED,origBooking.getId());
+							updateUserSessionStatus(origBooking.getRider().getId(),STATUS.COMPLETED,origBooking.getId());
+						//	commissionDAO.updateCommision(origBooking);
+						}			
+					}	
+					origBooking.setModifiedDate(new Date());
+					origBooking = (Booking)session.merge(origBooking);
+					if(isDriverAccepted) {
+						fCMNotificationDAO.sendBookingConfirmationNotification(origBooking);
+						deleteAcceptedBookingRequest(origBooking.getId());
 					}
-					session.merge(user);
-					origBooking.setRider(user);						
-					updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ACCEPTED,origBooking.getId());
-					updateUserSessionStatus(origBooking.getRider().getId(),STATUS.SCHEDULED,origBooking.getId());
-
-					isDriverAccepted = true;
+					else {
+						fCMNotificationDAO.sendBookingStatusNotification(origBooking,false);
+					}
 				}
 				else {
-					origBooking.setBookingStatus(driverStatus);
-					if(STATUS.ON_TRIP.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
-						origBooking.setStartDateTime(new Date());
-						updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ON_TRIP,origBooking.getId());
-						updateUserSessionStatus(origBooking.getRider().getId(),STATUS.ON_TRIP,origBooking.getId());
-					}
-					else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
-						origBooking.setEndDateTime(new Date());
-						updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.COMPLETED,origBooking.getId());
-						updateUserSessionStatus(origBooking.getRider().getId(),STATUS.COMPLETED,origBooking.getId());
-					//	commissionDAO.updateCommision(origBooking);
-					}			
-				}	
-				origBooking.setModifiedDate(new Date());
-				origBooking = (Booking)session.merge(origBooking);
-				if(isDriverAccepted) {
-					fCMNotificationDAO.sendBookingConfirmationNotification(origBooking);
-					deleteAcceptedBookingRequest(origBooking.getId());
-				}
-				else {
-					fCMNotificationDAO.sendBookingStatusNotification(origBooking,false);
+					throw new UserValidationException(ErrorMessages.BOOKING_ACCEPTED_ALREADY);
 				}
 			}
-			else {
-				throw new UserValidationException(ErrorMessages.BOOKING_ACCEPTED_ALREADY);
-			}
+		
 			return origBooking;
 		}
 	}

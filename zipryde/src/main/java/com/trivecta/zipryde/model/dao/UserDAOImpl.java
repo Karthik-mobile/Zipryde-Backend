@@ -660,7 +660,7 @@ public class UserDAOImpl implements UserDAO {
 		/**
 		 * If the Driver Location is Near By Booking Location, Then Auto Update the Status to Onsite
 		 */		
-		UserSession origUserSession = getUserSessionByUserId(userId);
+	/*	UserSession origUserSession = getUserSessionByUserId(userId);
 		if(origUserSession != null && origUserSession.getBookingId() != null && origUserSession.getBookingId() != 0) {
 			Booking booking = bookingDAO.getBookingById(origUserSession.getBookingId());
 			if(booking != null &&  STATUS.SCHEDULED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
@@ -676,6 +676,6 @@ public class UserDAOImpl implements UserDAO {
 					bookingDAO.updateBookingDriverStatus(updateBooking);
 				}				
 			}
-		}		
+		}*/		
 	}
 }
