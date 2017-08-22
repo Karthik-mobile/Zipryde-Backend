@@ -88,5 +88,6 @@ public class ZipRydeConstants {
 	
 	public interface ZIPRYDE_CONFIGURATION {
 		static String NO_OF_MILES_TO_SEARCH = "NO_OF_MILES_TO_SEARCH";
+		static String NO_OF_MILES_DRIVER_ONSITE = "NO_OF_MILES_DRIVER_ONSITE";
 	}
 }

@@ -648,4 +648,34 @@ public class UserDAOImpl implements UserDAO {
 			e.printStackTrace();
 		}		
 	}
+	
+	
+	public void updateDriverSession(Integer userId,Double longitude,Double latitude) throws UserValidationException {
+		mongoDbClient.updateDriverSession(String.valueOf(userId), longitude,latitude);
+		UserSession userSession  = new UserSession();
+		userSession.setUserId(userId);
+		userSession.setIsActive(1);
+		saveUserSession(userSession);
+		
+		/**
+		 * If the Driver Location is Near By Booking Location, Then Auto Update the Status to Onsite
+		 */		
+		UserSession origUserSession = getUserSessionByUserId(userId);
+		if(origUserSession != null && origUserSession.getBookingId() != null && origUserSession.getBookingId() != 0) {
+			Booking booking = bookingDAO.getBookingById(origUserSession.getBookingId());
+			if(booking != null &&  STATUS.SCHEDULED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+				Integer driverUserId = mongoDbClient.checkDriverNearByBookingLocation(
+						String.valueOf(userId), booking.getFromLongitude().doubleValue(), booking.getFromLatitude().doubleValue());
+				if(driverUserId != null){
+					Booking updateBooking = new Booking();
+					updateBooking.setId(booking.getId());
+					
+					Status status = new Status();
+					status.setStatus(STATUS.ON_SITE);
+					updateBooking.setDriverStatus(status);					
+					bookingDAO.updateBookingDriverStatus(updateBooking);
+				}				
+			}
+		}		
+	}
 }

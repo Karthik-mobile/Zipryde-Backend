@@ -121,4 +121,9 @@ public class UserServiceImpl implements UserService{
 	public void updateIdleDriverToOffline() {
 		userDAO.updateIdleDriverToOffline();
 	}
+	
+	@Transactional
+	public void updateDriverSession(Integer userId,Double longitude,Double latitude) throws UserValidationException {
+		userDAO.updateDriverSession(userId, longitude, latitude);
+	}
 }

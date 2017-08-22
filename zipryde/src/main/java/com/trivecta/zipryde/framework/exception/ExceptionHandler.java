@@ -42,4 +42,16 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(e, error, headers, HttpStatus.BAD_REQUEST, request);
     }
+	
+	@org.springframework.web.bind.annotation.ExceptionHandler({ UserAlreadyLoggedInException.class })
+    protected ResponseEntity<Object> handleUserAlreadyLoggedInException(Exception e, WebRequest request) {
+		
+        ClientErrorInformationException error = new ClientErrorInformationException(e.getMessage());
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return handleExceptionInternal(e, error, headers,HttpStatus.CONFLICT, request);
+    }
+	
 }

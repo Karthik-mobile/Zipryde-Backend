@@ -103,4 +103,9 @@ public interface ErrorMessages {
 	static String CONFIGURATION_TYPE_ALREADY_EXISTS = "Configuration Type Already Exists";
 	
 	static String  NO_BOOKING_FOUND = "No Zipryde found for this Id";
+	
+	static String LOST_RAISED_COMPLETED = "You can raise the Lost Item for Completed or Paid Zip Rydes only";
+	
+	static String USER_LOGGED_IN_ALREADY = "User Logged in already in another Device.";
+	
 }

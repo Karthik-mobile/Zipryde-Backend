@@ -50,4 +50,6 @@ public interface UserDAO {
 	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList);
 	
 	public void updateIdleDriverToOffline();
+	
+	public void updateDriverSession(Integer userId,Double longitude,Double latitude) throws UserValidationException;
 }

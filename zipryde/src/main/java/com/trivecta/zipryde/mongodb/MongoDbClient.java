@@ -60,10 +60,10 @@ public class MongoDbClient {
 	}
 	
 	public List<UserGeoSpatialResponse> getNearByActiveDrivers(Double longitude,Double latitude){
-		int noOfMilesToSearch = 40;
+		Double noOfMilesToSearch = 40d;
 		ZiprydeMstr ziprydeMstr = ziprydeConfigService.getZiprydeMstrByType(ZIPRYDE_CONFIGURATION.NO_OF_MILES_TO_SEARCH);
 		if(ziprydeMstr != null) {
-			noOfMilesToSearch = Integer.parseInt(ziprydeMstr.getValue());
+			noOfMilesToSearch = Double.valueOf(ziprydeMstr.getValue());
 		}
 		Double noOfMiles = noOfMilesToSearch / 3963.2 ;
 		
@@ -98,6 +98,39 @@ public class MongoDbClient {
 		return userResponseList;
 	}
 	
+	public Integer checkDriverNearByBookingLocation(String userId,Double longitude,Double latitude){
+		Double noOfMilesToSearch = 1.5;
+		ZiprydeMstr ziprydeMstr = ziprydeConfigService.getZiprydeMstrByType(ZIPRYDE_CONFIGURATION.NO_OF_MILES_DRIVER_ONSITE);
+		if(ziprydeMstr != null) {
+			noOfMilesToSearch = Double.valueOf(ziprydeMstr.getValue());
+		}
+		Double noOfMiles = noOfMilesToSearch / 3963.2 ;
+		
+		UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
+		List<Double> coordinates = new LinkedList<Double>();
+		coordinates.add(longitude);
+		coordinates.add(latitude);
+		
+		List circle = new ArrayList();
+		circle.add(coordinates);
+		circle.add(noOfMiles);
+		
+		FindIterable<Document> findIterable = mongoCollection.find(new Document("isActive",1).append("userId", userId)
+				.append("lastUpdatedTime", 
+				new Document("$gte", ZonedDateTime.now(ZoneOffset.UTC).minus(5, ChronoUnit.MINUTES).format(DateTimeFormatter.ISO_INSTANT))
+				.append("$lt",ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT)))
+				.append("loc",new Document("$geoWithin",new Document("$centerSphere",circle))));
+		
+		findIterable.forEach(new Block<Document>() {
+			public void apply(final Document document) {
+				Document geoDoc = (Document) document.get("loc");
+				userResponse.setUserId(Integer.parseInt(document.get("userId").toString()));
+			}			
+		});
+		
+		return userResponse.getUserId();
+	}
+	
 	public void updateIdleDriverToOffline() {
 
 		Bson filter = 
@@ -127,8 +160,7 @@ public class MongoDbClient {
 						userIds.add(Integer.parseInt(document.get("userId").toString()));
 			}});	
 		}
-		return userIds;	
-			
+		return userIds;				
 	}
 	
 	@Async

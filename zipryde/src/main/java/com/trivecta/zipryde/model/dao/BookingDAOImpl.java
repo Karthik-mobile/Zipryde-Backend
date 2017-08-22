@@ -455,12 +455,19 @@ public class BookingDAOImpl implements BookingDAO{
 		if(lostItem == null) {
 			Booking booking = getBookingById(newLostItem.getBookingId());
 			if(booking != null) {
-				newLostItem.setCrnNumber(booking.getCrnNumber());
-				if(booking.getDriver() != null)
-					newLostItem.setDriverMobileNumber(booking.getDriver().getMobileNumber());
-				newLostItem.setUserMobileNumber(booking.getRider().getMobileNumber());
-				session.save(newLostItem);
-				return newLostItem;
+				if(STATUS.COMPLETED.equalsIgnoreCase(booking.getBookingStatus().getStatus()) || 
+						STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+					newLostItem.setCrnNumber(booking.getCrnNumber());
+					if(booking.getDriver() != null)
+						newLostItem.setDriverMobileNumber(booking.getDriver().getMobileNumber());
+					newLostItem.setUserMobileNumber(booking.getRider().getMobileNumber());
+					session.save(newLostItem);
+					return newLostItem;
+				}
+				else {
+					throw new UserValidationException(ErrorMessages.LOST_RAISED_COMPLETED);
+				}
+				
 			}
 			else {
 				throw new UserValidationException(ErrorMessages.NO_BOOKING_FOUND);

@@ -48,4 +48,6 @@ public interface UserService {
 	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList);
 	
 	public void updateIdleDriverToOffline();
+	
+	public void updateDriverSession(Integer userId,Double longitude,Double latitude) throws UserValidationException;
 }

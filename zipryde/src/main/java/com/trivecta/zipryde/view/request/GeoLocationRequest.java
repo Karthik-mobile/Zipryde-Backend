@@ -12,7 +12,7 @@ public class GeoLocationRequest {
 		
 	private Number distanceInMiles;
 
-	private Number userId;
+	private Integer userId;
 	
 	private Number isOnline;
 	
@@ -64,11 +64,11 @@ public class GeoLocationRequest {
 		this.isOnline = isOnline;
 	}
 
-	public Number getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Number userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}	
 }

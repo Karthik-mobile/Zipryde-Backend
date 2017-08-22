@@ -28,7 +28,7 @@ public class MongoTransformer {
 	@Autowired
 	UserService userService;
 	
-	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
+/*	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
 		if(geoLocationRequest.getUserId() == null) {
 			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
@@ -69,6 +69,26 @@ public class MongoTransformer {
 					Double.valueOf(geoLocationRequest.getFromLongitude()), 
 					Double.valueOf(geoLocationRequest.getFromLatitude()));
 			saveUserSession(geoLocationRequest.getUserId().intValue(),1);
+		}
+	}*/
+	
+	public void updateDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
+		StringBuffer errorMsg = new StringBuffer();
+		if(geoLocationRequest.getUserId() == null) {
+			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
+		}
+		if(!ValidationUtil.isValidString(geoLocationRequest.getFromLatitude()) || 
+				!ValidationUtil.isValidString(geoLocationRequest.getFromLongitude())){
+			errorMsg.append(ErrorMessages.LAT_LON_REQUIRED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {			
+			userService.updateDriverSession(geoLocationRequest.getUserId(),
+					Double.valueOf(geoLocationRequest.getFromLongitude()), 
+					Double.valueOf(geoLocationRequest.getFromLatitude()));
 		}
 	}
 	
