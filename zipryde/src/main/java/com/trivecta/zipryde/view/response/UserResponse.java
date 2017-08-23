@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "alternateNumber", "emailId",
 		"driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil","defaultPercentageAccepted", "isOnline", "isEnable",
-		"cancellationCount","statusCode", "status", "comments", "restriction", "vehicleNumber","bookingId",
+		"cancellationCount","statusCode", "status", "comments", "restriction", "vehicleNumber","bookingId","accessToken",
 		"licenseFrontImage", "licenseBackImage", "userImage" })
 
 public class UserResponse {
@@ -87,6 +87,9 @@ public class UserResponse {
 	
 	@JsonProperty("bookingId")
 	private Integer bookingId;
+	
+	@JsonProperty("accessToken")
+	private String accessToken;
 
 	public Number getUserId() {
 		return userId;
@@ -278,6 +281,14 @@ public class UserResponse {
 
 	public void setBookingId(Integer bookingId) {
 		this.bookingId = bookingId;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
 }

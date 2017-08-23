@@ -106,6 +106,7 @@ public interface ErrorMessages {
 	
 	static String LOST_RAISED_COMPLETED = "You can raise the Lost Item for Completed or Paid Zip Rydes only";
 	
-	static String USER_LOGGED_IN_ALREADY = "User Logged in already in another Device.";
+	static String USER_LOGGED_IN_ALREADY = "User Loggedin already in another Device.";
 	
+	static String SESSION_EXPIRED = "Session Expired. Please relogin";
 }

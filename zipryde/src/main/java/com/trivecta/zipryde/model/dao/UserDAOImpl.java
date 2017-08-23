@@ -19,6 +19,7 @@ import com.trivecta.zipryde.constants.ZipRydeConstants;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.constants.ZipRydeConstants.USERTYPE;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
+import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.DriverProfile;
@@ -30,6 +31,7 @@ import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.model.entity.UserType;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
+import com.trivecta.zipryde.utility.Utility;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -136,13 +138,17 @@ public class UserDAOImpl implements UserDAO {
 		return newUser;
 	}
 	
-	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException {
+	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
+		User newUser = null;
 		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
-			return getUserByEmailIdPsswdAndUserType(user.getEmailId(),user.getUserType().getType(),user.getPassword());
+			newUser = getUserByEmailIdPsswdAndUserType(user.getEmailId(),user.getUserType().getType(),user.getPassword());
+			if(user.getIsOverride() == 0) {
+				validateSessionToken(newUser.getId());
+			}
 		}
 		else {		
 			Session session = this.sessionFactory.getCurrentSession();
-			User newUser =  getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
+			newUser =  getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
 			if(newUser.getIsEnable() == 0 ) {
 				throw new UserValidationException(ErrorMessages.ACCOUNT_DEACTIVATED);				
 			}
@@ -150,16 +156,48 @@ public class UserDAOImpl implements UserDAO {
 					(STATUS.REQUESTED.equalsIgnoreCase(newUser.getDriverProfile().getStatus().getStatus()))) {
 					throw new UserValidationException(ErrorMessages.DIVER_NOT_APPROVED);								
 			}
-			newUser.setDeviceToken(user.getDeviceToken());
-			session.merge(newUser);
-			if (USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())) {
-				saveUserSession(newUser.getId(),1);
+			if(user.getIsOverride() == 0) {
+				validateSessionToken(newUser.getId());
 			}
-			fetchLazyInitialisation(newUser);
-			return newUser;
-		}		
+			newUser.setDeviceToken(user.getDeviceToken());
+			session.merge(newUser);			
+		}	
+		String otp = saveUserSession(newUser.getId(),1,true);
+		fetchLazyInitialisation(newUser);
+		newUser.setAccessToken(otp);
+		return newUser;
 	}
 	
+
+	public User logOutUser(int userId) throws UserValidationException {
+		Session session = this.sessionFactory.getCurrentSession();
+		User origUser =  null;		
+		try {
+			origUser = session.find(User.class, userId);
+		}
+		catch(Exception e){
+			throw new UserValidationException(ErrorMessages.NO_USER_FOUND);
+		}
+		UserSession userSession = new UserSession();
+		userSession.setIsActive(0);
+		userSession.setSessionToken(null);
+		userSession.setValidUntil(null);
+		userSession.setUserId(userId);
+		userSession.setIsOverride(1);
+		saveUserSession(userSession);
+		
+		origUser.setDeviceToken(null);
+		session.merge(origUser);
+		return origUser;
+		
+	}
+
+	private void validateSessionToken(int userId) throws UserAlreadyLoggedInException {
+		UserSession userSession = getUserSessionByUserId(userId);
+		if(userSession != null && userSession.getSessionToken() != null) {
+			throw new UserAlreadyLoggedInException(ErrorMessages.USER_LOGGED_IN_ALREADY);
+		}		
+	}
 	private User getUserByMobileNoAndType(String mobileNumber,String userType) throws NoResultEntityException {
 		Session session = this.sessionFactory.getCurrentSession();
 		try {
@@ -270,19 +308,29 @@ public class UserDAOImpl implements UserDAO {
 				user.getDriverProfile();
 			}			
 			else if(USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())){
-				saveUserSession(user.getId(),1);
-			}
-			
+				String otp = saveUserSession(user.getId(),1,true);
+				user.setAccessToken(otp);
+			}			
 			return user;
 		}
 		return user;		
 	}
 	
-	private void saveUserSession(int userId,int isActive) throws UserValidationException {
+	private String saveUserSession(int userId,int isActive,boolean generateSessionToken) throws UserValidationException {
 		UserSession userSession = new UserSession();
 		userSession.setUserId(userId);
 		userSession.setIsActive(isActive);
+		String otp = null;
+		if(generateSessionToken){
+			otp = generateUniqueOTP() + userId;
+			userSession.setSessionToken(Utility.encryptWithMD5(otp));
+			Calendar validTime = Calendar.getInstance();
+			validTime.add(Calendar.HOUR, 24);
+			userSession.setValidUntil(validTime.getTime());
+			userSession.setIsOverride(1);
+		}		
 		saveUserSession(userSession);
+		return otp;
 	}
 	
 	public User updateUser(User user) throws NoResultEntityException, UserValidationException {
@@ -555,9 +603,10 @@ public class UserDAOImpl implements UserDAO {
 		Session session = this.sessionFactory.getCurrentSession();
 		if(userSession.getIsActive() == 0) {
 			try {
-				UserSession activeUserSession = (UserSession) session.getNamedQuery("UserSession.findByUserIdAndStatusNotNull")
+				Integer userId =  (Integer) session.getNamedQuery("UserSession.findByUserIdAndStatusNotNull")
 						.setParameter("userId", userSession.getUserId()).setMaxResults(1).getSingleResult();
-				throw new UserValidationException(ErrorMessages.DRIVER_ACTIVE_BOOKING);
+				if(userId != null)
+					throw new UserValidationException(ErrorMessages.DRIVER_ACTIVE_BOOKING);
 			}
 			catch(NoResultException e){
 				//Nothing to do
@@ -567,7 +616,11 @@ public class UserDAOImpl implements UserDAO {
 		UserSession origUserSession = getUserSessionByUserId(userSession.getUserId());
 		
 		if(origUserSession != null) {
-			origUserSession.setIsActive(userSession.getIsActive());			
+			origUserSession.setIsActive(userSession.getIsActive());	
+			if(userSession.getIsOverride() == 1) {
+				origUserSession.setSessionToken(userSession.getSessionToken());
+				origUserSession.setValidUntil(userSession.getValidUntil());
+			}
 			session.merge(origUserSession);
 			return origUserSession;
 		}

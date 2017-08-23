@@ -131,6 +131,12 @@ public class User implements Serializable {
 	@Transient 
 	private int bookingId;
 	
+	@Transient 
+	private int isOverride;
+	
+	@Transient
+	private String accessToken;
+	
 	public User() {
 	}
 
@@ -482,5 +488,21 @@ public class User implements Serializable {
 
 	public void setBookingId(int bookingId) {
 		this.bookingId = bookingId;
+	}
+
+	public int getIsOverride() {
+		return isOverride;
+	}
+
+	public void setIsOverride(int isOverride) {
+		this.isOverride = isOverride;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 }

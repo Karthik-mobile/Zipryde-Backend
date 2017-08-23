@@ -1,11 +1,14 @@
 package com.trivecta.zipryde.controller;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.mapping.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,10 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
+import com.trivecta.zipryde.framework.exception.SessionExpiredException;
+import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.view.data.transformer.AdminTransformer;
 import com.trivecta.zipryde.view.data.transformer.BookingTransformer;
+import com.trivecta.zipryde.view.data.transformer.HeaderValidationTransformer;
 import com.trivecta.zipryde.view.data.transformer.MongoTransformer;
 import com.trivecta.zipryde.view.data.transformer.PaymentTransformer;
 import com.trivecta.zipryde.view.data.transformer.UserTransformer;
@@ -73,6 +79,10 @@ public class ZiprydeController {
 	@Autowired
 	PaymentTransformer paymentTransformer;
 	
+	@Autowired
+	HeaderValidationTransformer headerValidationTransformer;
+	
+
 	/** ------------ MOBILE REGISTRATION ------------- */
 	
 	@RequestMapping(value="/getOTPByMobile")
@@ -87,6 +97,18 @@ public class ZiprydeController {
 	
 	/** ------------------- USER ------------------------ */
 	
+	@RequestMapping(value = "/verifyLogInUser")
+	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
+		return userTransformer.verifyLogInUser(userRequest);
+	}
+	
+	@RequestMapping(value = "/logoutUser")
+	public void logoutUser(@RequestHeader(value="access-token") String token , @RequestBody CommonRequest commonRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException, SessionExpiredException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userTransformer.logoutUser(commonRequest);
+		}
+	}
+	
 	@RequestMapping(value = "/saveUser")
 	public @ResponseBody UserResponse saveUser(@ModelAttribute UserRequest user) 
 			   throws ParseException, NoResultEntityException, MandatoryValidationException, UserValidationException {
@@ -94,321 +116,590 @@ public class ZiprydeController {
 	 }
 	
 	@RequestMapping(value = "/deleteUser")
-	public void deleteUser(@RequestBody UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException,UserValidationException{
-		userTransformer.deleteUser(userRequest);
+	public void deleteUser(@RequestHeader(value="access-token") String token,@RequestBody UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException,UserValidationException, SessionExpiredException{
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userTransformer.deleteUser(userRequest);
+		}
 	}
 	
 	@RequestMapping(value = "/getAllUserByUserType")
-	public @ResponseBody List<UserResponse> getAllUserByUserType(@RequestBody CommonRequest commonRequest) {
-		return userTransformer.getAllUserByUserType(commonRequest);
+	public @ResponseBody List<UserResponse> getAllUserByUserType(@RequestHeader(value="access-token") String token,@RequestBody CommonRequest commonRequest) throws SessionExpiredException {
+		List<UserResponse> userResponse = new ArrayList<UserResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userResponse = 	userTransformer.getAllUserByUserType(commonRequest);
+		}
+		return userResponse;
 	}
 	
 	@RequestMapping(value = "/getUserByUserId")
-	public @ResponseBody UserResponse getUserByUserId(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
-		return userTransformer.getUserByUserId(commonRequest);
+	public @ResponseBody UserResponse getUserByUserId(@RequestHeader(value="access-token") String token,@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			return userTransformer.getUserByUserId(commonRequest);
+		}
+		return new UserResponse();
 	}
-	
-	@RequestMapping(value = "/verifyLogInUser")
-	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException {
-		return userTransformer.verifyLogInUser(userRequest);
-	}
-	
+		
 	@RequestMapping(value = "/updatePasswordByUserAndType")
-	public @ResponseBody UserResponse updatePasswordByUserAndType(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException {
-		return userTransformer.updatePasswordByUserAndType(userRequest);
+	public @ResponseBody UserResponse updatePasswordByUserAndType(@RequestHeader(value="access-token") String token,
+			@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, SessionExpiredException {
+		UserResponse userResponse = new UserResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userResponse = userTransformer.updatePasswordByUserAndType(userRequest);
+		}
+		return userResponse;
 	}
 	
 	@RequestMapping(value = "/assignDriverVehicleAssociation")
-	public @ResponseBody DriverVehicleAssociationResponse assignDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
-			throws MandatoryValidationException, ParseException, UserValidationException {
-		return userTransformer.assignDriverVehicleAssociation(driverVehicleRequest);
+	public @ResponseBody DriverVehicleAssociationResponse assignDriverVehicleAssociation(@RequestHeader(value="access-token") String token,
+			@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
+			throws MandatoryValidationException, ParseException, UserValidationException, SessionExpiredException {
+		DriverVehicleAssociationResponse driverVehicleAss = new DriverVehicleAssociationResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			driverVehicleAss = userTransformer.assignDriverVehicleAssociation(driverVehicleRequest);;
+		}
+		return driverVehicleAss;
 	}
 	
 	@RequestMapping(value = "/unassignDriverVehicleAssociation")
-	public @ResponseBody DriverVehicleAssociationResponse unassignDriverVehicleAssociation(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
-			throws MandatoryValidationException, UserValidationException {
-		return userTransformer.unassignDriverVehicleAssociation(driverVehicleRequest);
+	public @ResponseBody DriverVehicleAssociationResponse unassignDriverVehicleAssociation(@RequestHeader(value="access-token") String token,
+			@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) 
+			throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		DriverVehicleAssociationResponse driverVehicleAss = new DriverVehicleAssociationResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			driverVehicleAss = userTransformer.unassignDriverVehicleAssociation(driverVehicleRequest);
+		}
+		return driverVehicleAss;
 	}
 	
 	@RequestMapping(value = "/getActiveDriverVehicleAssociationByDriverId")
 	public @ResponseBody DriverVehicleAssociationResponse getActiveDriverVehicleAssociationByDriverId
-				(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException {
-		return userTransformer.getActiveDriverVehicleAssociationByDriverId(driverVehicleRequest);
+				(@RequestHeader(value="access-token") String token,
+						@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, SessionExpiredException {
+		DriverVehicleAssociationResponse driverVehicleAss = new DriverVehicleAssociationResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			driverVehicleAss = userTransformer.getActiveDriverVehicleAssociationByDriverId(driverVehicleRequest);
+		}
+		return driverVehicleAss;
 	}
 	
 	@RequestMapping(value = "/getAllDriverVehicleAssociationByDriverId")
 	public @ResponseBody List<DriverVehicleAssociationResponse> getAllDriverVehicleAssociationByDriverId
-						(@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException {
-		return userTransformer.getAllDriverVehicleAssociationByDriverId(driverVehicleRequest);
+						(@RequestHeader(value="access-token") String token,
+								@RequestBody DriverVehicleAssociationRequest driverVehicleRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<DriverVehicleAssociationResponse>  driverAssocList = new ArrayList<DriverVehicleAssociationResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			driverAssocList = userTransformer.getAllDriverVehicleAssociationByDriverId(driverVehicleRequest);
+		}
+		return driverAssocList;
 	}
 	
-	/** --------------- DASHBOARD API ----------------- */
+	/** --------------- DASHBOARD API ----------------- 
+	 * @throws SessionExpiredException */
 	@RequestMapping(value = "/getDriverCountBySatus")
-	public CommonResponse getDriverCountBySatus(@RequestBody CommonRequest commonRequest) {
-		return userTransformer.getDriverCountBySatus(commonRequest);
+	public CommonResponse getDriverCountBySatus(@RequestHeader(value="access-token") String token,
+			@RequestBody CommonRequest commonRequest) throws SessionExpiredException {
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse = userTransformer.getDriverCountBySatus(commonRequest);
+		}
+		return commonResponse;
 	}
 	
 	@RequestMapping(value = "/getDriverCountByOnline")
-	public CommonResponse getDriverCountByOnline() {
-		return userTransformer.getDriverCountByOnline();
+	public CommonResponse getDriverCountByOnline(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse = userTransformer.getDriverCountByOnline();
+		}
+		return commonResponse;
 	}
 	
 	@RequestMapping(value = "/getDriversByStatus")
-	public @ResponseBody List<UserResponse> getDriversByStatus(@RequestBody CommonRequest commonRequest) {
-		return userTransformer.getDriversByStatus(commonRequest);
+	public @ResponseBody List<UserResponse> getDriversByStatus(@RequestHeader(value="access-token") String token,
+			@RequestBody CommonRequest commonRequest) throws SessionExpiredException {
+		List<UserResponse> userRespList = new ArrayList<UserResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userRespList = userTransformer.getDriversByStatus(commonRequest);
+		}
+		return userRespList;
 	}
 	
 	@RequestMapping(value = "/getDriversByOnline")
-	public @ResponseBody List<UserResponse> getDriversByOnline() {
-		return userTransformer.getDriversByOnline();
+	public @ResponseBody List<UserResponse> getDriversByOnline(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<UserResponse> userRespList = new ArrayList<UserResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userRespList = userTransformer.getDriversByOnline();
+		}
+		return userRespList;
 	}
 	
 	@RequestMapping(value = "/getBookingCountByDate")
-	public @ResponseBody CommonResponse getBookingCountByDate(@RequestBody BookingRequest bookingRequest) throws ParseException {
-		return bookingTranssformer.getBookingCountByDate(bookingRequest);
+	public @ResponseBody CommonResponse getBookingCountByDate(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws ParseException, SessionExpiredException {
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse = bookingTranssformer.getBookingCountByDate(bookingRequest);
+		}
+		return commonResponse;
 	}
 	
 	@RequestMapping(value = "/getBookingCountByDateNotInRequested")
-	public @ResponseBody CommonResponse getBookingCountByDateNotInRequested(@RequestBody BookingRequest bookingRequest) throws ParseException {
-		return bookingTranssformer.getBookingCountByDateNotInRequested(bookingRequest);
+	public @ResponseBody CommonResponse getBookingCountByDateNotInRequested(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws ParseException, SessionExpiredException {
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse = bookingTranssformer.getBookingCountByDateNotInRequested(bookingRequest);
+		}
+		return commonResponse;
 	}
 
 	@RequestMapping(value = "/getRevenueByDate")
-	public @ResponseBody CommonResponse getRevenueByDate(@RequestBody PaymentRequest paymentRequest) throws ParseException {
-		return paymentTransformer.getRevenueByDate(paymentRequest);
+	public @ResponseBody CommonResponse getRevenueByDate(@RequestHeader(value="access-token") String token,
+			@RequestBody PaymentRequest paymentRequest) throws ParseException, SessionExpiredException {
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse =  paymentTransformer.getRevenueByDate(paymentRequest);
+		}
+		return commonResponse;
 	}
 	
 	@RequestMapping(value = "/getRevenueByDateAndDriverId")
-	public @ResponseBody CommonResponse getRevenueByDateAndDriverId(@RequestBody PaymentRequest paymentRequest) throws ParseException, MandatoryValidationException {
-		return paymentTransformer.getRevenueByDateAndDriverId(paymentRequest);
+	public @ResponseBody CommonResponse getRevenueByDateAndDriverId(@RequestHeader(value="access-token") String token,
+			@RequestBody PaymentRequest paymentRequest) throws ParseException, MandatoryValidationException, SessionExpiredException {
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse =  paymentTransformer.getRevenueByDateAndDriverId(paymentRequest);
+		}
+		return commonResponse;
 	}
 	
 	@RequestMapping(value = "/getBookingCountByDateAndDriverId")
-	public @ResponseBody CommonResponse getBookingCountByDateAndDriverId(@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
-		return bookingTranssformer.getBookingCountByDateAndDriverId(bookingRequest);
+	public @ResponseBody CommonResponse getBookingCountByDateAndDriverId(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException, SessionExpiredException {
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse =  bookingTranssformer.getBookingCountByDateAndDriverId(bookingRequest);
+		}
+		return commonResponse;
 	}
 	
 	@RequestMapping(value = "/getCommissionAmountByStatus")
-	public @ResponseBody CommonResponse getCommissionAmountByStatus(@RequestBody CommonRequest commonRequest)throws MandatoryValidationException{
-		return paymentTransformer.getCommissionAmountByStatus(commonRequest);
+	public @ResponseBody CommonResponse getCommissionAmountByStatus(@RequestHeader(value="access-token") String token,
+			@RequestBody CommonRequest commonRequest)throws MandatoryValidationException, SessionExpiredException{
+		CommonResponse commonResponse = new CommonResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commonResponse = paymentTransformer.getCommissionAmountByStatus(commonRequest);
+		}
+		return commonResponse;
 	}
 	
-	/** ----------------- VEHICLE  --------------------- */
+	/** ----------------- VEHICLE  --------------------- 
+	 * @throws SessionExpiredException */
 	
 	@RequestMapping(value = "/saveVehicle")
-	public @ResponseBody CabResponse saveVehicle(@RequestBody CabRequest cabRequest) throws ParseException, MandatoryValidationException, UserValidationException{
-		return vehicleTransformer.saveVehicle(cabRequest);
+	public @ResponseBody CabResponse saveVehicle(@RequestHeader(value="access-token") String token,
+			@RequestBody CabRequest cabRequest) throws ParseException, MandatoryValidationException, UserValidationException, SessionExpiredException{
+		CabResponse cabResponse = new CabResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			cabResponse = vehicleTransformer.saveVehicle(cabRequest);
+		}		
+		return cabResponse;
 	}
 	
 	@RequestMapping(value = "/getAllVehicle")
-	public @ResponseBody List<CabResponse> getAllVehicle() {
-		return vehicleTransformer.getAllVehicle();
+	public @ResponseBody List<CabResponse> getAllVehicle(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<CabResponse> cabResponseList = new ArrayList<CabResponse>(); 
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			cabResponseList = vehicleTransformer.getAllVehicle();
+		}
+		return cabResponseList;
 	}
 	
 	@RequestMapping(value = "/getAllAvailableVehicles")
-	public @ResponseBody List<CabResponse> getAllAvailableVehicles() {
-		return vehicleTransformer.getAllAvailableVehicles();
+	public @ResponseBody List<CabResponse> getAllAvailableVehicles(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<CabResponse> cabResponseList = new ArrayList<CabResponse>(); 
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			cabResponseList = vehicleTransformer.getAllAvailableVehicles();
+		}
+		return cabResponseList;
 	}
 		
 	@RequestMapping(value = "/getVehicleByVehicleId")
-	public @ResponseBody CabResponse getVehicleByVehicleId(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, UserValidationException {
-		return vehicleTransformer.getVehicleByVehicleId(commonRequest);
+	public @ResponseBody CabResponse getVehicleByVehicleId(@RequestHeader(value="access-token") String token,
+			@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		CabResponse cabResponse = new CabResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			cabResponse = vehicleTransformer.getVehicleByVehicleId(commonRequest);
+		}
+		return cabResponse;
 	}
 	
 	@RequestMapping(value = "/getAllCabTypes")
-	public @ResponseBody List<CabTypeResponse> getAllCabTypes() {
-		return adminTransformer.getAllCabTypes();
+	public @ResponseBody List<CabTypeResponse> getAllCabTypes(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			return adminTransformer.getAllCabTypes();
+		}
+		return new ArrayList<CabTypeResponse>();
 	}
 	
 	@RequestMapping(value = "/getAllMake")
-	public @ResponseBody List<MakeModelResponse> getAllMake() {
-		return adminTransformer.getAllMake();
+	public @ResponseBody List<MakeModelResponse> getAllMake(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<MakeModelResponse> makeModelList = new ArrayList<MakeModelResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			makeModelList = adminTransformer.getAllMake();
+		}
+		return makeModelList;
 	}
 	
 	@RequestMapping(value = "/getAllModelByMakeId")
-	public @ResponseBody List<MakeModelResponse> getAllModelByMakeId(@RequestBody CommonRequest commonRequest) {
-		return adminTransformer.getAllModelByMakeId(commonRequest);
+	public @ResponseBody List<MakeModelResponse> getAllModelByMakeId(@RequestHeader(value="access-token") String token,@RequestBody CommonRequest commonRequest) throws SessionExpiredException {
+		List<MakeModelResponse> makeModelList = new ArrayList<MakeModelResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			makeModelList =  adminTransformer.getAllModelByMakeId(commonRequest);
+		}
+		return makeModelList;
 	}
 	
-	/** ------------------- NYOP & PRICING  ------------------------ */
+	/** ------------------- NYOP & PRICING  ------------------------ 
+	 * @throws SessionExpiredException */
 	@RequestMapping(value = "/getAllNYOPList")
-	public @ResponseBody List<NYOPResponse> getAllNYOPList() {
-		return adminTransformer.getAllNYOPList();
+	public @ResponseBody List<NYOPResponse> getAllNYOPList(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<NYOPResponse> nyopList = new ArrayList<NYOPResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			nyopList= adminTransformer.getAllNYOPList();
+		}	
+		return nyopList;
 	}
 	
 	@RequestMapping(value = "/getAllNYOPByCabTypeDistAndNoOfPassenger")
-	public @ResponseBody List<NYOPResponse> getAllNYOPByCabTypeDistAndNoOfPassenger(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
-		return adminTransformer.getAllNYOPByCabTypeDistAndNoOfPassenger(commonRequest);
+	public @ResponseBody List<NYOPResponse> getAllNYOPByCabTypeDistAndNoOfPassenger(@RequestHeader(value="access-token") String token,
+			@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<NYOPResponse> nyopList = new ArrayList<NYOPResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			nyopList=  adminTransformer.getAllNYOPByCabTypeDistAndNoOfPassenger(commonRequest);
+		}	
+		return nyopList;
 	}
 	
 	@RequestMapping(value = "/getAllEnabledPricingType")
-	public @ResponseBody List<PricingTypeResponse> getAllEnabledPricingType() {
-		return adminTransformer.getAllEnabledPricingType();
+	public @ResponseBody List<PricingTypeResponse> getAllEnabledPricingType(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<PricingTypeResponse> pricingResponseList = new ArrayList<PricingTypeResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			pricingResponseList =adminTransformer.getAllEnabledPricingType(); 
+		}
+		return pricingResponseList;
 	}
 	
 	@RequestMapping(value = "/getAllPricingMstrByCabType")
-	public @ResponseBody List<PricingMstrResponse> getAllPricingMstrByCabType(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
-		return adminTransformer.getAllPricingMstrByCabType(commonRequest);
+	public @ResponseBody List<PricingMstrResponse> getAllPricingMstrByCabType(@RequestHeader(value="access-token") String token,
+			@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<PricingMstrResponse> pricingResponseList = new ArrayList<PricingMstrResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			pricingResponseList = adminTransformer.getAllPricingMstrByCabType(commonRequest); 
+		}
+		return pricingResponseList;
 	}
 	
 	@RequestMapping(value = "/getAllPricingMstr")
-	public @ResponseBody List<PricingMstrResponse> getAllPricingMstr() throws MandatoryValidationException {
-		return adminTransformer.getAllPricingMstr();
+	public @ResponseBody List<PricingMstrResponse> getAllPricingMstr(@RequestHeader(value="access-token") String token) throws MandatoryValidationException, SessionExpiredException {
+		List<PricingMstrResponse> pricingResponseList = new ArrayList<PricingMstrResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			pricingResponseList = adminTransformer.getAllPricingMstr();
+		}
+		return pricingResponseList;
 	}
 	
 	@RequestMapping(value = "/savePricingMstrs")
-	public List<PricingMstrResponse> savePricingMstrs(@RequestBody List<PricingMstrRequest> pricingMstrReqList) {
-		return adminTransformer.savePricingMstrs(pricingMstrReqList);
+	public List<PricingMstrResponse> savePricingMstrs(@RequestHeader(value="access-token") String token,
+			@RequestBody List<PricingMstrRequest> pricingMstrReqList) throws SessionExpiredException {
+		List<PricingMstrResponse> pricingResponseList = new ArrayList<PricingMstrResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			pricingResponseList =  adminTransformer.savePricingMstrs(pricingMstrReqList);
+		}
+		return pricingResponseList;
 	}
 	
 	@RequestMapping(value = "/savePricingMstr")
-	public PricingMstrResponse savePricingMstr(@RequestBody PricingMstrRequest pricingMstrReqList) {
-		return adminTransformer.savePricingMstr(pricingMstrReqList);
+	public PricingMstrResponse savePricingMstr(@RequestHeader(value="access-token") String token,
+			@RequestBody PricingMstrRequest pricingMstrReqList) throws SessionExpiredException {
+		PricingMstrResponse pricingMstrResp = new PricingMstrResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			pricingMstrResp = adminTransformer.savePricingMstr(pricingMstrReqList);
+		}
+		return pricingMstrResp;
 	}
 	
-	/** ------------------- BOOKING  ------------------------ */
+	/** ------------------- BOOKING  ------------------------ 
+	 * @throws SessionExpiredException */
 	@RequestMapping(value = "/requestBooking")
-	public @ResponseBody BookingResponse requestBooking(@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
-		return bookingTranssformer.createBooking(bookingRequest);
+	public @ResponseBody BookingResponse requestBooking(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException, SessionExpiredException {
+		BookingResponse bookingResponse = new BookingResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponse =bookingTranssformer.createBooking(bookingRequest); 
+		}
+		return bookingResponse;
 	}
 	
 	@RequestMapping(value = "/updateBookingDriverStatus")
-	public @ResponseBody BookingResponse updateBookingDriverStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException{
-		return bookingTranssformer.updateBookingDriverStatus(bookingRequest);
+	public @ResponseBody BookingResponse updateBookingDriverStatus(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException{
+		BookingResponse bookingResponse = new BookingResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponse = bookingTranssformer.updateBookingDriverStatus(bookingRequest);
+		}
+		return bookingResponse;
 	}	
 
 	@RequestMapping(value = "/updateBookingStatus")
-	public @ResponseBody BookingResponse updateBookingStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException {
-		return bookingTranssformer.updateBookingStatus(bookingRequest);
+	public @ResponseBody BookingResponse updateBookingStatus(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		BookingResponse bookingResponse = new BookingResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponse = bookingTranssformer.updateBookingStatus(bookingRequest);
+		}
+		return bookingResponse;
 	}	
 	
 	@RequestMapping(value = "/getBookingByBookingId")
-	public @ResponseBody BookingResponse getBookingByBookingId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
-		return bookingTranssformer.getBookingByBookingId(bookingRequest);
+	public @ResponseBody BookingResponse getBookingByBookingId(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
+		BookingResponse bookingResponse = new BookingResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponse = bookingTranssformer.getBookingByBookingId(bookingRequest);
+		}
+		return bookingResponse;
 	}
 	
 	@RequestMapping(value = "/getBookingByDate")
-	public @ResponseBody List<BookingResponse> getBookingByDate(@RequestBody BookingRequest bookingRequest) throws ParseException {
-		return bookingTranssformer.getBookingByDate(bookingRequest);
+	public @ResponseBody List<BookingResponse> getBookingByDate(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws ParseException, SessionExpiredException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getBookingByDate(bookingRequest);
+		}
+		return bookingResponseList;
 	}
 	
 	@RequestMapping(value = "/getBookingByDateNotInRequested")
-	public @ResponseBody List<BookingResponse> getBookingByDateNotInRequested(@RequestBody BookingRequest bookingRequest) throws ParseException {
-		return bookingTranssformer.getBookingByDateNotInRequested(bookingRequest);
+	public @ResponseBody List<BookingResponse> getBookingByDateNotInRequested(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws ParseException, SessionExpiredException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getBookingByDateNotInRequested(bookingRequest);
+		}
+		return bookingResponseList;
 	}
 	
 	@RequestMapping(value = "/getBookingByBookingStatus")
-	public @ResponseBody List<BookingResponse> getBookingByBookingStatus(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
-		return bookingTranssformer.getBookingByBookingStatus(bookingRequest);
+	public @ResponseBody List<BookingResponse> getBookingByBookingStatus(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getBookingByBookingStatus(bookingRequest);
+		}
+		return bookingResponseList;
 	}
 	
 	@RequestMapping(value = "/getBookingByDriverId")
-	public @ResponseBody List<BookingResponse> getBookingByDriverId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
-		return bookingTranssformer.getBookingByDriverId(bookingRequest);
+	public @ResponseBody List<BookingResponse> getBookingByDriverId(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getBookingByDriverId(bookingRequest);
+		}
+		return bookingResponseList;
 	}
 	
 	@RequestMapping(value = "/getBookingByuserId")
-	public @ResponseBody List<BookingResponse> getBookingByuserId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
-		return bookingTranssformer.getBookingByuserId(bookingRequest);
+	public @ResponseBody List<BookingResponse> getBookingByuserId(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getBookingByuserId(bookingRequest);
+		}
+		return bookingResponseList;
 	}
 	
 	@RequestMapping(value = "/getBookingRequestedByDriverId")
-	public @ResponseBody List<BookingResponse> getBookingRequestedByDriverId(@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException {
-		return bookingTranssformer.getBookingRequestedByDriverId(bookingRequest);
+	public @ResponseBody List<BookingResponse> getBookingRequestedByDriverId(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getBookingRequestedByDriverId(bookingRequest);
+		}
+		return bookingResponseList;
 	}
 	
 	
-	/** ----------- PAYMENT -------------------- */
+	/** ----------- PAYMENT -------------------- 
+	 * @throws SessionExpiredException */
 	@RequestMapping(value = "/savePayment")  
-    public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException, UserValidationException{
-           paymentTransformer.savePayment(paymentRequest);
+    public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestHeader(value="access-token") String token,
+    		@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException{
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {   
+			paymentTransformer.savePayment(paymentRequest);
+		}
     }
 	
-	/** -------- COMMISSION ----------------- */
+	/** -------- COMMISSION ----------------- 
+	 * @throws SessionExpiredException */
+	
 	@RequestMapping(value = "/payCommission")  
-    public @ResponseBody CommissionResponse payCommission(@RequestBody CommonRequest commonRequest) throws UserValidationException, NoResultEntityException {
-		return paymentTransformer.saveCommission(commonRequest);
+    public @ResponseBody CommissionResponse payCommission(@RequestHeader(value="access-token") String token,
+    		@RequestBody CommonRequest commonRequest) throws UserValidationException, NoResultEntityException, SessionExpiredException {
+		CommissionResponse commissionResponse = new CommissionResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commissionResponse = paymentTransformer.saveCommission(commonRequest);
+		}
+		return commissionResponse;
     }
 	
 	@RequestMapping(value = "/getAllCommission")  
-    public @ResponseBody List<CommissionResponse> getAllCommission() {
-		return paymentTransformer.getAllCommissionsAvailable();
+    public @ResponseBody List<CommissionResponse> getAllCommission(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<CommissionResponse> commissionRespList = new ArrayList<CommissionResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commissionRespList = paymentTransformer.getAllCommissionsAvailable();
+		}
+		return commissionRespList;
     }
 	
 	@RequestMapping(value = "/saveCommissionMaster")  
-    public @ResponseBody CommissionMasterResponse saveCommissionMaster(@RequestBody CommissionMasterRequest commissionMasterRequest) throws MandatoryValidationException{
-		return paymentTransformer.saveCommissionMstr(commissionMasterRequest);
+    public @ResponseBody CommissionMasterResponse saveCommissionMaster(@RequestHeader(value="access-token") String token,
+    		@RequestBody CommissionMasterRequest commissionMasterRequest) throws MandatoryValidationException, SessionExpiredException{
+		CommissionMasterResponse commissionMstrResponse = new CommissionMasterResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commissionMstrResponse = paymentTransformer.saveCommissionMstr(commissionMasterRequest);
+		}
+		return commissionMstrResponse;
     }
 	
 	@RequestMapping(value = "/getCommissionMaster")  
-    public @ResponseBody CommissionMasterResponse getCommissionMaster() throws MandatoryValidationException{
-		return paymentTransformer.getCommissionMstr();
+    public @ResponseBody CommissionMasterResponse getCommissionMaster(@RequestHeader(value="access-token") String token) throws MandatoryValidationException, SessionExpiredException{
+		CommissionMasterResponse commissionMstrResponse = new CommissionMasterResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commissionMstrResponse = paymentTransformer.getCommissionMstr();
+		}
+		return commissionMstrResponse;
     }
 		
 	@RequestMapping(value = "/getCommissionByDriverIdAndStatus")  
-	public @ResponseBody List<CommissionResponse> getCommissionByDriverIdAndStatus(@RequestBody CommonRequest commonRequest) throws MandatoryValidationException {
-		return paymentTransformer.getCommissionByDriverIdAndStatus(commonRequest);
+	public @ResponseBody List<CommissionResponse> getCommissionByDriverIdAndStatus(@RequestHeader(value="access-token") String token,
+			@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<CommissionResponse> commissionRespList = new ArrayList<CommissionResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			commissionRespList = paymentTransformer.getCommissionByDriverIdAndStatus(commonRequest);
+		}
+		return commissionRespList;
 	}
 	
 	/** ------------ CONFIGURATIONS -----------------------*/
+	
 	@RequestMapping(value = "/getZiprydeConfigurationByType")  
-	public @ResponseBody ConfigurationResponse getZiprydeConfigurationByType(@RequestBody ConfigurationRequest configurationRequest) {
-		return adminTransformer.getZiprydeConfigurationByType(configurationRequest);
+	public @ResponseBody ConfigurationResponse getZiprydeConfigurationByType(@RequestHeader(value="access-token") String token,
+			@RequestBody ConfigurationRequest configurationRequest) throws SessionExpiredException {
+		ConfigurationResponse configurationResponse  = new ConfigurationResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			configurationResponse =  adminTransformer.getZiprydeConfigurationByType(configurationRequest);
+		}
+		return configurationResponse;
 	}
 	
 	@RequestMapping(value = "/saveZiprydeConfiguration")  
-	public @ResponseBody ConfigurationResponse saveZiprydeConfiguration(@RequestBody ConfigurationRequest configurationRequest) throws UserValidationException {
-		return adminTransformer.saveZiprydeConfiguration(configurationRequest);
+	public @ResponseBody ConfigurationResponse saveZiprydeConfiguration(@RequestHeader(value="access-token") String token,
+			@RequestBody ConfigurationRequest configurationRequest) throws UserValidationException, SessionExpiredException {
+		ConfigurationResponse configurationResponse  = new ConfigurationResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			configurationResponse = adminTransformer.saveZiprydeConfiguration(configurationRequest);
+		}
+		return configurationResponse;
 	}
 	
 	@RequestMapping(value = "/getAllZiprydeConfigurations")  
-	public @ResponseBody List<ConfigurationResponse> getAllZiprydeConfigurations() {
-		return adminTransformer.getAllZiprydeConfigurations();
+	public @ResponseBody List<ConfigurationResponse> getAllZiprydeConfigurations(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<ConfigurationResponse> configurationResList = new ArrayList<ConfigurationResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			configurationResList = adminTransformer.getAllZiprydeConfigurations();
+		}
+		return configurationResList;
 	}
 		
-	/** ------------Lost Item ------------- */
+	/** ------------Lost Item ------------- 
+	 * @throws SessionExpiredException */
 	
 	@RequestMapping(value = "/saveLostItem")  
-	public @ResponseBody LostItemResponse saveLostItem(@RequestBody LostItemRequest lostItemRequest) throws UserValidationException, MandatoryValidationException {
-		return bookingTranssformer.saveLostItem(lostItemRequest);
+	public @ResponseBody LostItemResponse saveLostItem(@RequestHeader(value="access-token") String token,
+			@RequestBody LostItemRequest lostItemRequest) throws UserValidationException, MandatoryValidationException, SessionExpiredException {
+		LostItemResponse lostItemResponse = new LostItemResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			lostItemResponse = bookingTranssformer.saveLostItem(lostItemRequest);
+		}
+		return lostItemResponse;
 	}
 	
 	@RequestMapping(value = "/getLostItemByBookingId")  
-	public @ResponseBody LostItemResponse getLostItemByBookingId(@RequestBody LostItemRequest lostItemRequest) throws MandatoryValidationException {
-		return bookingTranssformer.getLostItemByBookingId(lostItemRequest);
+	public @ResponseBody LostItemResponse getLostItemByBookingId(@RequestHeader(value="access-token") String token,
+			@RequestBody LostItemRequest lostItemRequest) throws MandatoryValidationException, SessionExpiredException {
+		LostItemResponse lostItemResponse = new LostItemResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			lostItemResponse = bookingTranssformer.getLostItemByBookingId(lostItemRequest);
+		}
+		return lostItemResponse;
 	}
 
 	@RequestMapping(value = "/getAllLostItems")  
-	public @ResponseBody List<LostItemResponse> getAllLostItems() {
-		return bookingTranssformer.getAllLostItems();
+	public @ResponseBody List<LostItemResponse> getAllLostItems(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<LostItemResponse> lostItemRespList = new ArrayList<LostItemResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			lostItemRespList = bookingTranssformer.getAllLostItems();
+		}
+		return lostItemRespList;
 	}
 	
-	/** --------- MONGO DB SERVICE -------------------- */
+	/** --------- MONGO DB SERVICE -------------------- 
+	 * @throws SessionExpiredException */
 	
 	@RequestMapping(value = "/getGeoLocationByDriverId")
-	public @ResponseBody UserGeoSpatialResponse getGeoLocationByDriverId(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
-		return mongoTransfomer.getGeoLocationByDriverId(geoLocationRequest);
+	public @ResponseBody UserGeoSpatialResponse getGeoLocationByDriverId(@RequestHeader(value="access-token") String token,
+			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, SessionExpiredException {
+		UserGeoSpatialResponse userGeoResponse = new UserGeoSpatialResponse();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userGeoResponse = mongoTransfomer.getGeoLocationByDriverId(geoLocationRequest);
+		}
+		return userGeoResponse;
 	}
 	
 	@RequestMapping(value = "/getNearByActiveDrivers")
-	public @ResponseBody List<UserGeoSpatialResponse> getNearByActiveDrivers(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException {
-		return mongoTransfomer.getNearByActiveDrivers(geoLocationRequest);
+	public @ResponseBody List<UserGeoSpatialResponse> getNearByActiveDrivers(@RequestHeader(value="access-token") String token,
+			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, SessionExpiredException {
+		List<UserGeoSpatialResponse> userGeoResponseList = new ArrayList<UserGeoSpatialResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			userGeoResponseList =	mongoTransfomer.getNearByActiveDrivers(geoLocationRequest);
+		}
+		return userGeoResponseList;
 	}
 	
 	@RequestMapping(value = "/insertDriverSession")
-	public void insertDriverSession(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
-		mongoTransfomer.updateDriverSession(geoLocationRequest);
+	public void insertDriverSession(@RequestHeader(value="access-token") String token,
+			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			mongoTransfomer.updateDriverSession(geoLocationRequest);
+		}
 	}
 	
 	@RequestMapping(value = "/updateDriverSession")
-	public void updateDriverSession(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
-		mongoTransfomer.updateDriverSession(geoLocationRequest);
+	public void updateDriverSession(@RequestHeader(value="access-token") String token,
+			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			mongoTransfomer.updateDriverSession(geoLocationRequest);
+		}
 	}
 	
 	@RequestMapping(value = "/updateDriverStatus")
-	public void updateDriverStatus(@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
-		mongoTransfomer.updateDriverOnlineStatus(geoLocationRequest);
-	}
-
-	
+	public void updateDriverStatus(@RequestHeader(value="access-token") String token,
+			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			mongoTransfomer.updateDriverOnlineStatus(geoLocationRequest);
+		}
+	}	
 }

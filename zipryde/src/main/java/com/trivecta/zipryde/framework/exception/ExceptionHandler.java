@@ -54,4 +54,15 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, error, headers,HttpStatus.CONFLICT, request);
     }
 	
+	@org.springframework.web.bind.annotation.ExceptionHandler({ SessionExpiredException.class })
+    protected ResponseEntity<Object> handleSessionExpiredException(Exception e, WebRequest request) {
+		
+        ClientErrorInformationException error = new ClientErrorInformationException(e.getMessage());
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return handleExceptionInternal(e, error, headers,HttpStatus.REQUEST_TIMEOUT, request);
+    }
+	
 }

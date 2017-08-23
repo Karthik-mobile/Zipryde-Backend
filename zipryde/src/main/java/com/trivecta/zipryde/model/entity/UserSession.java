@@ -17,7 +17,9 @@ import java.util.Date;
 	@NamedQuery(name="UserSession.findByUserIdsAndNoStatus", 
 		query="SELECT u.userId FROM UserSession u where u.isActive = 1 and u.logOutDateTime is NULL and u.status is NULL and u.userId in :userIds"),
 	@NamedQuery(name="UserSession.findByUserIdAndStatusNotNull", 
-	query="SELECT u.userId FROM UserSession u where u.isActive = 1 and u.logOutDateTime is NULL and u.status is NOT NULL and u.userId = :userId")
+		query="SELECT u.userId FROM UserSession u where u.isActive = 1 and u.logOutDateTime is NULL and u.status is NOT NULL and u.userId = :userId"),
+	@NamedQuery(name="UserSession.findBySessionToken", 
+	query="SELECT u.userId FROM UserSession u where u.sessionToken = :sessionToken and u.validUntil > NOW()" )
 })
 public class UserSession implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -39,6 +41,14 @@ public class UserSession implements Serializable {
 	private Integer userId;
 	
 	private Integer bookingId;
+	
+	private  String sessionToken;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date validUntil;
+	
+	@Transient 
+	private int isOverride;
 
 	public UserSession() {
 	}
@@ -97,6 +107,30 @@ public class UserSession implements Serializable {
 
 	public void setBookingId(Integer bookingId) {
 		this.bookingId = bookingId;
+	}
+
+	public String getSessionToken() {
+		return sessionToken;
+	}
+
+	public void setSessionToken(String sessionToken) {
+		this.sessionToken = sessionToken;
+	}
+
+	public Date getValidUntil() {
+		return validUntil;
+	}
+
+	public void setValidUntil(Date validUntil) {
+		this.validUntil = validUntil;
+	}
+
+	public int getIsOverride() {
+		return isOverride;
+	}
+
+	public void setIsOverride(int isOverride) {
+		this.isOverride = isOverride;
 	}
 
 }

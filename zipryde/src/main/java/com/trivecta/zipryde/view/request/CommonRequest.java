@@ -25,7 +25,7 @@ public class CommonRequest {
 	
 	private Number cabTypeId;
 	
-	private Number userId;
+	private Integer userId;
 	
 	private Number cabId;
 	
@@ -67,11 +67,11 @@ public class CommonRequest {
 		this.cabTypeId = cabTypeId;
 	}
 
-	public Number getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Number userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 

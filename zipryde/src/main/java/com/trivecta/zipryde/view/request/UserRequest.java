@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "password", "alternateNumber",
 		"emailId", "driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil", "defaultPercentageAccepted",
-		"isEnable", "status", "comments", "restriction", "deviceToken", "licenseFrontImage", "licenseBackImage", "userImage"
+		"isEnable", "status", "comments", "restriction", "deviceToken","overrideSessionToken", "licenseFrontImage", "licenseBackImage", "userImage"
 		// "licenseImages"
 })
 public class UserRequest {
@@ -78,6 +78,9 @@ public class UserRequest {
 
 	@JsonProperty("deviceToken")
 	private String deviceToken;
+	
+	@JsonProperty("overrideSessionToken")
+	private Integer overrideSessionToken;
 	
 	public Number getUserId() {
 		return userId;
@@ -245,6 +248,14 @@ public class UserRequest {
 
 	public void setDeviceToken(String deviceToken) {
 		this.deviceToken = deviceToken;
+	}
+
+	public Integer getOverrideSessionToken() {
+		return overrideSessionToken;
+	}
+
+	public void setOverrideSessionToken(Integer overrideSessionToken) {
+		this.overrideSessionToken = overrideSessionToken;
 	}
 
 }

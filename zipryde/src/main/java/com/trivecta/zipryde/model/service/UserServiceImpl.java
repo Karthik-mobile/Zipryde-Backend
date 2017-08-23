@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
+import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.dao.UserDAO;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
@@ -48,8 +49,13 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Transactional
-	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException {
+	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
 		return userDAO.verifyLogInUser(user);
+	}
+	
+	@Transactional
+	public void logOutUser(int userId) throws UserValidationException {
+		userDAO.logOutUser(userId);
 	}
 	
 	@Transactional

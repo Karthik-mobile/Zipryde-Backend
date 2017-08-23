@@ -18,6 +18,7 @@ import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants.USERTYPE;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
+import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
 import com.trivecta.zipryde.model.entity.DriverProfile;
@@ -237,7 +238,7 @@ public class UserTransformer {
 				user.setDriverProfile(driverProfile);			
 			}
 			User savedUser = userService.saveUser(user);
-			return setUserResponse(savedUser,true);
+			return setUserResponse(savedUser,true,false);
 		}		
 	}
 	
@@ -247,7 +248,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user,false));
+				userResponseList.add(setUserResponse(user,false,false));
 			}
 		}
 		return userResponseList;
@@ -258,11 +259,11 @@ public class UserTransformer {
 			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
 		}
 		User user = userService.getUserByUserId(commonRequest.getUserId().intValue());
-		return setUserResponse(user,true);
+		return setUserResponse(user,true,false);
 	}
 	
 	
-	public UserResponse verifyLogInUser(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException, UserValidationException {
+	public UserResponse verifyLogInUser(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
 		
 		StringBuffer errorMsg = new StringBuffer("");
 		
@@ -296,9 +297,17 @@ public class UserTransformer {
 			UserType userType = new UserType();
 			userType.setType(userRequest.getUserType());
 			user.setUserType(userType);
+			user.setIsOverride(userRequest.getOverrideSessionToken());
 			User newUser = userService.verifyLogInUser(user);
-			return setUserResponse(newUser,false);
+			return setUserResponse(newUser,false,true);
 		}		
+	}
+	
+	public void logoutUser(CommonRequest commonRequest) throws MandatoryValidationException, UserValidationException {
+		if(commonRequest.getUserId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
+		}
+		userService.logOutUser(commonRequest.getUserId());
 	}
 	
 	public UserResponse updatePasswordByUserAndType(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException {
@@ -334,7 +343,7 @@ public class UserTransformer {
 			userType.setType(userRequest.getUserType());
 			user.setUserType(userType);
 			User newUser = userService.updatePasswordByUserAndType(user);
-			return setUserResponse(newUser,false);
+			return setUserResponse(newUser,false,false);
 		}
 	}
 	
@@ -359,7 +368,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user,false));
+				userResponseList.add(setUserResponse(user,false,false));
 			}
 		}
 		return userResponseList;
@@ -371,7 +380,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user,false));
+				userResponseList.add(setUserResponse(user,false,false));
 			}
 		}
 		return userResponseList;
@@ -481,7 +490,7 @@ public class UserTransformer {
 		return driverVehicleResp;
 	}
 	
-	private UserResponse setUserResponse(User user,boolean loadImage) {
+	private UserResponse setUserResponse(User user,boolean loadImage,boolean setAccessToken) {
 		UserResponse userResponse = new UserResponse();
 		
 		userResponse.setUserId(user.getId());
@@ -494,6 +503,9 @@ public class UserTransformer {
 		userResponse.setUserType(user.getUserType().getType());
 		
 		userResponse.setIsOnline(user.getIsOnline());
+		if(setAccessToken) {
+			userResponse.setAccessToken(user.getAccessToken());
+		}
 		userResponse.setBookingId(user.getBookingId());
 		
 		if(USERTYPE.DRIVER.equalsIgnoreCase(userResponse.getUserType()) && user.getDriverProfile() != null ) {
