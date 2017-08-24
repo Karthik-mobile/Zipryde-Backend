@@ -31,7 +31,9 @@ import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.model.entity.UserType;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
+import com.trivecta.zipryde.utility.TwilioSMS;
 import com.trivecta.zipryde.utility.Utility;
+import com.twilio.sdk.TwilioRestException;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -50,6 +52,9 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Autowired
 	FCMNotificationDAO fCMNotificationDAO;
+	
+	@Autowired
+	TwilioSMSDAO twilioSMSDAO;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -104,6 +109,13 @@ public class UserDAOImpl implements UserDAO {
 		else {
 			otpVerification.setId(origOTPVerification.getId());
 			session.merge(otpVerification);
+		}			
+		try {
+			String message = "Your OTP is "+otpVerification.getOtp() +" for ZipRyde registration ";
+			twilioSMSDAO.sendSMS(otpVerification.getMobileNumber(), message);
+		} catch (TwilioRestException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}		
 		return otpVerification;		
 	}

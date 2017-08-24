@@ -13,6 +13,8 @@ public class Notification {
 	private boolean isDriver;
 	
 	private String ziprydeConfigType;
+	
+	private Integer commissionId;
 
 	public String getNotificationType() {
 		return notificationType;
@@ -60,6 +62,14 @@ public class Notification {
 
 	public void setZiprydeConfigType(String ziprydeConfigType) {
 		this.ziprydeConfigType = ziprydeConfigType;
+	}
+
+	public Integer getCommissionId() {
+		return commissionId;
+	}
+
+	public void setCommissionId(Integer commissionId) {
+		this.commissionId = commissionId;
 	}
 	
 }

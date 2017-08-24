@@ -23,6 +23,7 @@ public interface FCMNotificationDAO {
 	
 	public void sendPaymentSuccessNotification(Booking booking);
 	
-	//public void sendDriverOnlineStatusNotification();
-
+	public void sendCommissionPendingNotification(String driverDeviceToken,Integer commissionId);
+	
+	public void sendCommissionPaidNotification(String driverDeviceToken,Integer commissionId);
 }

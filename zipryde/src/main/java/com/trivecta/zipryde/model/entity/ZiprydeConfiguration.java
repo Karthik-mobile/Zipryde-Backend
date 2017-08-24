@@ -37,6 +37,11 @@ public class ZiprydeConfiguration implements Serializable {
 	private String type;
 
 	private String url;
+	
+	private String accoutSID;
+	
+	private String twilioNo;
+	
 
 	public ZiprydeConfiguration() {
 	}
@@ -103,6 +108,22 @@ public class ZiprydeConfiguration implements Serializable {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getAccoutSID() {
+		return accoutSID;
+	}
+
+	public void setAccoutSID(String accoutSID) {
+		this.accoutSID = accoutSID;
+	}
+
+	public String getTwilioNo() {
+		return twilioNo;
+	}
+
+	public void setTwilioNo(String twilioNo) {
+		this.twilioNo = twilioNo;
 	}
 
 }

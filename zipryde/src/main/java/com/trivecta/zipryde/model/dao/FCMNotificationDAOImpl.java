@@ -122,15 +122,32 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 	}
 	
 	@Async
-	public void sendCommissionPendingNotification(Booking booking) {
+	public void sendCommissionPendingNotification(String driverDeviceToken,Integer commissionId) {
 		try {
 			Notification notifcation = new Notification();
 			notifcation.setBody(NOTIFICATION_MESSAGE.COMMISSION_PENDING);
 			notifcation.setTitle(NOTIFICATION_TITLE.COMMISSION_PENDING);
 			notifcation.setNotificationType(NOTIFICATION_TYPE.COMMISSION_PENDING);
-			notifcation.setDriver(false);
+			notifcation.setDriver(true);
 			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_DRIVER);
-			sendFCMNotification(booking.getDriver().getDeviceToken(),notifcation);
+			notifcation.setCommissionId(commissionId);
+			sendFCMNotification(driverDeviceToken,notifcation);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block		
+		}
+	}
+	
+	@Async
+	public void sendCommissionPaidNotification(String driverDeviceToken,Integer commissionId) {
+		try {
+			Notification notifcation = new Notification();
+			notifcation.setBody(NOTIFICATION_MESSAGE.COMMISSION_PAID);
+			notifcation.setTitle(NOTIFICATION_TITLE.COMMISSION_PAID);
+			notifcation.setNotificationType(NOTIFICATION_TYPE.COMMISSION_PAID);
+			notifcation.setDriver(true);
+			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_DRIVER);
+			notifcation.setCommissionId(commissionId);
+			sendFCMNotification(driverDeviceToken,notifcation);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block		
 		}
@@ -182,6 +199,8 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 			data.put("notificationType", notification.getNotificationType());
 			if(notification.getBookingId() != null)
 				data.put("bookingId", notification.getBookingId());
+			if(notification.getCommissionId() != null)
+				data.put("commissionId", notification.getCommissionId());
 			json.put("data", data);
 			
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());

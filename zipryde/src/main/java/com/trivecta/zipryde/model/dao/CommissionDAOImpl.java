@@ -25,6 +25,9 @@ public class CommissionDAOImpl implements CommissionDAO{
 	
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	FCMNotificationDAO fCMNotificationDAO;
 
 	@Override
 	public Commission payCommission(Commission commission) throws NoResultEntityException {
@@ -39,6 +42,7 @@ public class CommissionDAOImpl implements CommissionDAO{
 		commissionOrg.setStatus(STATUS.PAID);
 		commissionOrg.setPaidDate(new Date());
 		session.merge(commissionOrg);
+		fCMNotificationDAO.sendCommissionPendingNotification(commissionOrg.getUser().getDeviceToken(),commissionOrg.getId());
 		return commissionOrg;
 	}
 
@@ -113,6 +117,10 @@ public class CommissionDAOImpl implements CommissionDAO{
 				commission.setStatus(PAYMENT.PENDING);
 			}		
 			session.saveOrUpdate(commission);	
+			if(PAYMENT.PENDING.equalsIgnoreCase(commission.getStatus())){
+				fCMNotificationDAO.sendCommissionPendingNotification(booking.getDriver().getDeviceToken(),commission.getId());
+
+			}
 		}		
 	}
 

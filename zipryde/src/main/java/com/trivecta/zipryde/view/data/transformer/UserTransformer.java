@@ -78,13 +78,6 @@ public class UserTransformer {
 		if(ValidationUtil.isValidString(otpRequest.getMobileNumber())) {
 			OtpVerification otpVerification = 
 					userService.generateAndSaveOTP(createOtpVerificationFromRequest(otpRequest));
-			/*try {
-				String message = "Your OTP to register in Zipryde is "+otpVerification.getOtp();
-				TwilioSMS.sendSMS(otpRequest.getMobileNumber(), message, null);
-			} catch (TwilioRestException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
 			return setOTPResponse(otpVerification);
 		}
 		else {

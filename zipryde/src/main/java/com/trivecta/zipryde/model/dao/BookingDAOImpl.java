@@ -60,6 +60,9 @@ public class BookingDAOImpl implements BookingDAO{
 	@Autowired
 	FCMNotificationDAO fCMNotificationDAO;
 	
+	@Autowired
+	TwilioSMSDAO twilioSMSDAO;
+	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -76,7 +79,8 @@ public class BookingDAOImpl implements BookingDAO{
 	public Booking createBooking(Booking booking){
 		Session session = this.sessionFactory.getCurrentSession();
 		
-		booking.setBookingDateTime(new Date());
+		if(booking.getBookingDateTime() == null)
+			booking.setBookingDateTime(new Date());
 		
 		CabType cabType = session.find(CabType.class, booking.getCabType().getId());
 		booking.setCabType(cabType);
@@ -119,27 +123,52 @@ public class BookingDAOImpl implements BookingDAO{
 		}
 		else {			
 			boolean updateBooking = true;
-			if(STATUS.ON_SITE.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+			
+			if(STATUS.ON_SITE.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
+						!STATUS.ACCEPTED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())) {
+					updateBooking = false;
+			}
+			else if(STATUS.ON_TRIP.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
+					!STATUS.ON_SITE.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())) {
+				updateBooking = false;
+			}
+			else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
+					!STATUS.ON_TRIP.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())) {
+				updateBooking = false;
+			}
+			else if(STATUS.PAID.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
+					!STATUS.COMPLETED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())) {
+				updateBooking = false;
+			}
+			
+			if(updateBooking && STATUS.ON_SITE.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 				Integer driverId = mongoDbClient.checkDriverNearByBookingLocation(
 						String.valueOf(origBooking.getDriver().getId()), origBooking.getFromLongitude().doubleValue(), origBooking.getFromLatitude().doubleValue());
 				if(driverId == null) {
 					updateBooking = false;
 				}
-				/*else {
+				else {
 					try {
-						String message = "Your Zipryde driver has arrived";
-						TwilioSMS.sendSMS(booking.getRider().getMobileNumber(), message, null);
+						String vehicleNumber = "";
+						if(origBooking.getDriver() != null && origBooking.getDriver().getDriverProfile()!= null) {
+							vehicleNumber = origBooking.getDriver().getDriverProfile().getVehicleNumber();
+						}
+						String message = "Your Zipryde "+ vehicleNumber  +"is arriving";
+						twilioSMSDAO.sendSMS(origBooking.getRider().getMobileNumber(), message);
 					} catch (TwilioRestException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}*/
-			}
+				}
+			}	
+			
 			if(updateBooking) {
 				boolean isDriverAccepted = false;
 				
 				if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) || 
-					(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
+						(!STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) ||
+					(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null) ||
+					(STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
 					
 					Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
 					origBooking.setDriverStatus(driverStatus);			
@@ -164,7 +193,26 @@ public class BookingDAOImpl implements BookingDAO{
 						origBooking.setRider(user);						
 						updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ACCEPTED,origBooking.getId());
 						updateUserSessionStatus(origBooking.getRider().getId(),STATUS.SCHEDULED,origBooking.getId());
-
+						isDriverAccepted = true;
+					}
+					else if(STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+						User driver = session.find(User.class, booking.getDriver().getId());
+						origBooking.setDriver(driver);
+						
+						Status bookingStatus = adminDAO.findByStatus(STATUS.ACCEPTED);
+						origBooking.setBookingStatus(bookingStatus);	
+						origBooking.setAcceptedDateTime(new Date());
+						origBooking.setAcceptedPrice(origBooking.getOfferedPrice());				
+		
+						User user = session.find(User.class,origBooking.getRider().getId());
+						if(user.getCancellationCount() == null) {
+							user.setCancellationCount(0);
+						}
+						else {
+							user.setCancellationCount(user.getCancellationCount()+1);
+						}
+						session.merge(user);
+						origBooking.setRider(user);						
 						isDriverAccepted = true;
 					}
 					else {
@@ -221,6 +269,8 @@ public class BookingDAOImpl implements BookingDAO{
 		Session session = this.sessionFactory.getCurrentSession();
 		Booking origBooking  = session.find(Booking.class, booking.getId());
 		boolean isDriver = true;
+		boolean updateBooking = true;
+		
 		if(STATUS.CANCELLED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {		
 			if((STATUS.ON_TRIP.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()) || 
 				STATUS.COMPLETED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()))) {
@@ -246,19 +296,27 @@ public class BookingDAOImpl implements BookingDAO{
 				deleteAcceptedBookingRequest(origBooking.getId());
 			}
 		}
-		Status bookingStatus = 	adminDAO.findByStatus(booking.getBookingStatus().getStatus());
-		origBooking.setBookingStatus(bookingStatus);
-		session.merge(origBooking);
-		//IF PAID, THEN UPDATE USER SESSION STATUS AND SAVE PAYMENT
-		if(STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
-			updateUserSessionStatus(origBooking.getDriver().getId(),null,null);
-			updateUserSessionStatus(origBooking.getRider().getId(),null,null);
-			commissionDAO.updateCommision(origBooking);			
-			paymentDAO.savePayment(payment);
-		}	
-		else if(!STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
-			fCMNotificationDAO.sendBookingStatusNotification(origBooking,isDriver);
-		}		
+		if(STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus()) &&
+				!STATUS.COMPLETED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())){
+			updateBooking = false;
+		}
+		
+		if(updateBooking) {
+			Status bookingStatus = 	adminDAO.findByStatus(booking.getBookingStatus().getStatus());
+			origBooking.setBookingStatus(bookingStatus);
+			session.merge(origBooking);
+			//IF PAID, THEN UPDATE USER SESSION STATUS AND SAVE PAYMENT
+			if(STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+				updateUserSessionStatus(origBooking.getDriver().getId(),null,null);
+				updateUserSessionStatus(origBooking.getRider().getId(),null,null);
+				commissionDAO.updateCommision(origBooking);			
+				paymentDAO.savePayment(payment);
+			}	
+			else if(!STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
+				fCMNotificationDAO.sendBookingStatusNotification(origBooking,isDriver);
+			}		
+		}
+		
 		return origBooking;
 	}
 	
@@ -355,6 +413,30 @@ public class BookingDAOImpl implements BookingDAO{
 	public List<Booking> getBookingByBookingStatus(String status) {
 		Session session = this.sessionFactory.getCurrentSession();
 		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStatus").setParameter("status", status).getResultList();
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
+	public List<Booking> getBookingByBookingStatusAndDriverId(String status,int driverId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStatusAndDriverId")
+				 .setParameter("status", status).setParameter("driverId", driverId).getResultList();
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
+	public List<Booking> getBookingByBookingStatusAndUserId(String status,int customerId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingStatusAndUserId")
+				 .setParameter("status", status).setParameter("riderId", customerId).getResultList();
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);

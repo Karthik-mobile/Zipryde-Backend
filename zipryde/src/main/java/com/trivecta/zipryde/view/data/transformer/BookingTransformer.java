@@ -117,6 +117,10 @@ public class BookingTransformer {
 			if(bookingRequest.getStartDateTime() != null) {
 				booking.setStartDateTime(startDate.parse(bookingRequest.getStartDateTime()));
 			}
+			
+			if(bookingRequest.getBookingDateTime() != null) {
+				booking.setBookingDateTime(startDate.parse(bookingRequest.getBookingDateTime()));
+			}
 				
 			booking.setSuggestedPrice(new BigDecimal(bookingRequest.getSuggestedPrice()));
 			booking.setOfferedPrice(new BigDecimal(bookingRequest.getOfferedPrice()));
@@ -259,6 +263,58 @@ public class BookingTransformer {
 			}
 		}
 		return bookingResponseList;		
+	}
+	
+	public List<BookingResponse> getBookingByBookingStatusAndDriverId(BookingRequest bookingRequest) throws MandatoryValidationException  {
+		StringBuffer errorMsg = new StringBuffer();
+		if(bookingRequest.getBookingStatus() == null) {
+			errorMsg.append(ErrorMessages.BOOKING_STATUS_REQUIRED);
+		}
+		if(bookingRequest.getDriverId() == null) {
+			errorMsg.append(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();			
+			List<Booking> bookingList = 
+					bookingService.getBookingByBookingStatusAndDriverId(bookingRequest.getBookingStatus(),bookingRequest.getDriverId().intValue());
+			
+			if(bookingList != null && bookingList.size() > 0) {
+				for(Booking booking : bookingList) {
+					bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				}
+			}
+			return bookingResponseList;
+		}				
+	}
+	
+	public List<BookingResponse> getBookingByBookingStatusAndUserId(BookingRequest bookingRequest) throws MandatoryValidationException  {
+		StringBuffer errorMsg = new StringBuffer();
+		if(bookingRequest.getBookingStatus() == null) {
+			errorMsg.append(ErrorMessages.BOOKING_STATUS_REQUIRED);
+		}
+		if(bookingRequest.getCustomerId() == null) {
+			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();		
+			List<Booking> bookingList = 
+					bookingService.getBookingByBookingStatusAndUserId(bookingRequest.getBookingStatus(),bookingRequest.getCustomerId().intValue());
+			
+			if(bookingList != null && bookingList.size() > 0) {
+				for(Booking booking : bookingList) {
+					bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				}
+			}
+			return bookingResponseList;		
+		}		
 	}
 	
 	public List<BookingResponse> getBookingByDriverId(BookingRequest bookingRequest) throws MandatoryValidationException  {

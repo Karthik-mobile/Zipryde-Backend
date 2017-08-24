@@ -42,6 +42,9 @@ public class BookingRequest {
 	@JsonProperty("acceptedDateTime")
 	private String acceptedDateTime;
 	
+	@JsonProperty("bookingDateTime")
+	private String bookingDateTime;
+		
 	@JsonProperty("startDateTime")
 	private String startDateTime;
 	
@@ -212,6 +215,14 @@ public class BookingRequest {
 
 	public void setDriverId(Number driverId) {
 		this.driverId = driverId;
+	}
+
+	public String getBookingDateTime() {
+		return bookingDateTime;
+	}
+
+	public void setBookingDateTime(String bookingDateTime) {
+		this.bookingDateTime = bookingDateTime;
 	}
 	
 	

@@ -77,13 +77,14 @@ public class ZipRydeConstants {
 		static String BOOKING_STATUS_CHANGE = "Zipryde status changed for Id is ";
 		static String BOOKING_PAYMENT_SUCCESS="Payment Success for Booking Id ";
 		static String BOOKING_CANCELLED = "Your Zipryde has been Cancelled";
-		static String COMMISSION_PENDING = "Your Zipryde  Commission is Pending";
-		static String COMMISSION_PAID = "Your Zipryde  Commission Paid";
+		static String COMMISSION_PENDING = "Your Zipryde Commission is Pending";
+		static String COMMISSION_PAID = "Your Zipryde Commission Paid";
 	}
 		
 	public interface NOTIFICATION_CONFIG_TYPE {
 		static String NOTIFICATION_DRIVER = "NOTIFICATION_DRIVER";
 		static String NOTIFICATION_RIDER = "NOTIFICATION_RIDER";
+		static String TWILIO_SMS ="TWILIO_SMS";
 	}
 	
 	public interface ZIPRYDE_CONFIGURATION {
