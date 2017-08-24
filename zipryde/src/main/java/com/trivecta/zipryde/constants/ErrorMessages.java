@@ -62,31 +62,31 @@ public interface ErrorMessages {
 	
 	static String MOBILE_NO_CANNOT_UPDATE = "Mobile No cannot be Updated";
 	
-	static String NO_USER_FOUND = " NO User found";	
+	static String NO_USER_FOUND = "No User found";	
 	
 	static String LICENSE_ISSUED_GREATER_CURRENT = "License Issued on must be less than Current Date";
 	
 	static String LICENSE_VALID_UNTIL_LESSER = "License Valid Until must be greater than Current Date";
 	
-	static String LOGGIN_FAILED = "Mobile Number or  Password does not match";
+	static String LOGGIN_FAILED = "UserName or  Password does not match";
 	
 	static String VIN_EXISTS_ALREADY = "Vehicle with VIN Exists already";
 	
 	static String LICENSE_PLATE_EXISTS_ALREADY = "Vehicle with License Plate Exists already";
 	
-	static String NO_CAB_FOUND_BY_ID = "NO Cab found for the given Cab Id";
+	static String NO_CAB_FOUND_BY_ID = "No Cab found for the given Cab Id";
 	
 	static String DIVER_NOT_APPROVED = "Driver Request is Pending for Approval";
 	
 	static String ACCOUNT_DEACTIVATED = "Account Deactivated";
 	
-	static String USER_NOT_DRIVER = " Given User for Vehicle Association is not a Driver";
+	static String USER_NOT_DRIVER = "Given User for Vehicle Association is not a Driver";
 	
-	static String DRIVER_ASSOCIATED_VEHICLE = "Driver Associated with Vehicle. Unassign the Vehicle and delete ";
+	static String DRIVER_ASSOCIATED_VEHICLE = "Driver Associated with Vehicle. Unassign the Vehicle and delete";
 	
-	static String COMMISSION_ID_EMPTY = "Kindly Send Commission Id.";
+	static String COMMISSION_ID_EMPTY = "Commission Id is Mandatory";
 	
-	static String COMMISSION_ID_INVALID = "Invalid Commission Id.";
+	static String COMMISSION_ID_INVALID = "Invalid Commission Id";
 
 	static String COMMISSION_MSTR_REQUEST_EXCEPTION_MESSAGE = "Send Either No of Miles or No of Trips in request";
 
@@ -96,7 +96,7 @@ public interface ErrorMessages {
 	
 	static String BOOKING_CANCELLED = "Your ZipRyde has been cancelled";
 	
-	static String BOOKING_CANNOT_CANCEL = "Your Zipryde Cannot get cancel";
+	static String BOOKING_CANNOT_CANCEL = "You cannot cancel this Zipryde";
 	
 	static String DRIVER_ACTIVE_BOOKING ="You have Active Zipryde and you cannot go offline";
 	
@@ -106,7 +106,7 @@ public interface ErrorMessages {
 	
 	static String LOST_RAISED_COMPLETED = "You can raise the Lost Item for Completed or Paid Zip Rydes only";
 	
-	static String USER_LOGGED_IN_ALREADY = "User Loggedin already in another Device.";
+	static String USER_LOGGED_IN_ALREADY = "You have logged in using another device.Do you want to Override?";
 	
-	static String SESSION_EXPIRED = "Session Expired. Please relogin";
+	static String SESSION_EXPIRED = "Your session has expired. Please login again !";
 }

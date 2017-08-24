@@ -146,19 +146,21 @@ public class UserDAOImpl implements UserDAO {
 				validateSessionToken(newUser.getId());
 			}
 		}
-		else {		
+		else {
 			Session session = this.sessionFactory.getCurrentSession();
 			newUser =  getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
+			
+			if(user.getIsOverride() == 0) {
+				validateSessionToken(newUser.getId());
+			}
+			
 			if(newUser.getIsEnable() == 0 ) {
 				throw new UserValidationException(ErrorMessages.ACCOUNT_DEACTIVATED);				
 			}
 			if (USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType()) && 
 					(STATUS.REQUESTED.equalsIgnoreCase(newUser.getDriverProfile().getStatus().getStatus()))) {
 					throw new UserValidationException(ErrorMessages.DIVER_NOT_APPROVED);								
-			}
-			if(user.getIsOverride() == 0) {
-				validateSessionToken(newUser.getId());
-			}
+			}			
 			newUser.setDeviceToken(user.getDeviceToken());
 			session.merge(newUser);			
 		}	

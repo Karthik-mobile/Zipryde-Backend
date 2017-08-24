@@ -62,7 +62,8 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        return handleExceptionInternal(e, error, headers,HttpStatus.REQUEST_TIMEOUT, request);
+        return handleExceptionInternal(e, error, headers,HttpStatus.METHOD_NOT_ALLOWED, request);
+
     }
 	
 }

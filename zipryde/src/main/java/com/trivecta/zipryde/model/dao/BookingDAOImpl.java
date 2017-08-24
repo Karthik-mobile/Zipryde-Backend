@@ -33,6 +33,8 @@ import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.mongodb.UserGeoSpatialResponse;
+import com.trivecta.zipryde.utility.TwilioSMS;
+import com.twilio.sdk.TwilioRestException;
 
 @Repository
 public class BookingDAOImpl implements BookingDAO{
@@ -123,6 +125,15 @@ public class BookingDAOImpl implements BookingDAO{
 				if(driverId == null) {
 					updateBooking = false;
 				}
+				/*else {
+					try {
+						String message = "Your Zipryde driver has arrived";
+						TwilioSMS.sendSMS(booking.getRider().getMobileNumber(), message, null);
+					} catch (TwilioRestException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}*/
 			}
 			if(updateBooking) {
 				boolean isDriverAccepted = false;

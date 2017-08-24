@@ -30,6 +30,7 @@ import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.model.entity.UserType;
 import com.trivecta.zipryde.model.entity.VehicleDetail;
 import com.trivecta.zipryde.model.service.UserService;
+import com.trivecta.zipryde.utility.TwilioSMS;
 import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
@@ -39,6 +40,7 @@ import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.DriverVehicleAssociationResponse;
 import com.trivecta.zipryde.view.response.OTPResponse;
 import com.trivecta.zipryde.view.response.UserResponse;
+import com.twilio.sdk.TwilioRestException;
 
 @Component
 public class UserTransformer {
@@ -76,7 +78,13 @@ public class UserTransformer {
 		if(ValidationUtil.isValidString(otpRequest.getMobileNumber())) {
 			OtpVerification otpVerification = 
 					userService.generateAndSaveOTP(createOtpVerificationFromRequest(otpRequest));
-			//TODO: Send OTP in SMS
+			/*try {
+				String message = "Your OTP to register in Zipryde is "+otpVerification.getOtp();
+				TwilioSMS.sendSMS(otpRequest.getMobileNumber(), message, null);
+			} catch (TwilioRestException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 			return setOTPResponse(otpVerification);
 		}
 		else {
