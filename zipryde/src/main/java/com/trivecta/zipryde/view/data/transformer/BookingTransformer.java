@@ -112,7 +112,7 @@ public class BookingTransformer {
 			customer.setId(bookingRequest.getCustomerId().intValue());
 			booking.setRider(customer);
 			
-			DateFormat startDate = new SimpleDateFormat("MM-dd-YYYY HH:mm:ss");
+			DateFormat startDate = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 			
 			if(bookingRequest.getStartDateTime() != null) {
 				booking.setStartDateTime(startDate.parse(bookingRequest.getStartDateTime()));
