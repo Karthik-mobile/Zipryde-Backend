@@ -553,6 +553,17 @@ public class ZiprydeController {
 		return bookingResponseList;
 	}
 	
+	@RequestMapping(value = "/getFutureBookingRequestedByDriverId")
+	public @ResponseBody List<BookingResponse> getFutureBookingRequestedByDriverId(@RequestHeader(value="access-token") String token,
+			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
+		System.out.println("getFutureBookingRequestedByDriverId : "+token);
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getFutureBookingRequestedByDriverId(bookingRequest);
+		}
+		return bookingResponseList;
+	}
+	
 	
 	/** ----------- PAYMENT -------------------- 
 	 * @throws SessionExpiredException */

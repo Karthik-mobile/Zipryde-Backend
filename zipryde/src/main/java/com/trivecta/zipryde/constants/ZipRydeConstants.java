@@ -22,6 +22,7 @@ public class ZipRydeConstants {
 		static String UNASSIGNED = "UNASSIGNED";
 		
 		static String REQUESTED = "REQUESTED";
+		static String FUTURE_REQUESTED = "FUTURE_REQUESTED";
 		static String ON_TRIP =  "ON_TRIP";
 		static String ON_SITE =  "ON_SITE";
 		static String SCHEDULED = "SCHEDULED";

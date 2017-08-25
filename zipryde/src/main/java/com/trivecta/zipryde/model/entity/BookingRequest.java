@@ -15,7 +15,8 @@ import javax.persistence.*;
 @NamedQueries({
 	@NamedQuery(name="BookingRequest.findAll", query="SELECT b FROM BookingRequest b"),
 	@NamedQuery(name="BookingRequest.findByDriverId", query="SELECT b.booking FROM BookingRequest b where b.user.id = :userId and isDeleted = 0 ORDER BY b.id DESC"),
-	@NamedQuery(name="BookingRequest.deleteByBookingId", query="UPDATE BookingRequest b SET b.isDeleted = 1 where b.booking.id = :bookingId ")
+	@NamedQuery(name="BookingRequest.deleteByBookingId", query="UPDATE BookingRequest b SET b.isDeleted = 1 where b.booking.id = :bookingId "),
+	@NamedQuery(name="BookingRequest.findByFutureBookingAndDriverId", query="SELECT b.booking FROM BookingRequest b where b.user.id = :userId and isDeleted = 0 and isFutureRequest = 1 ORDER BY b.id DESC")
 })
 public class BookingRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -40,7 +41,9 @@ public class BookingRequest implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 	
-	private Integer isDeleted;;
+	private Integer isDeleted;
+	
+	private  Integer isFutureRequest;
 	
 	public BookingRequest() {
 	}
@@ -91,6 +94,14 @@ public class BookingRequest implements Serializable {
 
 	public void setIsDeleted(Integer isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+
+	public Integer getIsFutureRequest() {
+		return isFutureRequest;
+	}
+
+	public void setIsFutureRequest(Integer isFutureRequest) {
+		this.isFutureRequest = isFutureRequest;
 	}
 
 }

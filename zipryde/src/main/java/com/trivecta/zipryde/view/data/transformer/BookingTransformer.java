@@ -368,6 +368,23 @@ public class BookingTransformer {
 		return bookingResponseList;		
 	}
 	
+	public List<BookingResponse> getFutureBookingRequestedByDriverId(BookingRequest bookingRequest) throws MandatoryValidationException  {
+		if(bookingRequest.getDriverId() == null) {
+			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
+		}
+				
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		
+		List<Booking> bookingList = bookingService.getFutureBookingRequestedByDriverId(bookingRequest.getDriverId().intValue());
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+			}
+		}
+		return bookingResponseList;		
+	}
+	
 	public CommonResponse getBookingCountByDate(BookingRequest bookingRequest) throws ParseException {
 		Date searchDate = new Date();
 		if(ValidationUtil.isValidString(bookingRequest.getStartDateTime())) {

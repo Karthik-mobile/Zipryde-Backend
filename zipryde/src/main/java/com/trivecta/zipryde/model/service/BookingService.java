@@ -34,6 +34,8 @@ public interface BookingService {
 	
 	public List<Booking> getBookingRequestedByDriverId(int driverId);
 	
+	public List<Booking> getFutureBookingRequestedByDriverId(int driverId);
+	
 	public Integer getBookingCountByDateNotInRequested(Date bookingDate);
 	
 	public List<Booking> getBookingByDateNotInRequested(Date bookingDate);

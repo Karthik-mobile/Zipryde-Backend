@@ -78,9 +78,19 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	public Booking createBooking(Booking booking){
 		Session session = this.sessionFactory.getCurrentSession();
+		Integer isFutureBooking = 0;
 		
-		if(booking.getBookingDateTime() == null)
+		if(booking.getBookingDateTime() == null){
 			booking.setBookingDateTime(new Date());
+			
+			Status bookingStatus = adminDAO.findByStatus(STATUS.REQUESTED);
+			booking.setBookingStatus(bookingStatus);
+		}
+		else {
+			isFutureBooking = 1;
+			Status bookingStatus = adminDAO.findByStatus(STATUS.FUTURE_REQUESTED);
+			booking.setBookingStatus(bookingStatus);	
+		}
 		
 		CabType cabType = session.find(CabType.class, booking.getCabType().getId());
 		booking.setCabType(cabType);
@@ -92,12 +102,7 @@ public class BookingDAOImpl implements BookingDAO{
 			User driver = session.find(User.class, booking.getDriver().getId());
 			booking.setDriver(driver);
 		}
-	
-		Status bookingStatus = adminDAO.findByStatus(STATUS.REQUESTED);
-		booking.setBookingStatus(bookingStatus);
-		
-		booking.setBookingDateTime(new Date());
-		
+			
 		BigDecimal suggestedPrice = 
 				pricingDAO.calculatePricingByTypeDistanceAndPerson(
 						booking.getDistanceInMiles(),booking.getCabType().getId(),booking.getNoOfPassengers());
@@ -106,7 +111,7 @@ public class BookingDAOImpl implements BookingDAO{
 		booking.setCreationDate(new Date());
 		session.save(booking);
 		updateUserSessionStatus(booking.getRider().getId(),STATUS.REQUESTED,booking.getId());
-		assignBookingToNearBYDrivers(booking);
+		assignBookingToNearBYDrivers(booking,isFutureBooking);
 		return booking;		
 	}
 	
@@ -478,6 +483,17 @@ public class BookingDAOImpl implements BookingDAO{
 		 return bookingList;
 	}
 	
+	public List<Booking> getFutureBookingRequestedByDriverId(int driverId) {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("BookingRequest.findByFutureBookingAndDriverId").setParameter("userId", driverId).getResultList();
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
 	private void fetchLazyInitialisation(Booking booking) {
 		if(booking.getBookingRequests() != null) {
 			booking.getBookingRequests().size();
@@ -491,7 +507,7 @@ public class BookingDAOImpl implements BookingDAO{
 	}
 	
 	@Async
-	private void assignBookingToNearBYDrivers(Booking booking) {
+	private void assignBookingToNearBYDrivers(Booking booking,Integer isFutureBooking) {
 		Session session = this.sessionFactory.getCurrentSession();
 		List<UserGeoSpatialResponse> nearByDriversList = mongoDbClient.getNearByActiveDrivers(booking.getFromLongitude().doubleValue(), booking.getFromLatitude().doubleValue());
 		
@@ -509,7 +525,7 @@ public class BookingDAOImpl implements BookingDAO{
 						.setParameter("cabTypeId", booking.getCabType().getId())
 						.setParameter("userIds", driverIdList).getResultList();
 				for(DriverVehicleAssociation driverVehicleAssociation : driverVehicleAssociationList)	{
-					createBookingRequest(booking,driverVehicleAssociation.getUser());
+					createBookingRequest(booking,driverVehicleAssociation.getUser(),isFutureBooking);
 				}
 			}
 		}
@@ -527,7 +543,7 @@ public class BookingDAOImpl implements BookingDAO{
 	}
 	
 	@Async
-	private void createBookingRequest(Booking booking,User user) {
+	private void createBookingRequest(Booking booking,User user,Integer isFutureBooking) {
 		Session session = this.sessionFactory.getCurrentSession();
 		//List<> = mongoDbClient.getNearByActiveDrivers(longitude, latitude);
 		BookingRequest bookingRequest = new BookingRequest();
@@ -535,6 +551,7 @@ public class BookingDAOImpl implements BookingDAO{
 		bookingRequest.setUser(user);
 		bookingRequest.setCreationDate(new Date());
 		bookingRequest.setIsDeleted(0);
+		bookingRequest.setIsFutureRequest(isFutureBooking);
 		session.save(bookingRequest);
 		fCMNotificationDAO.sendBookingRequestNotification(booking,user);
 	}	
