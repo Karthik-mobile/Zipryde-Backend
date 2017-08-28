@@ -12,11 +12,14 @@ import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
+import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.UserSession;
+import com.trivecta.zipryde.model.service.BookingService;
 import com.trivecta.zipryde.model.service.UserService;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
+import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.UserGeoSpatialResponse;
 
 @Component
@@ -27,6 +30,9 @@ public class MongoTransformer {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	BookingService bookingService;
 	
 /*	public void insertDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
 		StringBuffer errorMsg = new StringBuffer();
@@ -72,7 +78,8 @@ public class MongoTransformer {
 		}
 	}*/
 	
-	public void updateDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
+	public CommonResponse updateDriverSession(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
+		CommonResponse commmonResponse = new  CommonResponse();
 		StringBuffer errorMsg = new StringBuffer();
 		if(geoLocationRequest.getUserId() == null) {
 			errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
@@ -89,7 +96,19 @@ public class MongoTransformer {
 			userService.updateDriverSession(geoLocationRequest.getUserId(),
 					Double.valueOf(geoLocationRequest.getFromLongitude()), 
 					Double.valueOf(geoLocationRequest.getFromLatitude()));
+			
+			List<Booking> bookingList = bookingService.getBookingRequestedByDriverId(geoLocationRequest.getUserId());
+			
+			if(bookingList != null) {
+				List<Integer> bookingIdList = bookingList.stream()
+		                .map(Booking::getId).collect(Collectors.toList()); 
+				commmonResponse.setBookingId(bookingIdList);
+			}
+			else {
+				commmonResponse.setBookingId(new ArrayList<Integer>());
+			}			
 		}
+		return commmonResponse;
 	}
 	
 	public void updateDriverOnlineStatus(GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException {
@@ -133,6 +152,9 @@ public class MongoTransformer {
 		}
 		else 
 		{
+			System.out.println("getNearByActiveDrivers : From Longitude "+geoLocationRequest.getFromLongitude());
+			System.out.println("getNearByActiveDrivers : From Latitude "+geoLocationRequest.getFromLatitude());
+
 			List<UserGeoSpatialResponse> userGeoRespList = new ArrayList<UserGeoSpatialResponse>();
 			List<com.trivecta.zipryde.mongodb.UserGeoSpatialResponse> 
 			mongoUserRespList =

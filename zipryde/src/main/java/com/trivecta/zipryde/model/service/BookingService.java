@@ -26,7 +26,7 @@ public interface BookingService {
 	
 	public List<Booking> getBookingByBookingStatusAndUserId(String status,int customerId);
 	
-	public List<Booking> getBookingByDriverId(int driverId);
+	public List<Booking> getBookingByDriverId(int driverId,int paginationNo);
 	
 	public List<Booking> getBookingByuserId(int customerId);
 	

@@ -735,12 +735,13 @@ public class ZiprydeController {
 	}
 	
 	@RequestMapping(value = "/updateDriverSession")
-	public void updateDriverSession(@RequestHeader(value="access-token") String token,
+	public CommonResponse updateDriverSession(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
 		System.out.println("updateDriverSession : "+token);
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
-			mongoTransfomer.updateDriverSession(geoLocationRequest);
+			return mongoTransfomer.updateDriverSession(geoLocationRequest);
 		}
+		return null;
 	}
 	
 	@RequestMapping(value = "/updateDriverStatus")

@@ -170,11 +170,15 @@ public class BookingDAOImpl implements BookingDAO{
 			if(updateBooking) {
 				boolean isDriverAccepted = false;
 				
-				if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) || 
-						(!STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) ||
-					(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null) ||
-					(STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null)) {
-					
+				if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
+						!STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) ||
+						(origBooking.getDriverStatus() != null && 
+						 STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus()) && 
+								STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) || 
+						(STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
+								origBooking.getDriver() == null) || 
+						 (STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && origBooking.getDriver() == null))
+					{					
 					Status driverStatus = adminDAO.findByStatus(booking.getDriverStatus().getStatus());
 					origBooking.setDriverStatus(driverStatus);			
 					
@@ -450,9 +454,17 @@ public class BookingDAOImpl implements BookingDAO{
 		 return bookingList;
 	}
 	
-	public List<Booking> getBookingByDriverId(int driverId) {
+	public List<Booking> getBookingByDriverId(int driverId,int paginationNo) {
 		Session session = this.sessionFactory.getCurrentSession();
-		 List<Booking> bookingList = session.getNamedQuery("Booking.findByDriverId").setParameter("driverId", driverId).getResultList();
+		int maxResult = 10;
+		int firstResult = maxResult - 9;
+		if(paginationNo != 0) {
+			maxResult = paginationNo * 10;
+			firstResult = maxResult - 9;
+		}
+		List<Booking> bookingList = 
+				 session.getNamedQuery("Booking.findByDriverId").
+				 setParameter("driverId", driverId).setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);

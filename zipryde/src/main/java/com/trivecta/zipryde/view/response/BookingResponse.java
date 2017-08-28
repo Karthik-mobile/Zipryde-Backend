@@ -32,7 +32,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"driverStatusCode",
 	"bookingStatus", 
 	"driverStatus",
-	"noOfPassengers"
+	"noOfPassengers",
+	"pageNo"
 })
 
 public class BookingResponse {
@@ -117,6 +118,9 @@ public class BookingResponse {
 	
 	@JsonProperty("driverImage")
 	String driverImage;
+	
+	@JsonProperty("pageNo")
+	private Integer pageNo;
 	
 	public Number getBookingId() {
 		return bookingId;
@@ -332,6 +336,14 @@ public class BookingResponse {
 
 	public void setDriverStatusCode(String driverStatusCode) {
 		this.driverStatusCode = driverStatusCode;
+	}
+
+	public Integer getPageNo() {
+		return pageNo;
+	}
+
+	public void setPageNo(Integer pageNo) {
+		this.pageNo = pageNo;
 	}
 
 	

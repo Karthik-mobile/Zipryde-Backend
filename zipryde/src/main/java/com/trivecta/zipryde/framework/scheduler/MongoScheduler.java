@@ -15,7 +15,7 @@ public class MongoScheduler {
 	@Autowired
 	UserService userService;
 	
-	@Scheduled(fixedRate = 300000) // 5 Minutes
+	@Scheduled(fixedRate = 540000) // 9 Minutes
     public void updateIdleDriverToOffline() {
 		try {
 			userService.updateIdleDriverToOffline();

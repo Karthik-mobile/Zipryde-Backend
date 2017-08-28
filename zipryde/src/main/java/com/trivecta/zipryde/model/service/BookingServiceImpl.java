@@ -60,8 +60,8 @@ public class BookingServiceImpl implements BookingService{
 	}
 	
 	@Transactional
-	public List<Booking> getBookingByDriverId(int driverId) {
-		return bookingDAO.getBookingByDriverId(driverId);
+	public List<Booking> getBookingByDriverId(int driverId,int paginationNo) {
+		return bookingDAO.getBookingByDriverId(driverId,paginationNo);
 	}
 
 	@Transactional

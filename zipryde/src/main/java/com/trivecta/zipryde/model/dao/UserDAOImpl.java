@@ -708,7 +708,7 @@ public class UserDAOImpl implements UserDAO {
 					userSession.setIsActive(0);
 					session.merge(userSession);
 				}
-				bookingDAO.cancelBookingByDriversInOffline(driverIds);				
+				//bookingDAO.cancelBookingByDriversInOffline(driverIds);				
 			}
 		}
 		catch(Exception e){

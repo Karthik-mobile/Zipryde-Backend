@@ -23,12 +23,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"acceptedPrice", 
 	"bookingStatus", 
 	"driverStatus",
-	"noOfPassengers"
+	"noOfPassengers",
+	"pageNo"
 })
 public class BookingRequest {
 
 	@JsonProperty("bookingId")
-	private Number bookingId;
+	private Integer bookingId;
 	
 	@JsonProperty("from")
 	private String from;
@@ -58,7 +59,7 @@ public class BookingRequest {
 	private Double offeredPrice;	
 	
 	@JsonProperty("offeredPricePercentage")
-	private Number offeredPricePercentage;
+	private Integer offeredPricePercentage;
 		
 	@JsonProperty("acceptedPrice")
 	private Double acceptedPrice;
@@ -70,22 +71,25 @@ public class BookingRequest {
 	private String driverStatus;
 	
 	@JsonProperty("noOfPassengers")
-	private Number noOfPassengers;
+	private Integer noOfPassengers;
 
 	@JsonProperty("customerId")
-	private Number customerId;
+	private Integer customerId;
 
 	@JsonProperty("cabTypeId")
-	private Number cabTypeId;
+	private Integer cabTypeId;
 	
 	@JsonProperty("driverId")
-	private Number driverId;
+	private Integer driverId;
 	
-	public Number getBookingId() {
+	@JsonProperty("pageNo")
+	private Integer pageNo;
+	
+	public Integer getBookingId() {
 		return bookingId;
 	}
 
-	public void setBookingId(Number bookingId) {
+	public void setBookingId(Integer bookingId) {
 		this.bookingId = bookingId;
 	}
 
@@ -169,27 +173,27 @@ public class BookingRequest {
 		this.driverStatus = driverStatus;
 	}
 
-	public Number getNoOfPassengers() {
+	public Integer getNoOfPassengers() {
 		return noOfPassengers;
 	}
 
-	public void setNoOfPassengers(Number noOfPassengers) {
+	public void setNoOfPassengers(Integer noOfPassengers) {
 		this.noOfPassengers = noOfPassengers;
 	}
 
-	public Number getCustomerId() {
+	public Integer getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(Number customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 
-	public Number getCabTypeId() {
+	public Integer getCabTypeId() {
 		return cabTypeId;
 	}
 
-	public void setCabTypeId(Number cabTypeId) {
+	public void setCabTypeId(Integer cabTypeId) {
 		this.cabTypeId = cabTypeId;
 	}
 
@@ -201,19 +205,19 @@ public class BookingRequest {
 		this.offeredPrice = offeredPrice;
 	}
 
-	public Number getOfferedPricePercentage() {
+	public Integer getOfferedPricePercentage() {
 		return offeredPricePercentage;
 	}
 
-	public void setOfferedPricePercentage(Number offeredPricePercentage) {
+	public void setOfferedPricePercentage(Integer offeredPricePercentage) {
 		this.offeredPricePercentage = offeredPricePercentage;
 	}
 
-	public Number getDriverId() {
+	public Integer getDriverId() {
 		return driverId;
 	}
 
-	public void setDriverId(Number driverId) {
+	public void setDriverId(Integer driverId) {
 		this.driverId = driverId;
 	}
 
@@ -224,6 +228,12 @@ public class BookingRequest {
 	public void setBookingDateTime(String bookingDateTime) {
 		this.bookingDateTime = bookingDateTime;
 	}
-	
-	
+
+	public Integer getPageNo() {
+		return pageNo;
+	}
+
+	public void setPageNo(Integer pageNo) {
+		this.pageNo = pageNo;
+	}	
 }

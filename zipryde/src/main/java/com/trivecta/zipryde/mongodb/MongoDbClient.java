@@ -90,8 +90,7 @@ public class MongoDbClient {
 				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));
 				userResponse.setLongitude(new BigDecimal(geoDoc.get("lon").toString()));
 				userResponseList.add(userResponse);
-				/*System.out.println(document.get("userId") + "--->" + document.get("loc"));
-				System.out.println(geoDoc.get("lon")+" -- > "+geoDoc.get("lat"));*/
+				System.out.println("Mongo :: getNearByActiveDrivers :: "+document.get("userId"));
 			}			
 		});
 		
@@ -99,31 +98,27 @@ public class MongoDbClient {
 	}
 	
 	public Integer checkDriverNearByBookingLocation(String userId,Double longitude,Double latitude){
-		Double noOfMilesToSearch = 1.5;
-		ZiprydeMstr ziprydeMstr = ziprydeConfigService.getZiprydeMstrByType(ZIPRYDE_CONFIGURATION.NO_OF_MILES_DRIVER_ONSITE);
+		Double noOfMetersToSearch = 200d;
+		ZiprydeMstr ziprydeMstr = ziprydeConfigService.getZiprydeMstrByType(ZIPRYDE_CONFIGURATION.NO_OF_METERS_DRIVER_ONSITE);
 		if(ziprydeMstr != null) {
-			noOfMilesToSearch = Double.valueOf(ziprydeMstr.getValue());
+			noOfMetersToSearch = Double.valueOf(ziprydeMstr.getValue());
 		}
-		Double noOfMiles = noOfMilesToSearch / 3963.2 ;
-		
+	
 		UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
 		List<Double> coordinates = new LinkedList<Double>();
 		coordinates.add(longitude);
 		coordinates.add(latitude);
-		
-		List circle = new ArrayList();
-		circle.add(coordinates);
-		circle.add(noOfMiles);
-		
+			
 		FindIterable<Document> findIterable = mongoCollection.find(new Document("isActive",1).append("userId", userId)
 				.append("lastUpdatedTime", 
 				new Document("$gte", ZonedDateTime.now(ZoneOffset.UTC).minus(5, ChronoUnit.MINUTES).format(DateTimeFormatter.ISO_INSTANT))
 				.append("$lt",ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT)))
-				.append("loc",new Document("$geoWithin",new Document("$centerSphere",circle))));
+				.append("loc",new Document("$near",
+						new Document("$geometry",new Document("type","Point").append("coordinates", coordinates))
+						.append("$maxDistance", noOfMetersToSearch))));
 		
 		findIterable.forEach(new Block<Document>() {
 			public void apply(final Document document) {
-				Document geoDoc = (Document) document.get("loc");
 				userResponse.setUserId(Integer.parseInt(document.get("userId").toString()));
 			}			
 		});

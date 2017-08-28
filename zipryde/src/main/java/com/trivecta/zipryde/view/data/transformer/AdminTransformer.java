@@ -131,9 +131,12 @@ public class AdminTransformer {
 		
 		if(commonRequest.getDistanceInMiles() != null && commonRequest.getCabTypeId() != null && 
 				commonRequest.getNoOfPassengers() != null) {
+			System.out.println(" getAllNYOPByCabTypeDistAndNoOfPassenger : Distance "+commonRequest.getDistanceInMiles());
+			System.out.println(" getAllNYOPByCabTypeDistAndNoOfPassenger : Cab Type "+commonRequest.getCabTypeId());
+			System.out.println(" getAllNYOPByCabTypeDistAndNoOfPassenger : No Of Passengers "+commonRequest.getNoOfPassengers());
+
 			List<NYOPResponse> nyopResponseList = 
-					new ArrayList<NYOPResponse>();
-			
+					new ArrayList<NYOPResponse>();		
 			
 			Map<Integer,BigDecimal> nyopPricingList =
 					adminService.getAllNYOPByCabTypeDistanceAndPerson(

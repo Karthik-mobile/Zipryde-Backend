@@ -322,13 +322,19 @@ public class BookingTransformer {
 			throw new MandatoryValidationException(ErrorMessages.DRIVER_ID_REQUIRED);
 		}
 		
+		if(bookingRequest.getPageNo() == null) {
+			bookingRequest.setPageNo(1);
+		}
+		
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		
-		List<Booking> bookingList = bookingService.getBookingByDriverId(bookingRequest.getDriverId().intValue());
+		List<Booking> bookingList = bookingService.getBookingByDriverId(bookingRequest.getDriverId(),bookingRequest.getPageNo());
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,false);
+				bookingResponse.setPageNo(bookingRequest.getPageNo());
+				bookingResponseList.add(bookingResponse);
 			}
 		}
 		return bookingResponseList;		
