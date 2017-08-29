@@ -78,7 +78,7 @@ public interface ErrorMessages {
 	
 	static String DIVER_NOT_APPROVED = "Driver Request is Pending for Approval";
 	
-	static String ACCOUNT_DEACTIVATED = "Account Deactivated";
+	static String ACCOUNT_DEACTIVATED = "Contact Admin for Account Activation";
 	
 	static String USER_NOT_DRIVER = "Given User for Vehicle Association is not a Driver";
 	
@@ -109,4 +109,7 @@ public interface ErrorMessages {
 	static String USER_LOGGED_IN_ALREADY = "You have logged in using another device.Do you want to Override?";
 	
 	static String SESSION_EXPIRED = "Your session has expired. Please login again !";
+	
+	static String EMAIL_ID_NOT_EXISTS = "Email Id does not exists";
+	
 }

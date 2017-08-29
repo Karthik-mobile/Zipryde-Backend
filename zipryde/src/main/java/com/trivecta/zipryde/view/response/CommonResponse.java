@@ -11,7 +11,7 @@ public class CommonResponse {
 	
 	private Double revenueAmount;
 	
-	private List<Integer> bookingId;
+	private String booking;
 
 	public Number getCount() {
 		return count;
@@ -29,15 +29,12 @@ public class CommonResponse {
 		this.revenueAmount = revenueAmount;
 	}
 
-	public List<Integer> getBookingId() {
-		return bookingId;
+	public String getBooking() {
+		return booking;
 	}
 
-	public void setBookingId(List<Integer> bookingId) {
-		this.bookingId = bookingId;
+	public void setBooking(String booking) {
+		this.booking = booking;
 	}
-	
-	
 
-	
 }

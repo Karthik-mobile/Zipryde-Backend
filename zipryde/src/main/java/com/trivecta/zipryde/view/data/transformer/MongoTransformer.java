@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
+import com.trivecta.zipryde.constants.ZipRydeConstants;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
@@ -99,13 +100,11 @@ public class MongoTransformer {
 			
 			List<Booking> bookingList = bookingService.getBookingRequestedByDriverId(geoLocationRequest.getUserId());
 			
-			if(bookingList != null) {
-				List<Integer> bookingIdList = bookingList.stream()
-		                .map(Booking::getId).collect(Collectors.toList()); 
-				commmonResponse.setBookingId(bookingIdList);
+			if(bookingList != null && bookingList.size() > 0) {
+				commmonResponse.setBooking(ZipRydeConstants.YES);
 			}
 			else {
-				commmonResponse.setBookingId(new ArrayList<Integer>());
+				commmonResponse.setBooking(ZipRydeConstants.NO);
 			}			
 		}
 		return commmonResponse;

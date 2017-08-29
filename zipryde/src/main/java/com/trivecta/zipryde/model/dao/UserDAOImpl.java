@@ -114,8 +114,7 @@ public class UserDAOImpl implements UserDAO {
 			String message = "Your OTP is "+otpVerification.getOtp() +" for ZipRyde registration ";
 			twilioSMSDAO.sendSMS(otpVerification.getMobileNumber(), message);
 		} catch (TwilioRestException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//nothing to do
 		}		
 		return otpVerification;		
 	}
@@ -233,7 +232,7 @@ public class UserDAOImpl implements UserDAO {
 			return user;
 		}
 		catch(NoResultException e) {
-			throw new NoResultEntityException(ErrorMessages.LOGGIN_FAILED);
+			throw new NoResultEntityException(ErrorMessages.EMAIL_ID_NOT_EXISTS);
 		}
 	}
 	
@@ -322,8 +321,8 @@ public class UserDAOImpl implements UserDAO {
 				user.getDriverProfile();
 			}			
 			else if(USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType())){
-				String otp = saveUserSession(user.getId(),1,true);
-				user.setAccessToken(otp);
+				saveUserSession(user.getId(),1,false);
+				//user.setAccessToken(otp);
 			}			
 			return user;
 		}

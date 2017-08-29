@@ -77,9 +77,6 @@ public class MongoDbClient {
 		circle.add(noOfMiles);
 		
 		FindIterable<Document> findIterable = mongoCollection.find(new Document("isActive",1)
-				.append("lastUpdatedTime", 
-				new Document("$gte", ZonedDateTime.now(ZoneOffset.UTC).minus(5, ChronoUnit.MINUTES).format(DateTimeFormatter.ISO_INSTANT))
-				.append("$lt",ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT)))
 				.append("loc",new Document("$geoWithin",new Document("$centerSphere",circle))));
 		
 		findIterable.forEach(new Block<Document>() {
@@ -110,9 +107,6 @@ public class MongoDbClient {
 		coordinates.add(latitude);
 			
 		FindIterable<Document> findIterable = mongoCollection.find(new Document("isActive",1).append("userId", userId)
-				.append("lastUpdatedTime", 
-				new Document("$gte", ZonedDateTime.now(ZoneOffset.UTC).minus(5, ChronoUnit.MINUTES).format(DateTimeFormatter.ISO_INSTANT))
-				.append("$lt",ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT)))
 				.append("loc",new Document("$near",
 						new Document("$geometry",new Document("type","Point").append("coordinates", coordinates))
 						.append("$maxDistance", noOfMetersToSearch))));
@@ -130,7 +124,7 @@ public class MongoDbClient {
 
 		Bson filter = 
 				Filters.gte("lastUpdatedTime", 
-						ZonedDateTime.now(ZoneOffset.UTC).minus(5, ChronoUnit.MINUTES).format(DateTimeFormatter.ISO_INSTANT));
+						ZonedDateTime.now(ZoneOffset.UTC).minus(10, ChronoUnit.MINUTES).format(DateTimeFormatter.ISO_INSTANT));
 		Bson filter1 = Filters.lt("lastUpdatedTime", ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
 		
 		Bson filters = Filters.and(filter,filter1);
@@ -151,7 +145,7 @@ public class MongoDbClient {
 		if(findIterable !=null) {
 			findIterable.forEach(new Block<Document>() {
 				public void apply(final Document document) {
-					if(document != null) 
+					if(document != null && document.get("userId") != null) 
 						userIds.add(Integer.parseInt(document.get("userId").toString()));
 			}});	
 		}

@@ -19,6 +19,7 @@ import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.Commission;
 import com.trivecta.zipryde.model.entity.CommissionMstr;
+import com.trivecta.zipryde.model.entity.User;
 
 @Repository
 public class CommissionDAOImpl implements CommissionDAO{
@@ -41,8 +42,13 @@ public class CommissionDAOImpl implements CommissionDAO{
 		}
 		commissionOrg.setStatus(STATUS.PAID);
 		commissionOrg.setPaidDate(new Date());
+		//Enable User if Commission Paid
+		User user = (User)session.find(User.class, commissionOrg.getUser().getId());
+		user.setIsEnable(1);
+		session.merge(user);
+		commissionOrg.setUser(user);
 		session.merge(commissionOrg);
-		fCMNotificationDAO.sendCommissionPendingNotification(commissionOrg.getUser().getDeviceToken(),commissionOrg.getId());
+		fCMNotificationDAO.sendCommissionPaidNotification(commissionOrg.getUser().getDeviceToken(),commissionOrg.getId());
 		return commissionOrg;
 	}
 
@@ -107,7 +113,7 @@ public class CommissionDAOImpl implements CommissionDAO{
 				commission = getNewCommissionObject();
 			}
 			
-			commission.setUser(booking.getDriver());
+			User user = (User)session.find(User.class, booking.getDriver().getId());
 			commission.setNoOfMiles(commission.getNoOfMiles() + booking.getDistanceInMiles());
 			commission.setNoOfTrips(commission.getNoOfTrips() + 1);
 			Double commissionAmount = calculateCommissionAmount(booking.getAcceptedPrice(),commissionMstr.getCommisionPercentage());
@@ -115,7 +121,11 @@ public class CommissionDAOImpl implements CommissionDAO{
 			if(commission.getNoOfMiles() >= commissionMstr.getNoOfMiles() || commission.getNoOfTrips() >= commissionMstr.getNoOfTrips()) {
 				commission.setCalculatedDate(new Date());
 				commission.setStatus(PAYMENT.PENDING);
+				//If Commission is Pending diable DRIVER
+				user.setIsEnable(0);
+				session.merge(user);
 			}		
+			commission.setUser(user);
 			session.saveOrUpdate(commission);	
 			if(PAYMENT.PENDING.equalsIgnoreCase(commission.getStatus())){
 				fCMNotificationDAO.sendCommissionPendingNotification(booking.getDriver().getDeviceToken(),commission.getId());

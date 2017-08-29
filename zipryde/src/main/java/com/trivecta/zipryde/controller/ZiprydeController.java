@@ -141,12 +141,9 @@ public class ZiprydeController {
 	}
 		
 	@RequestMapping(value = "/updatePasswordByUserAndType")
-	public @ResponseBody UserResponse updatePasswordByUserAndType(@RequestHeader(value="access-token") String token,
-			@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, SessionExpiredException {
+	public @ResponseBody UserResponse updatePasswordByUserAndType(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, SessionExpiredException {
 		UserResponse userResponse = new UserResponse();
-		if(headerValidationTransformer.validHeaderAccessToken(token)) {
-			userResponse = userTransformer.updatePasswordByUserAndType(userRequest);
-		}
+		userResponse = userTransformer.updatePasswordByUserAndType(userRequest);
 		return userResponse;
 	}
 	
