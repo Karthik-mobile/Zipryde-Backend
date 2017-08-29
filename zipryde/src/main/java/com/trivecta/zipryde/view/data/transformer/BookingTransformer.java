@@ -29,6 +29,7 @@ import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.service.BookingService;
 import com.trivecta.zipryde.model.service.PaymentService;
+import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
@@ -44,6 +45,9 @@ public class BookingTransformer {
 
 	@Autowired
 	BookingService bookingService;
+	
+	@Autowired
+	MongoDbClient mongoDbClient;
 	
 	/*
 	 * Step 1 - Create Booking with Status - Requested
@@ -87,6 +91,22 @@ public class BookingTransformer {
 			errorMsg = errorMsg.append(ErrorMessages.OFFERED_PRICE_REQUIRED);
 		}
 		
+		if(bookingRequest.getGeoLocationRequest()!= null){
+			boolean isFromInLimit  = 
+					mongoDbClient.checkDistance(Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLongitude()),
+					Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLatitude()));
+			
+			boolean isToInLimit  = 
+					mongoDbClient.checkDistance(Double.valueOf(bookingRequest.getGeoLocationRequest().getToLongitude()),
+					Double.valueOf(bookingRequest.getGeoLocationRequest().getToLatitude()));
+			
+			if(!isFromInLimit) {
+				errorMsg = errorMsg.append(ErrorMessages.FROM_LOC_NOT_IN_LIMIT+"\n");
+			}
+			if(!isToInLimit) {
+				errorMsg = errorMsg.append(ErrorMessages.TO_LOC_NOT_IN_LIMIT+"\n");
+			}
+		}
 		if(ValidationUtil.isValidString(errorMsg.toString())) {
 			throw new MandatoryValidationException(errorMsg.toString());
 		}
@@ -332,7 +352,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,false);
+				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,true);
 				bookingResponse.setPageNo(bookingRequest.getPageNo());
 				bookingResponseList.add(bookingResponse);
 			}
@@ -345,13 +365,18 @@ public class BookingTransformer {
 			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
 		}
 		
+		if(bookingRequest.getPageNo() == null) {
+			bookingRequest.setPageNo(1);
+		}
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		
-		List<Booking> bookingList = bookingService.getBookingByuserId(bookingRequest.getCustomerId().intValue());
+		List<Booking> bookingList = bookingService.getBookingByuserId(bookingRequest.getCustomerId(),bookingRequest.getPageNo());
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,true));
+				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,true);
+				bookingResponse.setPageNo(bookingRequest.getPageNo());
+				bookingResponseList.add(bookingResponse);
 			}
 		}
 		return bookingResponseList;		

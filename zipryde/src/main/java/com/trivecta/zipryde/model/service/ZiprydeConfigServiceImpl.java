@@ -47,4 +47,9 @@ public class ZiprydeConfigServiceImpl implements ZiprydeConfigService {
 	public ZiprydeMstr getZiprydeMstrByType(String type){
 		return ziprydeConfigurationDAO.getZiprydeMstrByType(type);
 	}
+	
+	@Transactional
+	public String getZiprydeMstrValueByType(String type){
+		return ziprydeConfigurationDAO.getZiprydeMstrValueByType(type);
+	}
 }

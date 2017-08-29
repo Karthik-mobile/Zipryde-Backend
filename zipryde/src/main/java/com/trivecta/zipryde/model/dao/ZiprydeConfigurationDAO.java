@@ -11,4 +11,5 @@ public interface ZiprydeConfigurationDAO {
 	public ZiprydeConfiguration saveZiprydeConfiguration(ZiprydeConfiguration ziprydeConfiguration)throws UserValidationException ;
 	public List<ZiprydeConfiguration> getAllZiprydeConfigurations();
 	public ZiprydeMstr getZiprydeMstrByType(String type);
+	public String  getZiprydeMstrValueByType(String type);
 }

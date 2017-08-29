@@ -31,6 +31,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.trivecta.zipryde.constants.ZipRydeConstants;
 import com.trivecta.zipryde.constants.ZipRydeConstants.ZIPRYDE_CONFIGURATION;
 import com.trivecta.zipryde.model.entity.ZiprydeMstr;
 import com.trivecta.zipryde.model.service.ZiprydeConfigService;
@@ -44,6 +45,7 @@ public class MongoDbClient {
 	static MongoClient mongoClient = new MongoClient("localhost", 27017);
 	static MongoDatabase mongoDatabase = mongoClient.getDatabase("ZIPRYDE");
 	static MongoCollection<Document> mongoCollection = mongoDatabase.getCollection("driversession");
+	//static MongoCollection<Document> mongoLocCollection = mongoDatabase.getCollection("location");
 	
 	public UserGeoSpatialResponse getGeoLocationByDriverId(String userId) {
 		UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
@@ -87,7 +89,6 @@ public class MongoDbClient {
 				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));
 				userResponse.setLongitude(new BigDecimal(geoDoc.get("lon").toString()));
 				userResponseList.add(userResponse);
-				System.out.println("Mongo :: getNearByActiveDrivers :: "+document.get("userId"));
 			}			
 		});
 		
@@ -164,10 +165,48 @@ public class MongoDbClient {
 		Bson filter = Filters.eq("userId", userId);
 		Bson toUpdate = new Document("loc",new Document("lon",longitude).append("lat", latitude))
 				.append("isActive", 1).append("lastUpdatedTime", ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
-		//Bson toInsert = new Document("isActive",1);
 		Bson toInsert = new Document("userId",userId);
 		UpdateOptions options = new UpdateOptions().upsert(true);
 		mongoCollection.updateOne(filter, new Document("$set",toUpdate).append("$setOnInsert",toInsert),options);
+	}
+	
+	public boolean checkDistance(Double longitude,Double latitude){
+		return true;
+/*		String ziprydeMstrValue = ziprydeConfigService.getZiprydeMstrValueByType(ZIPRYDE_CONFIGURATION.ENABLE_LOC_LIMIT);
+		
+		if(ZipRydeConstants.NO.equalsIgnoreCase(ziprydeMstrValue)){
+			return true;
+		}
+		
+		boolean isWithInLimit = false;
+		Double noOfMetersToSearch = Double.valueOf(100) ;
+		ziprydeMstrValue = ziprydeConfigService.getZiprydeMstrValueByType(ZIPRYDE_CONFIGURATION.GEO_DISTNACE_SEARCH_LIMIT);
+		if(ziprydeMstrValue != null) {
+			noOfMetersToSearch = Double.valueOf(ziprydeMstrValue);
+		}
+		Double noOfMilesToSearch = noOfMetersToSearch * Double.valueOf(1609.34);
+		
+		UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
+		List<Double> coordinates = new LinkedList<Double>();
+		coordinates.add(longitude);
+		coordinates.add(latitude);
+		
+		FindIterable<Document> findIterable = mongoLocCollection.
+				find(new Document("loc",new Document("$near",
+						new Document("$geometry",new Document("type","Point").append("coordinates", coordinates))
+						.append("$maxDistance", noOfMilesToSearch))));		
+		
+		findIterable.forEach(new Block<Document>() {
+			public void apply(final Document document) {
+				Document geoDoc = (Document) document.get("loc");
+				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));		
+			}			
+		});
+		
+		if(userResponse.getLatitude() != null) {
+			isWithInLimit = true;
+		}
+		return isWithInLimit;*/
 	}
 	
 	/*public static void main(String args[]) {

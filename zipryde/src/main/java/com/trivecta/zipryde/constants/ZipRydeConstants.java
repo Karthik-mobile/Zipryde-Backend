@@ -91,6 +91,10 @@ public class ZipRydeConstants {
 	public interface ZIPRYDE_CONFIGURATION {
 		static String NO_OF_MILES_TO_SEARCH = "NO_OF_MILES_TO_SEARCH";
 		static String NO_OF_METERS_DRIVER_ONSITE = "NO_OF_METERS_DRIVER_ONSITE";
+		static String ENABLE_LOC_LIMIT = "ENABLE_LOC_LIMIT";
+		static String GEO_DISTNACE_SEARCH_LIMIT = "GEO_DISTNACE_SEARCH_LIMIT";
+		static String GEO_LATITUDE_LIMIT = "GEO_LATITUDE_LIMIT";
+		static String GEO_LONGITUDE_LIMIT = "GEO_LONGITUDE_LIMIT";
 	}	
 
 	public static String YES = "Y";	

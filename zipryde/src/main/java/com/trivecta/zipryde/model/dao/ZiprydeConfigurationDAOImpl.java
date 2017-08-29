@@ -78,4 +78,18 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 		}
 		return ziprydeMstr;		
 	}
+	
+	public String  getZiprydeMstrValueByType(String type){
+		Session session = this.sessionFactory.getCurrentSession();
+		String zipMstrValue = null;
+		try{
+			ZiprydeMstr ziprydeMstr = (ZiprydeMstr) session.getNamedQuery("ZiprydeMstr.findByType").
+					setParameter("type", type).getSingleResult();
+			zipMstrValue = ziprydeMstr.getValue();					
+		}
+		catch(NoResultException e){
+			//No Result
+		}
+		return zipMstrValue;		
+	}
 }

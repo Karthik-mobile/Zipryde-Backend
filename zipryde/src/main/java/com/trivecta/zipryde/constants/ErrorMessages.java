@@ -112,4 +112,8 @@ public interface ErrorMessages {
 	
 	static String EMAIL_ID_NOT_EXISTS = "Email Id does not exists";
 	
+	static String FROM_LOC_NOT_IN_LIMIT ="From Location is not in limit";
+	
+	static String TO_LOC_NOT_IN_LIMIT ="To Location is not in limit";
+	
 }

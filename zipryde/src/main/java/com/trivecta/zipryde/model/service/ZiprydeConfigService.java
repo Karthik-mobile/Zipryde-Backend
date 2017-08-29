@@ -15,4 +15,6 @@ public interface ZiprydeConfigService {
 	public List<ZiprydeConfiguration> getAllZiprydeConfigurations();
 	
 	public ZiprydeMstr getZiprydeMstrByType(String type);
+	
+	public String getZiprydeMstrValueByType(String type);
 }

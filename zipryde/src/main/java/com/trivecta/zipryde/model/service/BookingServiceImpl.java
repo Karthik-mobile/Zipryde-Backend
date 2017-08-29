@@ -65,8 +65,8 @@ public class BookingServiceImpl implements BookingService{
 	}
 
 	@Transactional
-	public List<Booking> getBookingByuserId(int customerId) {
-		return bookingDAO.getBookingByuserId(customerId);
+	public List<Booking> getBookingByuserId(int customerId,int paginationNo) {
+		return bookingDAO.getBookingByuserId(customerId, paginationNo);
 	}
 	
 	@Transactional

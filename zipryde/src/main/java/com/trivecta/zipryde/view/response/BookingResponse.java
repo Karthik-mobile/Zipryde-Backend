@@ -121,7 +121,7 @@ public class BookingResponse {
 	
 	@JsonProperty("pageNo")
 	private Integer pageNo;
-	
+		
 	public Number getBookingId() {
 		return bookingId;
 	}
@@ -346,5 +346,4 @@ public class BookingResponse {
 		this.pageNo = pageNo;
 	}
 
-	
 }

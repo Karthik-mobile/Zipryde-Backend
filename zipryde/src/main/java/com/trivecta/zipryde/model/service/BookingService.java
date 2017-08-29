@@ -28,7 +28,7 @@ public interface BookingService {
 	
 	public List<Booking> getBookingByDriverId(int driverId,int paginationNo);
 	
-	public List<Booking> getBookingByuserId(int customerId);
+	public List<Booking> getBookingByuserId(int customerId,int paginationNo);
 	
 	public Integer getBookingCountByDate(Date bookingDate);
 	

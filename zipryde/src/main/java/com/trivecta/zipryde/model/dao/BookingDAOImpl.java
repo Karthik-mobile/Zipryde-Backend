@@ -12,6 +12,7 @@ import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
@@ -235,7 +236,7 @@ public class BookingDAOImpl implements BookingDAO{
 							origBooking.setEndDateTime(new Date());
 							updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.COMPLETED,origBooking.getId());
 							updateUserSessionStatus(origBooking.getRider().getId(),STATUS.COMPLETED,origBooking.getId());
-						//	commissionDAO.updateCommision(origBooking);
+							//commissionDAO.updateCommision(origBooking);
 						}			
 					}	
 					origBooking.setModifiedDate(new Date());
@@ -282,7 +283,8 @@ public class BookingDAOImpl implements BookingDAO{
 		
 		if(STATUS.CANCELLED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {		
 			if((STATUS.ON_TRIP.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()) || 
-				STATUS.COMPLETED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()))) {
+				STATUS.COMPLETED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()) ||
+				STATUS.PAID.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()))) {
 				throw new UserValidationException(ErrorMessages.BOOKING_CANNOT_CANCEL);
 			}
 			else {
@@ -457,14 +459,21 @@ public class BookingDAOImpl implements BookingDAO{
 	public List<Booking> getBookingByDriverId(int driverId,int paginationNo) {
 		Session session = this.sessionFactory.getCurrentSession();
 		int maxResult = 10;
-		int firstResult = maxResult - 9;
+		int firstResult = 0;
 		if(paginationNo != 0) {
 			maxResult = paginationNo * 10;
-			firstResult = maxResult - 9;
+			firstResult = maxResult - 10;
 		}
-		List<Booking> bookingList = 
-				 session.getNamedQuery("Booking.findByDriverId").
-				 setParameter("driverId", driverId).setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
+		Query query = session.getNamedQuery("Booking.findByDriverId").setParameter("driverId", driverId);
+		Long bookingCount = 0L;
+		try {
+			bookingCount = (Long) query.getSingleResult();
+		}
+		catch(Exception e){
+			//Nothing to do
+		}
+		
+		List<Booking> bookingList =  query.setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
@@ -473,10 +482,24 @@ public class BookingDAOImpl implements BookingDAO{
 		 return bookingList;
 	}
 	
-	public List<Booking> getBookingByuserId(int customerId) {
+	public List<Booking> getBookingByuserId(int customerId,int paginationNo) {
 		Session session = this.sessionFactory.getCurrentSession();
-		 List<Booking> bookingList = session.getNamedQuery("Booking.findByRiderId").setParameter("riderId", customerId).getResultList();
-		 if(bookingList != null && bookingList.size() >0){
+		int maxResult = 10;
+		int firstResult = 0;
+		if(paginationNo != 0) {
+			maxResult = paginationNo * 10;
+			firstResult = maxResult - 10;
+		}
+		Query query = session.getNamedQuery("Booking.findByRiderId").setParameter("driverId", customerId);
+		Long bookingCount = 0L;
+		try {
+			bookingCount = (Long) query.getSingleResult();
+		}
+		catch(Exception e){
+			//Nothing to do
+		}
+		List<Booking> bookingList = query.setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
+		if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
 			 }
