@@ -173,6 +173,7 @@ public class UserDAOImpl implements UserDAO {
 					throw new UserValidationException(ErrorMessages.DIVER_NOT_APPROVED);								
 			}			
 			newUser.setDeviceToken(user.getDeviceToken());
+			newUser.setModifiedDate(new Date());
 			session.merge(newUser);			
 		}	
 		String otp = saveUserSession(newUser.getId(),1,true);
@@ -210,7 +211,26 @@ public class UserDAOImpl implements UserDAO {
 		if(userSession != null && userSession.getSessionToken() != null) {
 			throw new UserAlreadyLoggedInException(ErrorMessages.USER_LOGGED_IN_ALREADY);
 		}		
+	}	
+	
+	public void updateDeviceToken(String accessToken,String deviceToken){
+		Session session = this.sessionFactory.getCurrentSession();		
+		Integer userId = null;
+		try {
+			userId = (Integer) session.getNamedQuery("UserSession.findBySessionToken")
+					.setParameter("sessionToken", accessToken).getSingleResult();			
+		}
+		catch(Exception e){
+			//No result
+		}
+		if(userId != null) {
+			User user = getUserByUserId(userId);
+			user.setDeviceToken(deviceToken);
+			user.setModifiedDate(new Date());
+			session.merge(user);
+		}
 	}
+	
 	private User getUserByMobileNoAndType(String mobileNumber,String userType) throws NoResultEntityException {
 		Session session = this.sessionFactory.getCurrentSession();
 		try {

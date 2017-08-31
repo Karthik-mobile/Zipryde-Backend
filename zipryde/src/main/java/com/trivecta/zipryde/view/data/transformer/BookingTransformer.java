@@ -30,6 +30,7 @@ import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.service.BookingService;
 import com.trivecta.zipryde.model.service.PaymentService;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
+import com.trivecta.zipryde.utility.DistanceCalculator;
 import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
@@ -69,29 +70,39 @@ public class BookingTransformer {
 		StringBuffer errorMsg = new StringBuffer();
 		
 		if(!ValidationUtil.isValidString(bookingRequest.getFrom())) {
-			errorMsg = errorMsg.append(ErrorMessages.PICKUP_LOC_REQUIRED);
+			errorMsg = errorMsg.append(ErrorMessages.PICKUP_LOC_REQUIRED+"\n");
 		}
 		if(!ValidationUtil.isValidString(bookingRequest.getTo())) {
-			errorMsg = errorMsg.append(ErrorMessages.DROP_LOC_REQUIRED);
+			errorMsg = errorMsg.append(ErrorMessages.DROP_LOC_REQUIRED+"\n");
 		}
 		if( bookingRequest.getGeoLocationRequest() == null) {
-			errorMsg = errorMsg.append(ErrorMessages.LAT_LON_REQUIRED);
+			errorMsg = errorMsg.append(ErrorMessages.LAT_LON_REQUIRED+"\n");
 		}
 		
 		if(bookingRequest.getCabTypeId() == null) {
-			errorMsg = errorMsg.append(ErrorMessages.CAB_REQUIRED);
+			errorMsg = errorMsg.append(ErrorMessages.CAB_REQUIRED+"\n");
 		}
 		if(bookingRequest.getCustomerId() == null) {
-			errorMsg = errorMsg.append(ErrorMessages.USER_ID_REQUIRED);
+			errorMsg = errorMsg.append(ErrorMessages.USER_ID_REQUIRED+"\n");
 		}
 		if(bookingRequest.getSuggestedPrice() == null) {
-			errorMsg = errorMsg.append(ErrorMessages.SUGGESTED_PRICE_REQUIRED);
+			errorMsg = errorMsg.append(ErrorMessages.SUGGESTED_PRICE_REQUIRED+"\n");
 		}
 		if(bookingRequest.getOfferedPrice() == null) {
-			errorMsg = errorMsg.append(ErrorMessages.OFFERED_PRICE_REQUIRED);
+			errorMsg = errorMsg.append(ErrorMessages.OFFERED_PRICE_REQUIRED+"\n");
 		}
 		
-		if(bookingRequest.getGeoLocationRequest()!= null){
+		/*if(bookingRequest.getGeoLocationRequest()!= null){
+			Double distance = DistanceCalculator.distance(
+					Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLatitude()), 
+					Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLongitude()), 
+					Double.valueOf(bookingRequest.getGeoLocationRequest().getToLatitude()), 
+					Double.valueOf(bookingRequest.getGeoLocationRequest().getToLongitude()));
+			distance= (double) Math.round(distance * 100) / 100;
+			if(distance.compareTo(Double.valueOf("100.00")) > 0) {
+				errorMsg = errorMsg.append(ErrorMessages.FROM_TO_LOC_NOT_IN_LIMIT+"\n");
+			}
+			
 			boolean isFromInLimit  = 
 					mongoDbClient.checkDistance(Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLongitude()),
 					Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLatitude()));
@@ -106,7 +117,7 @@ public class BookingTransformer {
 			if(!isToInLimit) {
 				errorMsg = errorMsg.append(ErrorMessages.TO_LOC_NOT_IN_LIMIT+"\n");
 			}
-		}
+		}*/
 		if(ValidationUtil.isValidString(errorMsg.toString())) {
 			throw new MandatoryValidationException(errorMsg.toString());
 		}

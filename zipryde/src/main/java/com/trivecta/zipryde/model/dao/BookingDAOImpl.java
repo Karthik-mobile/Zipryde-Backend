@@ -473,7 +473,8 @@ public class BookingDAOImpl implements BookingDAO{
 			//Nothing to do
 		}
 		
-		List<Booking> bookingList =  query.setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
+		List<Booking> bookingList = // query.setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
+				 query.getResultList();
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);
@@ -490,7 +491,7 @@ public class BookingDAOImpl implements BookingDAO{
 			maxResult = paginationNo * 10;
 			firstResult = maxResult - 10;
 		}
-		Query query = session.getNamedQuery("Booking.findByRiderId").setParameter("driverId", customerId);
+		Query query = session.getNamedQuery("Booking.findByRiderId").setParameter("riderId", customerId);
 		Long bookingCount = 0L;
 		try {
 			bookingCount = (Long) query.getSingleResult();
@@ -498,7 +499,8 @@ public class BookingDAOImpl implements BookingDAO{
 		catch(Exception e){
 			//Nothing to do
 		}
-		List<Booking> bookingList = query.setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
+		List<Booking> bookingList = // query.setFirstResult(firstResult).setMaxResults(maxResult).getResultList();
+				 query.getResultList();
 		if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);

@@ -24,6 +24,8 @@ public interface UserService {
 	
 	public void logOutUser(int userId) throws UserValidationException;
 	
+	public void updateDeviceToken(String accessToken,String deviceToken);
+	
 	public User getUserByUserId(int userId);
 	
 	public Integer getDriverCountBySatus(String status);

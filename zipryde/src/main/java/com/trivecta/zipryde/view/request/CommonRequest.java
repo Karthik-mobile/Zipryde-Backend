@@ -13,7 +13,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"cabId",
 	"noOfPassengers",
 	"status",
-	"commissionId"
+	"commissionId",
+	"deviceToken"
 })
 public class CommonRequest {
 
@@ -34,6 +35,8 @@ public class CommonRequest {
 	private String status;
 	
 	private Number commissionId;
+	
+	private String deviceToken;
 	
 	public Number getMakeId() {
 		return makeId;
@@ -105,6 +108,14 @@ public class CommonRequest {
 
 	public void setCommissionId(Number commissionId) {
 		this.commissionId = commissionId;
+	}
+
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
 	}
 	
 }

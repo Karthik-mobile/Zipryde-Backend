@@ -43,10 +43,10 @@ public class CommissionDAOImpl implements CommissionDAO{
 		commissionOrg.setStatus(STATUS.PAID);
 		commissionOrg.setPaidDate(new Date());
 		//Enable User if Commission Paid
-		User user = (User)session.find(User.class, commissionOrg.getUser().getId());
+		/*User user = (User)session.find(User.class, commissionOrg.getUser().getId());
 		user.setIsEnable(1);
 		session.merge(user);
-		commissionOrg.setUser(user);
+		commissionOrg.setUser(user);*/
 		session.merge(commissionOrg);
 		fCMNotificationDAO.sendCommissionPaidNotification(commissionOrg.getUser().getDeviceToken(),commissionOrg.getId());
 		return commissionOrg;
@@ -121,15 +121,14 @@ public class CommissionDAOImpl implements CommissionDAO{
 			if(commission.getNoOfMiles() >= commissionMstr.getNoOfMiles() || commission.getNoOfTrips() >= commissionMstr.getNoOfTrips()) {
 				commission.setCalculatedDate(new Date());
 				commission.setStatus(PAYMENT.PENDING);
-				//If Commission is Pending diable DRIVER
-				user.setIsEnable(0);
-				session.merge(user);
+				//If Commission is Pending disable DRIVER
+				/*user.setIsEnable(0);
+				session.merge(user);*/
 			}		
 			commission.setUser(user);
 			session.saveOrUpdate(commission);	
 			if(PAYMENT.PENDING.equalsIgnoreCase(commission.getStatus())){
 				fCMNotificationDAO.sendCommissionPendingNotification(booking.getDriver().getDeviceToken(),commission.getId());
-
 			}
 		}		
 	}

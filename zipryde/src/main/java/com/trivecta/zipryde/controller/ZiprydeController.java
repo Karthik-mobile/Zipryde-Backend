@@ -191,6 +191,12 @@ public class ZiprydeController {
 		return driverAssocList;
 	}
 	
+	@RequestMapping(value = "/updateDeviceToken")
+	public void updateDeviceToken(@RequestHeader(required = false, value="access-token") String token,
+								@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+		userTransformer.updateDeviceToken(token, commonRequest);
+	}
+	
 	/** --------------- DASHBOARD API ----------------- 
 	 * @throws SessionExpiredException */
 	@RequestMapping(value = "/getDriverCountBySatus")

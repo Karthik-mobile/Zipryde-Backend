@@ -172,7 +172,7 @@ public class MongoDbClient {
 	
 	public boolean checkDistance(Double longitude,Double latitude){
 		return true;
-/*		String ziprydeMstrValue = ziprydeConfigService.getZiprydeMstrValueByType(ZIPRYDE_CONFIGURATION.ENABLE_LOC_LIMIT);
+		/*String ziprydeMstrValue = ziprydeConfigService.getZiprydeMstrValueByType(ZIPRYDE_CONFIGURATION.ENABLE_LOC_LIMIT);
 		
 		if(ZipRydeConstants.NO.equalsIgnoreCase(ziprydeMstrValue)){
 			return true;
@@ -186,7 +186,7 @@ public class MongoDbClient {
 		}
 		Double noOfMilesToSearch = noOfMetersToSearch * Double.valueOf(1609.34);
 		
-		UserGeoSpatialResponse  userResponse = new UserGeoSpatialResponse();
+		List<UserGeoSpatialResponse>  userResponseList = new ArrayList<UserGeoSpatialResponse>();
 		List<Double> coordinates = new LinkedList<Double>();
 		coordinates.add(longitude);
 		coordinates.add(latitude);
@@ -198,12 +198,14 @@ public class MongoDbClient {
 		
 		findIterable.forEach(new Block<Document>() {
 			public void apply(final Document document) {
+				UserGeoSpatialResponse userResponse = new UserGeoSpatialResponse();
 				Document geoDoc = (Document) document.get("loc");
-				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));		
+				userResponse.setLatitude(new BigDecimal(geoDoc.get("lat").toString()));	
+				userResponseList.add(userResponse);
 			}			
 		});
 		
-		if(userResponse.getLatitude() != null) {
+		if(userResponseList != null && userResponseList.size() > 0) {
 			isWithInLimit = true;
 		}
 		return isWithInLimit;*/

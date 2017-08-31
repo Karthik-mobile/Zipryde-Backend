@@ -466,6 +466,12 @@ public class UserTransformer {
 			return driverVehicleResponseList;
 		}
 	}
+	
+	public void updateDeviceToken(String accessToken,CommonRequest commonRequest) {
+		if(ValidationUtil.isValidString(accessToken) && ValidationUtil.isValidString(commonRequest.getDeviceToken())) {
+			userService.updateDeviceToken(Utility.encryptWithMD5(accessToken), commonRequest.getDeviceToken());
+		}
+	}
 		
 	private DriverVehicleAssociationResponse setDriverVehicleResponse(DriverVehicleAssociation newAssociation) {
 		DriverVehicleAssociationResponse driverVehicleResp = new DriverVehicleAssociationResponse();

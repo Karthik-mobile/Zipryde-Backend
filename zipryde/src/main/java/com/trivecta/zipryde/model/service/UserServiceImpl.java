@@ -59,6 +59,11 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Transactional
+	public void updateDeviceToken(String accessToken,String deviceToken) {
+		userDAO.updateDeviceToken(accessToken,deviceToken);
+	}
+	
+	@Transactional
 	public User getUserByUserId(int userId){
 		return userDAO.getUserByUserId(userId);
 	}
