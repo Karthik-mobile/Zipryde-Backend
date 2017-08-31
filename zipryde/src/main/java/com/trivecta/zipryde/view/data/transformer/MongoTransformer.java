@@ -206,6 +206,13 @@ public class MongoTransformer {
 		
 			UserGeoSpatialResponse userResp = new 
 					UserGeoSpatialResponse(mongoUserResp.getUserId(), mongoUserResp.getLongitude(), mongoUserResp.getLatitude());
+			
+			Booking booking = bookingService.getActiveBookingByDriverId(geoLocationRequest.getUserId());
+			if(booking != null) {
+				userResp.setBookingId(booking.getId());
+				userResp.setBookingStatus(booking.getBookingStatus().getStatusValue());
+				userResp.setBookingStatusCode(booking.getBookingStatus().getStatus());
+			}
 			return userResp;
 		}			
 	}

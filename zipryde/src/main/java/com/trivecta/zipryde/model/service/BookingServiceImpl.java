@@ -105,6 +105,11 @@ public class BookingServiceImpl implements BookingService{
 	}
 	
 	@Transactional
+	public Booking getActiveBookingByDriverId(int driverId) {
+		return bookingDAO.getActiveBookingByDriverId(driverId);
+	}
+	
+	@Transactional
 	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException {
 		return bookingDAO.saveLostItem(newLostItem);
 	}

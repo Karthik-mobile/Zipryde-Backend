@@ -102,7 +102,6 @@ public class BookingTransformer {
 			if(distance.compareTo(Double.valueOf("100.00")) > 0) {
 				errorMsg = errorMsg.append(ErrorMessages.FROM_TO_LOC_NOT_IN_LIMIT+"\n");
 			}
-			
 			boolean isFromInLimit  = 
 					mongoDbClient.checkDistance(Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLongitude()),
 					Double.valueOf(bookingRequest.getGeoLocationRequest().getFromLatitude()));

@@ -44,7 +44,7 @@ public interface BookingService {
 	
 	public void updateBookinStatusUnAnswered();
 	
-	
+	public Booking getActiveBookingByDriverId(int driverId);
 	
 	/**----------- Lost Items ----------------- */
 	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException;

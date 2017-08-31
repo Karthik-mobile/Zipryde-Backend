@@ -57,4 +57,6 @@ public interface UserDAO {
 	public void updateIdleDriverToOffline();
 	
 	public void updateDriverSession(Integer userId,Double longitude,Double latitude) throws UserValidationException;
+	
+	public UserSession getUserSessionByUserId(int userId);
 }

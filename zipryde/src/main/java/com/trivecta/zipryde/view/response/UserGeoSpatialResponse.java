@@ -4,18 +4,24 @@ import java.math.BigDecimal;
 
 public class UserGeoSpatialResponse {
 	
-	private Number userId;
+	private Integer userId;
 	
 	private BigDecimal latitude;
 	
 	private BigDecimal longitude;
 	
-	private Number isOnline;
+	private Integer isOnline;
 	
 	private String cabType;
 	
-	private Number cabTypeId;
-
+	private Integer cabTypeId;
+	
+	private Integer bookingId;
+	
+	private  String bookingStatusCode;
+	
+	private  String bookingStatus;
+	
 	public UserGeoSpatialResponse() {
 		//Nothing to do
 	}
@@ -26,11 +32,11 @@ public class UserGeoSpatialResponse {
 		this.longitude = longitude;
 	}
 	
-	public Number getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Number userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 
@@ -50,11 +56,11 @@ public class UserGeoSpatialResponse {
 		this.longitude = longitude;
 	}
 
-	public Number getIsOnline() {
+	public Integer getIsOnline() {
 		return isOnline;
 	}
 
-	public void setIsOnline(Number isOnline) {
+	public void setIsOnline(Integer isOnline) {
 		this.isOnline = isOnline;
 	}
 
@@ -66,12 +72,36 @@ public class UserGeoSpatialResponse {
 		this.cabType = cabType;
 	}
 
-	public Number getCabTypeId() {
+	public Integer getCabTypeId() {
 		return cabTypeId;
 	}
 
-	public void setCabTypeId(Number cabTypeId) {
+	public void setCabTypeId(Integer cabTypeId) {
 		this.cabTypeId = cabTypeId;
+	}
+
+	public Integer getBookingId() {
+		return bookingId;
+	}
+
+	public void setBookingId(Integer bookingId) {
+		this.bookingId = bookingId;
+	}
+
+	public String getBookingStatus() {
+		return bookingStatus;
+	}
+
+	public void setBookingStatus(String bookingStatus) {
+		this.bookingStatus = bookingStatus;
+	}
+
+	public String getBookingStatusCode() {
+		return bookingStatusCode;
+	}
+
+	public void setBookingStatusCode(String bookingStatusCode) {
+		this.bookingStatusCode = bookingStatusCode;
 	}
 
 

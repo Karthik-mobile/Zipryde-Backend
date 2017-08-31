@@ -64,6 +64,9 @@ public class BookingDAOImpl implements BookingDAO{
 	@Autowired
 	TwilioSMSDAO twilioSMSDAO;
 	
+	@Autowired
+	UserDAO userDAO;
+	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -530,6 +533,17 @@ public class BookingDAOImpl implements BookingDAO{
 		 }
 		 return bookingList;
 	}
+	
+	
+	public Booking getActiveBookingByDriverId(int driverId) {
+		UserSession userSession = userDAO.getUserSessionByUserId(driverId);
+		if(userSession != null && userSession.getBookingId() != null) {
+			Booking booking = getBookingById(userSession.getBookingId());
+			return booking;
+		}
+		return null;
+	}
+	
 	
 	private void fetchLazyInitialisation(Booking booking) {
 		if(booking.getBookingRequests() != null) {

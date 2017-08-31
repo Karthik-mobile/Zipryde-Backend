@@ -48,6 +48,8 @@ public interface BookingDAO {
 	
 	public void cancelBookingByDriversInOffline(List<Integer> driverIds);
 	
+	public Booking getActiveBookingByDriverId(int driverId);
+	
 	
 	/**----------- Lost Items ----------------- */
 	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException;
