@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants.PAYMENT;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
+import com.trivecta.zipryde.constants.ZipRydeConstants.USERTYPE;
+import com.trivecta.zipryde.controller.ZiprydeController;
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
@@ -33,10 +36,12 @@ import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.utility.DistanceCalculator;
 import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.BookingRequest;
+import com.trivecta.zipryde.view.request.CallMaskingRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.LostItemRequest;
 import com.trivecta.zipryde.view.request.PaymentRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
+import com.trivecta.zipryde.view.response.CallMaskingResponse;
 import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.LostItemResponse;
@@ -49,21 +54,8 @@ public class BookingTransformer {
 	
 	@Autowired
 	MongoDbClient mongoDbClient;
-	
-	/*
-	 * Step 1 - Create Booking with Status - Requested
-	 * Step 2 - get logged in near by Driver ( Max Count for now - 10) with Customer Geo location
-	 * Step 3 - get Driver from Step 2 and Filter with Cab Type and Requested Percentage value by Customer
-	 * Step 4 - Send Notification to Driver (Async Call)
-	 * Step 5 - Return the Booking Id
-	 * 
-	 */
-	
-	/*
-	 * Step1 - Driver Accepts Booking
-	 * Step2 - Update Booking with Status - Scheduled
-	 * Step3 - Send Notification
-	 */
+
+	private org.apache.log4j.Logger logger = Logger.getLogger(ZiprydeController.class);
 	
 	public BookingResponse createBooking(BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
 		
@@ -201,6 +193,10 @@ public class BookingTransformer {
 			status.setStatus(bookingRequest.getDriverStatus());
 			booking.setDriverStatus(status);
 			
+			//Enter TOLL Amount by DRIVER when ZIPRYDE Completes
+			if(bookingRequest.getTollAmount() != null)
+				booking.setTipAmount(new BigDecimal(bookingRequest.getTollAmount()));
+			
 			Booking updatedBooking = bookingService.updateBookingDriverStatus(booking);
 			return setBookingResponseFromBooking(updatedBooking,false);
 		}
@@ -224,7 +220,12 @@ public class BookingTransformer {
 			
 			Status status = new Status();
 			status.setStatus(bookingRequest.getBookingStatus());
-			booking.setBookingStatus(status);			
+			booking.setBookingStatus(status);		
+			
+			//Enter Tip Amount  by User after ZIPRYDE Completes
+			if(bookingRequest.getTipAmount() != null)
+				booking.setTipAmount(new BigDecimal(bookingRequest.getTipAmount()));
+			
 			Booking updatedBooking = bookingService.updateBookingStatus(booking,null);
 			return setBookingResponseFromBooking(updatedBooking,false);
 		}
@@ -489,6 +490,63 @@ public class BookingTransformer {
 	}
 
 	
+	public CallMaskingResponse getCallMaskingNumber(CallMaskingRequest callMaskingRequest) throws MandatoryValidationException {
+		StringBuffer errorMsg = new StringBuffer();
+		CallMaskingResponse callMaskingResponse = new CallMaskingResponse();
+		if(callMaskingRequest.getBookingId() == null) {
+			errorMsg.append(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+		if(callMaskingRequest.getUserType() == null) {
+			errorMsg.append(ErrorMessages.USER_TYPE_MANDATORY);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			logger.info("getCallMaskingNumber : booking Id : "+callMaskingRequest.getBookingId());
+			logger.info("getCallMaskingNumber : User Type: "+callMaskingRequest.getUserType());
+			Booking booking = bookingService.getBookingById(callMaskingRequest.getBookingId());
+			
+			if(USERTYPE.DRIVER.equalsIgnoreCase(callMaskingRequest.getUserType())){
+				callMaskingResponse.setBookingId(booking.getId());
+				callMaskingResponse.setMobileNumber(booking.getRider().getMobileNumber());
+				callMaskingResponse.setUserType(USERTYPE.RIDER);
+			}
+			else if(USERTYPE.RIDER.equalsIgnoreCase(callMaskingRequest.getUserType())) {
+				callMaskingResponse.setBookingId(booking.getId());
+				if(booking.getDriver() != null) {
+					callMaskingResponse.setMobileNumber(booking.getDriver().getMobileNumber());
+					callMaskingResponse.setUserType(USERTYPE.DRIVER);
+				}
+			}
+		}
+		return callMaskingResponse;		
+	}
+	
+	public CallMaskingResponse getCallMaskingNumber(CallMaskingRequest callMaskingRequest,String accessToken) throws MandatoryValidationException, UserValidationException {
+		StringBuffer errorMsg = new StringBuffer();
+		CallMaskingResponse callMaskingResponse = new CallMaskingResponse();
+		if(callMaskingRequest.getBookingId() == null) {
+			errorMsg.append(ErrorMessages.BOOKING_ID_REQUIRED);
+		}
+		
+		if(ValidationUtil.isValidString(errorMsg.toString())) {
+			throw new MandatoryValidationException(errorMsg.toString());
+		}
+		else {
+			logger.info("getCallMaskingNumber : booking Id : "+callMaskingRequest.getBookingId());
+			logger.info("getCallMaskingNumber : accessToken : "+accessToken);
+			Booking booking = bookingService.getCallMaskingNumberByBookingId(
+					callMaskingRequest.getBookingId(),Utility.encryptWithMD5(accessToken));
+			
+			callMaskingResponse.setBookingId(booking.getId());
+			callMaskingResponse.setMobileNumber(booking.getMobileNumber());
+			callMaskingResponse.setUserType(booking.getUserType());
+		}
+		return callMaskingResponse;		
+	}
+	
 	public BookingResponse setBookingResponseFromBooking(Booking booking,boolean loadImages) {
 		BookingResponse bookingResponse = new BookingResponse();
 		
@@ -497,11 +555,11 @@ public class BookingTransformer {
 		bookingResponse.setBookingId(booking.getId());
 		bookingResponse.setCustomerId(booking.getRider().getId());
 		bookingResponse.setCustomerName(booking.getRider().getFirstName()+" "+booking.getRider().getLastName());
-		bookingResponse.setCustomerMobileNumber(booking.getRider().getMobileNumber());
+		//bookingResponse.setCustomerMobileNumber(booking.getRider().getMobileNumber());
 		if(booking.getDriver() != null) {
 			bookingResponse.setDriverId(booking.getDriver().getId());
 			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
-			bookingResponse.setDriverMobileNumber(booking.getDriver().getMobileNumber());
+			//bookingResponse.setDriverMobileNumber(booking.getDriver().getMobileNumber());
 			if(booking.getDriver().getDriverProfile() != null) {
 				bookingResponse.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
 				if(booking.getDriver().getDriverProfile().getDriverProfileImage() != null)
@@ -564,6 +622,12 @@ public class BookingTransformer {
 		
 		if(booking.getOfferedPrice() != null)
 			bookingResponse.setOfferedPrice(booking.getOfferedPrice().setScale(2,RoundingMode.CEILING).doubleValue());
+		
+		if(booking.getTipAmount() != null)
+			bookingResponse.setTipAmount(booking.getTipAmount().setScale(2,RoundingMode.CEILING).doubleValue());
+		
+		if(booking.getTollAmount() != null)
+			bookingResponse.setTollAmount(booking.getTollAmount().setScale(2,RoundingMode.CEILING).doubleValue());
 		
 		return bookingResponse;
 	}

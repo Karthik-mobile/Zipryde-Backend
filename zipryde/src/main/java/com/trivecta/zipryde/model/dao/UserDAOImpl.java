@@ -19,6 +19,7 @@ import com.trivecta.zipryde.constants.ZipRydeConstants;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
 import com.trivecta.zipryde.constants.ZipRydeConstants.USERTYPE;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
+import com.trivecta.zipryde.framework.exception.SessionExpiredException;
 import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.Booking;
@@ -214,8 +215,7 @@ public class UserDAOImpl implements UserDAO {
 		Session session = this.sessionFactory.getCurrentSession();		
 		Integer userId = null;
 		try {
-			userId = (Integer) session.getNamedQuery("UserSession.findBySessionToken")
-					.setParameter("sessionToken", accessToken).getSingleResult();			
+			userId =getUserIdFromAccessToken(accessToken);	
 		}
 		catch(Exception e){
 			//No result
@@ -226,6 +226,18 @@ public class UserDAOImpl implements UserDAO {
 			user.setModifiedDate(new Date());
 			session.merge(user);
 		}
+	}
+	
+	public Integer getUserIdFromAccessToken(String accessToken) throws UserValidationException{
+		Session session = this.sessionFactory.getCurrentSession();		
+		try {
+			Integer userId = (Integer) session.getNamedQuery("UserSession.findBySessionToken")
+					.setParameter("sessionToken", accessToken).getSingleResult();
+			return userId;
+		}
+		catch(NoResultException e){
+			throw new UserValidationException(ErrorMessages.NO_USER_FOUND);
+		}		
 	}
 	
 	private User getUserByMobileNoAndType(String mobileNumber,String userType) throws NoResultEntityException {

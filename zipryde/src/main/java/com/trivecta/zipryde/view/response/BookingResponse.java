@@ -33,7 +33,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"bookingStatus", 
 	"driverStatus",
 	"noOfPassengers",
-	"pageNo"
+	"pageNo",
+	"tollAmount",
+	"tipAmount"
 })
 
 public class BookingResponse {
@@ -121,6 +123,12 @@ public class BookingResponse {
 	
 	@JsonProperty("pageNo")
 	private Integer pageNo;
+	
+	@JsonProperty("tollAmount")
+	private Double tollAmount;
+	
+	@JsonProperty("tipAmount")
+	private Double tipAmount;	
 		
 	public Number getBookingId() {
 		return bookingId;
@@ -345,5 +353,22 @@ public class BookingResponse {
 	public void setPageNo(Integer pageNo) {
 		this.pageNo = pageNo;
 	}
+
+	public Double getTollAmount() {
+		return tollAmount;
+	}
+
+	public void setTollAmount(Double tollAmount) {
+		this.tollAmount = tollAmount;
+	}
+
+	public Double getTipAmount() {
+		return tipAmount;
+	}
+
+	public void setTipAmount(Double tipAmount) {
+		this.tipAmount = tipAmount;
+	}
+
 
 }

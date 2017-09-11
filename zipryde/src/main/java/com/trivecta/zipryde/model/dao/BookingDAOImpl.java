@@ -1,20 +1,15 @@
 package com.trivecta.zipryde.model.dao;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -23,11 +18,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
-import com.trivecta.zipryde.constants.ZipRydeConstants;
-import com.trivecta.zipryde.constants.ZipRydeConstants.NOTIFICATION_MESSAGE;
 import com.trivecta.zipryde.constants.ZipRydeConstants.STATUS;
+import com.trivecta.zipryde.constants.ZipRydeConstants.USERTYPE;
+import com.trivecta.zipryde.controller.ZiprydeController;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
-import com.trivecta.zipryde.framework.helper.Notification;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.BookingRequest;
 import com.trivecta.zipryde.model.entity.CabType;
@@ -39,7 +33,6 @@ import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.model.entity.UserSession;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
 import com.trivecta.zipryde.mongodb.UserGeoSpatialResponse;
-import com.trivecta.zipryde.utility.TwilioSMS;
 import com.twilio.sdk.TwilioRestException;
 
 @Repository
@@ -71,6 +64,9 @@ public class BookingDAOImpl implements BookingDAO{
 	
 	@Autowired
 	UserDAO userDAO;
+	
+	private org.apache.log4j.Logger logger = Logger.getLogger(ZiprydeController.class);
+
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -124,7 +120,6 @@ public class BookingDAOImpl implements BookingDAO{
 		return booking;		
 	}
 	
-	
 	/*
 	 * DRIVER STATUS - ACCEPTED / REJECTED / ON-TRIP / COMPLETED
 	 */
@@ -150,10 +145,10 @@ public class BookingDAOImpl implements BookingDAO{
 					!STATUS.ON_TRIP.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())) {
 				updateBooking = false;
 			}
-			else if(STATUS.PAID.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
+			/*else if(STATUS.PAID.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
 					!STATUS.COMPLETED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())) {
-				updateBooking = false;
-			}
+				updateBooking = false;				
+			}*/
 			
 			//If the Schedule Trip is Yet to start, the time validation should be less than or equal to 1 hour
 			if(origBooking.getDriverStatus() != null && 
@@ -197,8 +192,7 @@ public class BookingDAOImpl implements BookingDAO{
 			}	
 			
 			if(updateBooking) {
-				boolean isDriverAccepted = false;
-				
+				boolean isDriverAccepted = false;				
 				if((!STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
 						!STATUS.SCHEDULED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) ||
 						(origBooking.getDriverStatus() != null && 
@@ -262,6 +256,9 @@ public class BookingDAOImpl implements BookingDAO{
 						}
 						else if(STATUS.COMPLETED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
 							origBooking.setEndDateTime(new Date());
+							if(booking.getTollAmount() != null) {
+								origBooking.setTollAmount(booking.getTollAmount());
+							}
 							updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.COMPLETED,origBooking.getId());
 							updateUserSessionStatus(origBooking.getRider().getId(),STATUS.COMPLETED,origBooking.getId());
 							//commissionDAO.updateCommision(origBooking);
@@ -309,9 +306,12 @@ public class BookingDAOImpl implements BookingDAO{
 		boolean isDriver = true;
 		boolean updateBooking = true;
 		
+		logger.info("updateBookingStatus : "+booking.getBookingStatus().getStatus() +" for "+booking.getId());
+		
 		if(STATUS.CANCELLED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {		
 			if((STATUS.ON_TRIP.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()) || 
 				STATUS.COMPLETED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()) ||
+				STATUS.INVOICE_GENERATED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()) ||
 				STATUS.PAID.equalsIgnoreCase(origBooking.getBookingStatus().getStatus()))) {
 				throw new UserValidationException(ErrorMessages.BOOKING_CANNOT_CANCEL);
 			}
@@ -335,15 +335,20 @@ public class BookingDAOImpl implements BookingDAO{
 				deleteAcceptedBookingRequest(origBooking.getId());
 			}
 		}
-		if(STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus()) &&
+		else if(STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus()) &&
 				!STATUS.COMPLETED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())){
 			updateBooking = false;
 		}
-		
+			
 		if(updateBooking) {
 			Status bookingStatus = 	adminDAO.findByStatus(booking.getBookingStatus().getStatus());
 			origBooking.setBookingStatus(bookingStatus);
+			
+			if(booking.getTipAmount() != null) {
+				origBooking.setTipAmount(booking.getTipAmount());
+			}			
 			session.merge(origBooking);
+			
 			//IF PAID, THEN UPDATE USER SESSION STATUS AND SAVE PAYMENT
 			if(STATUS.PAID.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
 				updateUserSessionStatus(origBooking.getDriver().getId(),null,null);
@@ -354,8 +359,7 @@ public class BookingDAOImpl implements BookingDAO{
 			else if(!STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getBookingStatus().getStatus())) {
 				fCMNotificationDAO.sendBookingStatusNotification(origBooking,isDriver);
 			}		
-		}
-		
+		}		
 		return origBooking;
 	}
 	
@@ -558,8 +562,7 @@ public class BookingDAOImpl implements BookingDAO{
 		 }
 		 return bookingList;
 	}
-	
-	
+		
 	public Booking getActiveBookingByDriverId(int driverId) {
 		UserSession userSession = userDAO.getUserSessionByUserId(driverId);
 		if(userSession != null && userSession.getBookingId() != null) {
@@ -569,6 +572,32 @@ public class BookingDAOImpl implements BookingDAO{
 		return null;
 	}
 	
+	public Booking getCallMaskingNumberByBookingId(Integer bookingId,String accessToken) throws UserValidationException {
+		Integer userId = userDAO.getUserIdFromAccessToken(accessToken);
+		User user = userDAO.getUserByUserId(userId);
+		Booking booking = getBookingById(bookingId);
+		if(booking != null) {
+			Booking result  = new Booking();
+			result.setId(booking.getId());
+			if(user!= null){
+				if(USERTYPE.DRIVER.equalsIgnoreCase(user.getUserType().getType()) && 
+						user.getId() == booking.getDriver().getId()) {
+					result.setUserType(USERTYPE.RIDER);
+					result.setMobileNumber(booking.getRider().getMobileNumber());
+				}
+				else if(USERTYPE.RIDER.equalsIgnoreCase(user.getUserType().getType()) && 
+						user.getId() == booking.getRider().getId()) {
+					if(booking.getDriver() != null) {
+						result.setUserType(USERTYPE.DRIVER);
+						result.setMobileNumber(booking.getDriver().getMobileNumber());
+					}
+				}
+			}
+			
+			return result;
+		}
+		return null;
+	}
 	
 	private void fetchLazyInitialisation(Booking booking) {
 		if(booking.getBookingRequests() != null) {
@@ -642,7 +671,7 @@ public class BookingDAOImpl implements BookingDAO{
 		}
 	}
 	
-	
+		
 	/**----------- Lost Items ----------------- */
 	
 	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException {

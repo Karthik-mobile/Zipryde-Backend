@@ -71,11 +71,19 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 		try {
 			Notification notifcation = new Notification();
 			notifcation.setBookingId(booking.getId());
-			notifcation.setDriver(false);
-			notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
-			notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_STATUS_CHANGE+booking.getId());
+			notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_STATUS_CHANGE+booking.getId());			
+			String deviceToken = null;
+			if(toDriver) {
+				notifcation.setDriver(true);
+				notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_DRIVER);
+				deviceToken = booking.getDriver().getDeviceToken();
+			}
+			else {
+				deviceToken = booking.getRider().getDeviceToken();
+				notifcation.setDriver(false);
+				notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_RIDER);
+			}		
 			
-			String deviceToken = booking.getRider().getDeviceToken();
 			if(ZipRydeConstants.STATUS.ON_SITE.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
 				notifcation.setTitle(NOTIFICATION_TITLE.BOOKING_DRIVER_ONSITE);
 				notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_DRIVER_ONSITE);
@@ -93,11 +101,22 @@ public class FCMNotificationDAOImpl implements FCMNotificationDAO{
 				notifcation.setNotificationType(NOTIFICATION_TYPE.BOOKING_CANCELLED);
 				notifcation.setBody(NOTIFICATION_MESSAGE.BOOKING_CANCELLED);
 				
+				/*if(toDriver){
+					notifcation.setDriver(true);
+					notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_DRIVER);
+					deviceToken = booking.getDriver().getDeviceToken();
+				}*/
+			}
+			else if(ZipRydeConstants.STATUS.INVOICE_GENERATED.equalsIgnoreCase(booking.getBookingStatus().getStatus())) {
+				notifcation.setTitle(NOTIFICATION_TITLE.INVOICE_GENERATED);
+				notifcation.setNotificationType(NOTIFICATION_TYPE.INVOICE_GENERATED);
+				notifcation.setBody(NOTIFICATION_MESSAGE.INVOICE_GENERATED);
+				/*
 				if(toDriver){
 					notifcation.setDriver(true);
 					notifcation.setZiprydeConfigType(NOTIFICATION_CONFIG_TYPE.NOTIFICATION_DRIVER);
 					deviceToken = booking.getDriver().getDeviceToken();
-				}
+				}*/
 			}
 			sendFCMNotification(deviceToken,notifcation);
 		} catch (IOException e) {

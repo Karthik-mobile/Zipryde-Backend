@@ -116,8 +116,19 @@ public class Booking implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 	
+	private BigDecimal tollAmount;
+	
+	private BigDecimal tipAmount;
+	
 	@Transient
 	private Integer offeredPricePercentage;
+	
+	/* Used For Call Masking */
+	@Transient
+	private String mobileNumber;
+	
+	@Transient
+	private String userType;
 	
 	public Booking() {
 	}
@@ -364,6 +375,38 @@ public class Booking implements Serializable {
 
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	public BigDecimal getTollAmount() {
+		return tollAmount;
+	}
+
+	public void setTollAmount(BigDecimal tollAmount) {
+		this.tollAmount = tollAmount;
+	}
+
+	public BigDecimal getTipAmount() {
+		return tipAmount;
+	}
+
+	public void setTipAmount(BigDecimal tipAmount) {
+		this.tipAmount = tipAmount;
 	}
 
 }

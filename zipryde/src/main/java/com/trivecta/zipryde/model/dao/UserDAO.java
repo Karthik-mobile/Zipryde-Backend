@@ -59,4 +59,6 @@ public interface UserDAO {
 	public void updateDriverSession(Integer userId,Double longitude,Double latitude) throws UserValidationException;
 	
 	public UserSession getUserSessionByUserId(int userId);
+	
+	public Integer getUserIdFromAccessToken(String accessToken) throws UserValidationException;
 }

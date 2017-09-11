@@ -110,6 +110,11 @@ public class BookingServiceImpl implements BookingService{
 	}
 	
 	@Transactional
+	public Booking getCallMaskingNumberByBookingId(Integer bookingId,String accessToken) throws UserValidationException {
+		return bookingDAO.getCallMaskingNumberByBookingId(bookingId, accessToken);
+	}
+
+	@Transactional
 	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException {
 		return bookingDAO.saveLostItem(newLostItem);
 	}

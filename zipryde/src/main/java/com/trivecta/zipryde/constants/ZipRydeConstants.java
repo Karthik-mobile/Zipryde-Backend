@@ -30,6 +30,8 @@ public class ZipRydeConstants {
 		static String CANCELLED = "CANCELLED";
 		static String ACCEPTED = "ACCEPTED";
 		static String PAID = "PAID";
+		static String INVOICE_GENERATED = "INVOICE_GENERATED";
+		
 	}
 	
 	
@@ -58,6 +60,7 @@ public class ZipRydeConstants {
 		static String BOOKING_CANCELLED = "BOOKING_CANCELLED";
 		static String COMMISSION_PENDING = "COMMISSION_PENDING";
 		static String COMMISSION_PAID = "COMMISSION_PAID";
+		static String INVOICE_GENERATED = "INVOICE_GENERATED";
 	}
 	
 	public interface NOTIFICATION_TITLE {
@@ -70,6 +73,7 @@ public class ZipRydeConstants {
 		static String BOOKING_CANCELLED = "ZIPRYDE BOOKING CANCELLED";
 		static String COMMISSION_PENDING = "ZIPRYDE COMMISSION PENDING";
 		static String COMMISSION_PAID = "ZIPRYDE COMMISSION PAID";
+		static String INVOICE_GENERATED = "ZIPRYDE INVOICE GENERATED";
 	}
 	
 	public interface NOTIFICATION_MESSAGE {
@@ -80,6 +84,7 @@ public class ZipRydeConstants {
 		static String BOOKING_CANCELLED = "Your Zipryde has been Cancelled";
 		static String COMMISSION_PENDING = "Your Zipryde Commission is Pending";
 		static String COMMISSION_PAID = "Your Zipryde Commission Paid";
+		static String INVOICE_GENERATED = "Zipryde Invoice Generated";
 	}
 		
 	public interface NOTIFICATION_CONFIG_TYPE {

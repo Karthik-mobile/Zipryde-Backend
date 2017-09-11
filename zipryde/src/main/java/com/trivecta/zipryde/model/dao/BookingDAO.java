@@ -50,6 +50,8 @@ public interface BookingDAO {
 	
 	public Booking getActiveBookingByDriverId(int driverId);
 	
+	public Booking getCallMaskingNumberByBookingId(Integer bookingId,String accessToken) throws UserValidationException;
+
 	
 	/**----------- Lost Items ----------------- */
 	public LostItem saveLostItem(LostItem newLostItem) throws UserValidationException;

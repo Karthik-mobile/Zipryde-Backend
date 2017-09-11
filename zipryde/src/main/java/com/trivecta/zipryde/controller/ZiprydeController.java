@@ -4,23 +4,22 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.mapping.Array;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.ModelAttribute;
+
 import com.trivecta.zipryde.framework.exception.MandatoryValidationException;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.SessionExpiredException;
 import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
-import com.trivecta.zipryde.model.entity.User;
 import com.trivecta.zipryde.view.data.transformer.AdminTransformer;
 import com.trivecta.zipryde.view.data.transformer.BookingTransformer;
 import com.trivecta.zipryde.view.data.transformer.HeaderValidationTransformer;
@@ -30,6 +29,7 @@ import com.trivecta.zipryde.view.data.transformer.UserTransformer;
 import com.trivecta.zipryde.view.data.transformer.VehicleTransformer;
 import com.trivecta.zipryde.view.request.BookingRequest;
 import com.trivecta.zipryde.view.request.CabRequest;
+import com.trivecta.zipryde.view.request.CallMaskingRequest;
 import com.trivecta.zipryde.view.request.CommissionMasterRequest;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.ConfigurationRequest;
@@ -43,12 +43,12 @@ import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.BookingResponse;
 import com.trivecta.zipryde.view.response.CabResponse;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
+import com.trivecta.zipryde.view.response.CallMaskingResponse;
 import com.trivecta.zipryde.view.response.CommissionMasterResponse;
 import com.trivecta.zipryde.view.response.CommissionResponse;
 import com.trivecta.zipryde.view.response.CommonResponse;
 import com.trivecta.zipryde.view.response.ConfigurationResponse;
 import com.trivecta.zipryde.view.response.DriverVehicleAssociationResponse;
-import com.trivecta.zipryde.view.response.GeoLocationResponse;
 import com.trivecta.zipryde.view.response.LostItemResponse;
 import com.trivecta.zipryde.view.response.MakeModelResponse;
 import com.trivecta.zipryde.view.response.NYOPResponse;
@@ -82,6 +82,7 @@ public class ZiprydeController {
 	@Autowired
 	HeaderValidationTransformer headerValidationTransformer;
 	
+	private org.apache.log4j.Logger log = Logger.getLogger(ZiprydeController.class);
 
 	/** ------------ MOBILE REGISTRATION ------------- */
 	
@@ -194,6 +195,16 @@ public class ZiprydeController {
 	public void updateDeviceToken(@RequestHeader(required = false, value="access-token") String token,
 								@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
 		userTransformer.updateDeviceToken(token, commonRequest);
+	}
+	
+	@RequestMapping(value = "/getCallMaskingNumber")
+	public @ResponseBody CallMaskingResponse getCallMaskingNumber(@RequestHeader(value="access-token") String token,
+			@RequestBody CallMaskingRequest callMaskingRequest) throws SessionExpiredException, MandatoryValidationException, UserValidationException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			//return bookingTranssformer.getCallMaskingNumber(callMaskingRequest);
+			return bookingTranssformer.getCallMaskingNumber(callMaskingRequest,token);
+		}
+		return null;
 	}
 	
 	/** --------------- DASHBOARD API ----------------- 
@@ -581,7 +592,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/payCommission")  
     public @ResponseBody CommissionResponse payCommission(@RequestHeader(value="access-token") String token,
     		@RequestBody CommonRequest commonRequest) throws UserValidationException, NoResultEntityException, SessionExpiredException {
-		System.out.println("payCommission : "+token);
 		CommissionResponse commissionResponse = new CommissionResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			commissionResponse = paymentTransformer.saveCommission(commonRequest);
@@ -591,7 +601,6 @@ public class ZiprydeController {
 	
 	@RequestMapping(value = "/getAllCommission")  
     public @ResponseBody List<CommissionResponse> getAllCommission(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
-		System.out.println("getAllCommission : "+token);
 		List<CommissionResponse> commissionRespList = new ArrayList<CommissionResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			commissionRespList = paymentTransformer.getAllCommissionsAvailable();
@@ -602,7 +611,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/saveCommissionMaster")  
     public @ResponseBody CommissionMasterResponse saveCommissionMaster(@RequestHeader(value="access-token") String token,
     		@RequestBody CommissionMasterRequest commissionMasterRequest) throws MandatoryValidationException, SessionExpiredException{
-		System.out.println("saveCommissionMaster : "+token);
 		CommissionMasterResponse commissionMstrResponse = new CommissionMasterResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			commissionMstrResponse = paymentTransformer.saveCommissionMstr(commissionMasterRequest);
@@ -612,7 +620,6 @@ public class ZiprydeController {
 	
 	@RequestMapping(value = "/getCommissionMaster")  
     public @ResponseBody CommissionMasterResponse getCommissionMaster(@RequestHeader(value="access-token") String token) throws MandatoryValidationException, SessionExpiredException{
-		System.out.println("getCommissionMaster : "+token);
 		CommissionMasterResponse commissionMstrResponse = new CommissionMasterResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			commissionMstrResponse = paymentTransformer.getCommissionMstr();
@@ -623,7 +630,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getCommissionByDriverIdAndStatus")  
 	public @ResponseBody List<CommissionResponse> getCommissionByDriverIdAndStatus(@RequestHeader(value="access-token") String token,
 			@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getCommissionByDriverIdAndStatus : "+token);
 		List<CommissionResponse> commissionRespList = new ArrayList<CommissionResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			commissionRespList = paymentTransformer.getCommissionByDriverIdAndStatus(commonRequest);
@@ -678,7 +684,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getLostItemByBookingId")  
 	public @ResponseBody LostItemResponse getLostItemByBookingId(@RequestHeader(value="access-token") String token,
 			@RequestBody LostItemRequest lostItemRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getLostItemByBookingId : "+token);
 		LostItemResponse lostItemResponse = new LostItemResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			lostItemResponse = bookingTranssformer.getLostItemByBookingId(lostItemRequest);
@@ -688,7 +693,6 @@ public class ZiprydeController {
 
 	@RequestMapping(value = "/getAllLostItems")  
 	public @ResponseBody List<LostItemResponse> getAllLostItems(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
-		System.out.println("getAllLostItems : "+token);
 		List<LostItemResponse> lostItemRespList = new ArrayList<LostItemResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			lostItemRespList = bookingTranssformer.getAllLostItems();
@@ -702,7 +706,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getGeoLocationByDriverId")
 	public @ResponseBody UserGeoSpatialResponse getGeoLocationByDriverId(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getGeoLocationByDriverId : "+token);
 		UserGeoSpatialResponse userGeoResponse = new UserGeoSpatialResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			userGeoResponse = mongoTransfomer.getGeoLocationByDriverId(geoLocationRequest);
@@ -713,7 +716,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getNearByActiveDrivers")
 	public @ResponseBody List<UserGeoSpatialResponse> getNearByActiveDrivers(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getNearByActiveDrivers : "+token);
 		List<UserGeoSpatialResponse> userGeoResponseList = new ArrayList<UserGeoSpatialResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			userGeoResponseList =	mongoTransfomer.getNearByActiveDrivers(geoLocationRequest);
@@ -724,7 +726,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/insertDriverSession")
 	public void insertDriverSession(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
-		System.out.println("insertDriverSession : "+token);
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			mongoTransfomer.updateDriverSession(geoLocationRequest);
 		}
@@ -733,7 +734,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateDriverSession")
 	public CommonResponse updateDriverSession(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
-		System.out.println("updateDriverSession : "+token);
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			return mongoTransfomer.updateDriverSession(geoLocationRequest);
 		}
@@ -743,7 +743,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateDriverStatus")
 	public void updateDriverStatus(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
-		System.out.println("updateDriverStatus : "+token);
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			mongoTransfomer.updateDriverOnlineStatus(geoLocationRequest);
 		}
