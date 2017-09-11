@@ -99,7 +99,6 @@ public class ZiprydeController {
 	
 	@RequestMapping(value = "/verifyLogInUser")
 	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
-		System.out.println("verifyLogInUser : "+userRequest.getMobileNumber());
 		return userTransformer.verifyLogInUser(userRequest);
 	}
 	
@@ -438,7 +437,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/requestBooking")
 	public @ResponseBody BookingResponse requestBooking(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException, SessionExpiredException {
-		System.out.println("requestBooking : "+token);
 		BookingResponse bookingResponse = new BookingResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponse =bookingTranssformer.createBooking(bookingRequest); 
@@ -449,7 +447,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateBookingDriverStatus")
 	public @ResponseBody BookingResponse updateBookingDriverStatus(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException{
-		System.out.println("updateBookingDriverStatus : "+token);
 		BookingResponse bookingResponse = new BookingResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponse = bookingTranssformer.updateBookingDriverStatus(bookingRequest);
@@ -460,7 +457,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateBookingStatus")
 	public @ResponseBody BookingResponse updateBookingStatus(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
-		System.out.println("updateBookingStatus : "+token);
 		BookingResponse bookingResponse = new BookingResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponse = bookingTranssformer.updateBookingStatus(bookingRequest);
@@ -471,7 +467,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByBookingId")
 	public @ResponseBody BookingResponse getBookingByBookingId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getBookingByBookingId : "+token);
 		BookingResponse bookingResponse = new BookingResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponse = bookingTranssformer.getBookingByBookingId(bookingRequest);
@@ -482,7 +477,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByDate")
 	public @ResponseBody List<BookingResponse> getBookingByDate(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws ParseException, SessionExpiredException {
-		System.out.println("getBookingByDate : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByDate(bookingRequest);
@@ -493,7 +487,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByDateNotInRequested")
 	public @ResponseBody List<BookingResponse> getBookingByDateNotInRequested(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws ParseException, SessionExpiredException {
-		System.out.println("getBookingByDateNotInRequested : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByDateNotInRequested(bookingRequest);
@@ -504,7 +497,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByBookingStatusAndDriverId")
 	public @ResponseBody List<BookingResponse> getBookingByBookingStatusAndDriverId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println(" getBookingByBookingStatusAndDriverId : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByBookingStatusAndDriverId(bookingRequest);
@@ -515,7 +507,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByBookingStatusAndUserId")
 	public @ResponseBody List<BookingResponse> getBookingByBookingStatusAndUserId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println(" getBookingByBookingStatusAndUserId : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByBookingStatusAndUserId(bookingRequest);
@@ -526,7 +517,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByBookingStatus")
 	public @ResponseBody List<BookingResponse> getBookingByBookingStatus(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println(" getBookingByBookingStatus : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByBookingStatus(bookingRequest);
@@ -537,7 +527,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByDriverId")
 	public @ResponseBody List<BookingResponse> getBookingByDriverId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println(" getBookingByDriverId : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByDriverId(bookingRequest);
@@ -548,7 +537,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByuserId")
 	public @ResponseBody List<BookingResponse> getBookingByuserId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getBookingByuserId : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByuserId(bookingRequest);
@@ -559,7 +547,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingRequestedByDriverId")
 	public @ResponseBody List<BookingResponse> getBookingRequestedByDriverId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getBookingRequestedByDriverId : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingRequestedByDriverId(bookingRequest);
@@ -570,7 +557,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getFutureBookingRequestedByDriverId")
 	public @ResponseBody List<BookingResponse> getFutureBookingRequestedByDriverId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
-		System.out.println("getFutureBookingRequestedByDriverId : "+token);
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getFutureBookingRequestedByDriverId(bookingRequest);
@@ -584,7 +570,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/savePayment")  
     public @ResponseStatus(value = HttpStatus.OK)  void savePayment(@RequestHeader(value="access-token") String token,
     		@RequestBody PaymentRequest paymentRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException{
-		System.out.println("savePayment : "+token);
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {   
 			paymentTransformer.savePayment(paymentRequest);
 		}
@@ -651,7 +636,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getZiprydeConfigurationByType")  
 	public @ResponseBody ConfigurationResponse getZiprydeConfigurationByType(@RequestHeader(value="access-token") String token,
 			@RequestBody ConfigurationRequest configurationRequest) throws SessionExpiredException {
-		System.out.println("getZiprydeConfigurationByType : "+token);
 		ConfigurationResponse configurationResponse  = new ConfigurationResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			configurationResponse =  adminTransformer.getZiprydeConfigurationByType(configurationRequest);
@@ -662,7 +646,6 @@ public class ZiprydeController {
 	@RequestMapping(value = "/saveZiprydeConfiguration")  
 	public @ResponseBody ConfigurationResponse saveZiprydeConfiguration(@RequestHeader(value="access-token") String token,
 			@RequestBody ConfigurationRequest configurationRequest) throws UserValidationException, SessionExpiredException {
-		System.out.println("saveZiprydeConfiguration : "+token);
 		ConfigurationResponse configurationResponse  = new ConfigurationResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			configurationResponse = adminTransformer.saveZiprydeConfiguration(configurationRequest);
@@ -672,7 +655,6 @@ public class ZiprydeController {
 	
 	@RequestMapping(value = "/getAllZiprydeConfigurations")  
 	public @ResponseBody List<ConfigurationResponse> getAllZiprydeConfigurations(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
-		System.out.println("getAllZiprydeConfigurations : "+token);
 		List<ConfigurationResponse> configurationResList = new ArrayList<ConfigurationResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			configurationResList = adminTransformer.getAllZiprydeConfigurations();

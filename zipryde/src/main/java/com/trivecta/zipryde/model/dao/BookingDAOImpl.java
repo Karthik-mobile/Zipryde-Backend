@@ -3,6 +3,11 @@ package com.trivecta.zipryde.model.dao;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -148,6 +153,26 @@ public class BookingDAOImpl implements BookingDAO{
 			else if(STATUS.PAID.equalsIgnoreCase(booking.getDriverStatus().getStatus()) && 
 					!STATUS.COMPLETED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus())) {
 				updateBooking = false;
+			}
+			
+			//If the Schedule Trip is Yet to start, the time validation should be less than or equal to 1 hour
+			if(origBooking.getDriverStatus() != null && 
+					STATUS.SCHEDULED.equalsIgnoreCase(origBooking.getDriverStatus().getStatus()) && 
+					STATUS.ACCEPTED.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
+				Instant startInstant =origBooking.getBookingDateTime().toInstant();
+				Instant  endInstant = new Date().toInstant();
+				Duration duration = Duration.between(endInstant, startInstant);
+				long min = duration.toMinutes();
+				/*Instant serverInstant = Date.from(java.time.ZonedDateTime.now(ZoneOffset.UTC).toInstant()).toInstant();
+				Duration duration1 = Duration.between(serverInstant, startInstant);
+				long min1 = duration1.toMinutes();
+				System.out.println(" Update Booking Status : Duration diff1 :"+min1);*/
+				if(min > 60) {
+					updateBooking = false;
+				}
+				/*if(min1 > 60) {
+					updateBooking = false;
+				}*/
 			}
 			
 			if(updateBooking && STATUS.ON_SITE.equalsIgnoreCase(booking.getDriverStatus().getStatus())) {
