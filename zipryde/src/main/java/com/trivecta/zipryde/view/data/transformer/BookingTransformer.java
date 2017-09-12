@@ -195,7 +195,7 @@ public class BookingTransformer {
 			
 			//Enter TOLL Amount by DRIVER when ZIPRYDE Completes
 			if(bookingRequest.getTollAmount() != null)
-				booking.setTipAmount(new BigDecimal(bookingRequest.getTollAmount()));
+				booking.setTollAmount(new BigDecimal(bookingRequest.getTollAmount()));
 			
 			Booking updatedBooking = bookingService.updateBookingDriverStatus(booking);
 			return setBookingResponseFromBooking(updatedBooking,false);
