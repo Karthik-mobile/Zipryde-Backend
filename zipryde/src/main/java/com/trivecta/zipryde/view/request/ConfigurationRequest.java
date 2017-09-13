@@ -9,6 +9,10 @@ private Integer id;
 	private String accessKey;
 		
 	private String type;
+	
+	private String accountSID;
+	
+	private String twilioNo;
 
 	public Integer getId() {
 		return id;
@@ -40,6 +44,22 @@ private Integer id;
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getAccountSID() {
+		return accountSID;
+	}
+
+	public void setAccountSID(String accountSID) {
+		this.accountSID = accountSID;
+	}
+
+	public String getTwilioNo() {
+		return twilioNo;
+	}
+
+	public void setTwilioNo(String twilioNo) {
+		this.twilioNo = twilioNo;
 	}
 
 	

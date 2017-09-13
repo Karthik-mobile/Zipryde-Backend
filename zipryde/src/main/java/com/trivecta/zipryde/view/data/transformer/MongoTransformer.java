@@ -134,12 +134,6 @@ public class MongoTransformer {
 		//Mysql change online Status
 		UserSession userSession = new UserSession();
 		userSession.setIsActive(isOnline);
-		/*if(geoLocationRequest.getIsOnline() != null) {
-			userSession.setIsActive(geoLocationRequest.getIsOnline().intValue());
-		}
-		else {
-			userSession.setIsActive(1);
-		}*/
 		userSession.setUserId(userId);
 		userService.saveUserSession(userSession);
 	}

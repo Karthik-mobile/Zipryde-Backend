@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.trivecta.zipryde.constants.ErrorMessages;
+import com.trivecta.zipryde.constants.ZipRydeConstants;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 import com.trivecta.zipryde.model.entity.ZiprydeMstr;
@@ -53,6 +54,10 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 			ZiprydeConfiguration origConfig = session.find(ZiprydeConfiguration.class, ziprydeConfiguration.getId());
 			origConfig.setAccessKey(ziprydeConfiguration.getAccessKey());
 			origConfig.setUrl(ziprydeConfiguration.getUrl());
+			if(ZipRydeConstants.NOTIFICATION_CONFIG_TYPE.TWILIO_SMS.equalsIgnoreCase(ziprydeConfiguration.getType())) {
+				origConfig.setAccoutSID(ziprydeConfiguration.getAccoutSID());
+				origConfig.setTwilioNo(ziprydeConfiguration.getTwilioNo());
+			}
 			origConfig.setModifiedDate(new Date());
 			origConfig = (ZiprydeConfiguration) session.merge(origConfig);
 			return origConfig;

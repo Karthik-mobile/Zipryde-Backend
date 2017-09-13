@@ -223,6 +223,12 @@ public class AdminTransformer {
 		ziprydeConfiguration.setAccessKey(configurationRequest.getAccessKey());
 		ziprydeConfiguration.setUrl(configurationRequest.getUrl());
 		ziprydeConfiguration.setId(configurationRequest.getId());
+		if(configurationRequest.getAccountSID() != null) {
+			ziprydeConfiguration.setAccoutSID(configurationRequest.getAccountSID());
+		}
+		if(configurationRequest.getTwilioNo() != null) {
+			ziprydeConfiguration.setTwilioNo(configurationRequest.getTwilioNo());
+		}
 		ZiprydeConfiguration newZipRydeConfiguration = ziprydeConfigService.saveZiprydeConfiguration(ziprydeConfiguration);
 		return setConfigurationResponse(newZipRydeConfiguration);		
 	}
@@ -244,6 +250,8 @@ public class AdminTransformer {
 		configurationResponse.setUrl(ziprydeConfiguration.getUrl());
 		configurationResponse.setType(ziprydeConfiguration.getType());
 		configurationResponse.setAccessKey(ziprydeConfiguration.getAccessKey());
+		configurationResponse.setAccountSID(ziprydeConfiguration.getAccoutSID());
+		configurationResponse.setTwilioNo(ziprydeConfiguration.getTwilioNo());
 		return configurationResponse;	
 	}
 	

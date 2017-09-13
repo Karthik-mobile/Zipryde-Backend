@@ -82,7 +82,7 @@ public class ZiprydeController {
 	@Autowired
 	HeaderValidationTransformer headerValidationTransformer;
 	
-	private org.apache.log4j.Logger log = Logger.getLogger(ZiprydeController.class);
+	private org.apache.log4j.Logger logger = Logger.getLogger(ZiprydeController.class);
 
 	/** ------------ MOBILE REGISTRATION ------------- */
 	
@@ -134,6 +134,7 @@ public class ZiprydeController {
 	
 	@RequestMapping(value = "/getUserByUserId")
 	public @ResponseBody UserResponse getUserByUserId(@RequestHeader(value="access-token") String token,@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+		logger.info("getUserByUserId : "+token);
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			return userTransformer.getUserByUserId(commonRequest);
 		}
@@ -194,6 +195,7 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateDeviceToken")
 	public void updateDeviceToken(@RequestHeader(required = false, value="access-token") String token,
 								@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+		logger.info("updateDeviceToken : "+token);
 		userTransformer.updateDeviceToken(token, commonRequest);
 	}
 	
@@ -478,6 +480,7 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getBookingByBookingId")
 	public @ResponseBody BookingResponse getBookingByBookingId(@RequestHeader(value="access-token") String token,
 			@RequestBody BookingRequest bookingRequest) throws MandatoryValidationException, SessionExpiredException {
+		logger.info("getBookingByBookingId : "+token);
 		BookingResponse bookingResponse = new BookingResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponse = bookingTranssformer.getBookingByBookingId(bookingRequest);
@@ -706,6 +709,7 @@ public class ZiprydeController {
 	@RequestMapping(value = "/getGeoLocationByDriverId")
 	public @ResponseBody UserGeoSpatialResponse getGeoLocationByDriverId(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, SessionExpiredException {
+		logger.info("getGeoLocationByDriverId : "+token+" UserID "+geoLocationRequest.getUserId());
 		UserGeoSpatialResponse userGeoResponse = new UserGeoSpatialResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			userGeoResponse = mongoTransfomer.getGeoLocationByDriverId(geoLocationRequest);
@@ -734,6 +738,7 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateDriverSession")
 	public CommonResponse updateDriverSession(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		logger.info("updateDriverSession : "+token+" UserID "+geoLocationRequest.getUserId());
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			return mongoTransfomer.updateDriverSession(geoLocationRequest);
 		}
@@ -743,6 +748,7 @@ public class ZiprydeController {
 	@RequestMapping(value = "/updateDriverStatus")
 	public void updateDriverStatus(@RequestHeader(value="access-token") String token,
 			@RequestBody GeoLocationRequest geoLocationRequest) throws MandatoryValidationException, UserValidationException, SessionExpiredException {
+		logger.info("updateDriverStatus : "+token+" UserID "+geoLocationRequest.getUserId());
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			mongoTransfomer.updateDriverOnlineStatus(geoLocationRequest);
 		}

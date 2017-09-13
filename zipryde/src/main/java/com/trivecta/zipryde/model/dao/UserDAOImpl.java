@@ -727,9 +727,11 @@ public class UserDAOImpl implements UserDAO {
 	@Async
 	public void updateIdleDriverToOffline() {
 		try {
+			System.out.println(" updateIdleDriverToOffline calls");
 			mongoDbClient.updateIdleDriverToOffline();
 			List<Integer> driverIds = mongoDbClient.findDriversByActive(0);
 			if(driverIds != null && driverIds.size() > 0) {
+				System.out.println(" updateIdleDriverToOffline : driverIds "+driverIds.toString());
 				Session session = this.sessionFactory.getCurrentSession();
 				List<UserSession> userSessions = session.getNamedQuery("UserSession.findByActiveUserIds").setParameter("userIds", driverIds).getResultList();
 				for(UserSession userSession : userSessions){

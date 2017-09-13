@@ -511,6 +511,7 @@ public class UserTransformer {
 		
 		userResponse.setIsOnline(user.getIsOnline());
 		if(setAccessToken) {
+			System.out.println(" User : "+user.getId() + " Access Token :"+user.getAccessToken());
 			userResponse.setAccessToken(user.getAccessToken());
 		}
 		userResponse.setBookingId(user.getBookingId());

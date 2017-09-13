@@ -29,6 +29,7 @@ public class HeaderValidationDAOImpl implements HeaderValidationDAO{
 			return true;
 		}
 		catch(NoResultException e){
+			System.out.println(" Session Expired : "+accessToken);
 			throw new SessionExpiredException(ErrorMessages.SESSION_EXPIRED);
 		}		
 	}
