@@ -215,12 +215,13 @@ public class BookingDAOImpl implements BookingDAO{
 						origBooking.setAcceptedPrice(origBooking.getOfferedPrice());				
 		
 						User user = session.find(User.class,origBooking.getRider().getId());
-						if(user.getCancellationCount() == null) {
+						user.setCancellationCount(0);
+						/*if(user.getCancellationCount() == null) {
 							user.setCancellationCount(0);
 						}
 						else {
 							user.setCancellationCount(user.getCancellationCount()+1);
-						}
+						}*/
 						session.merge(user);
 						origBooking.setRider(user);						
 						updateUserSessionStatus(origBooking.getDriver().getId(),STATUS.ACCEPTED,origBooking.getId());
@@ -237,12 +238,13 @@ public class BookingDAOImpl implements BookingDAO{
 						origBooking.setAcceptedPrice(origBooking.getOfferedPrice());				
 		
 						User user = session.find(User.class,origBooking.getRider().getId());
-						if(user.getCancellationCount() == null) {
+						user.setCancellationCount(0);
+						/*if(user.getCancellationCount() == null) {
 							user.setCancellationCount(0);
 						}
 						else {
 							user.setCancellationCount(user.getCancellationCount()+1);
-						}
+						}*/
 						session.merge(user);
 						origBooking.setRider(user);						
 						isDriverAccepted = true;
