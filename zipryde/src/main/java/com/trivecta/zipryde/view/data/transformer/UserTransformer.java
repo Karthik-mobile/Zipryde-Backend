@@ -53,7 +53,8 @@ public class UserTransformer {
 			OTPResponse response = new OTPResponse();
 			
 			response.setMobileNumber(String.valueOf(otpVerification.getMobileNumber()));
-			response.setOtp(otpVerification.getOtp());
+			//response.setOtp(otpVerification.getOtp());
+			response.setOtp("");
 			
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");		
 			response.setValidity(dateFormat.format(otpVerification.getValidUntil()));
