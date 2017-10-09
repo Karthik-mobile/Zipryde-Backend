@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
+import com.trivecta.zipryde.model.entity.AppVersion;
 import com.trivecta.zipryde.model.entity.ZiprydeConfiguration;
 import com.trivecta.zipryde.model.entity.ZiprydeMstr;
 
@@ -96,5 +97,31 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 			//No Result
 		}
 		return zipMstrValue;		
+	}
+	
+	public AppVersion getAppVersionByMobileOS(String appMobileOs) {
+		Session session = this.sessionFactory.getCurrentSession();
+		AppVersion appVersion = null;
+		try {
+			appVersion =  (AppVersion)session.getNamedQuery("AppVersion.findByMobileOS")
+					.setParameter("appMobileOS", appMobileOs).getSingleResult();
+		}
+		catch(NoResultException e){
+			//No Result
+		}
+		return appVersion;
+	}
+	
+	public AppVersion getAppVersionByMobileOSVersionName(String appMobileOs,String versionName) {
+		Session session = this.sessionFactory.getCurrentSession();
+		AppVersion appVersion = null;
+		try {
+			appVersion =  (AppVersion)session.getNamedQuery("AppVersion.findByMobileOSVersionName")
+					.setParameter("appMobileOS", appMobileOs).setParameter("versionName", versionName).getSingleResult();
+		}
+		catch(NoResultException e){
+			//No Result
+		}
+		return appVersion;
 	}
 }

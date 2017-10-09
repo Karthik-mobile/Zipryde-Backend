@@ -5,6 +5,7 @@ import java.util.List;
 import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
+import com.trivecta.zipryde.model.entity.AppVersion;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.User;
@@ -20,7 +21,7 @@ public interface UserService {
 	
 	public List<User> getAllUserByUserType(String userType);
 	
-	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException;
+	public User verifyLogInUser(User user,AppVersion newAppVersion) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException;
 	
 	public void logOutUser(int userId) throws UserValidationException;
 	

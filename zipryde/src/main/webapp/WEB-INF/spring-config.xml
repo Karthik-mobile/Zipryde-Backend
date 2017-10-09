@@ -58,7 +58,8 @@
 				<value>com.trivecta.zipryde.model.entity.VehicleDetail</value>
 				<value>com.trivecta.zipryde.model.entity.ZiprydeConfiguration</value>
 				<value>com.trivecta.zipryde.model.entity.ZiprydeMstr</value>
-				<value>com.trivecta.zipryde.model.entity.LostItem</value>				
+				<value>com.trivecta.zipryde.model.entity.LostItem</value>	
+				<value>com.trivecta.zipryde.model.entity.AppVersion</value>				
 			</list>
 		</property>
 		<property name="hibernateProperties">

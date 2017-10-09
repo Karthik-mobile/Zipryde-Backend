@@ -21,6 +21,7 @@ import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.framework.helper.ValidationUtil;
+import com.trivecta.zipryde.model.entity.AppVersion;
 import com.trivecta.zipryde.model.entity.DriverProfile;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
@@ -34,6 +35,7 @@ import com.trivecta.zipryde.utility.TwilioSMS;
 import com.trivecta.zipryde.utility.Utility;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
+import com.trivecta.zipryde.view.request.LoginRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.UserRequest;
 import com.trivecta.zipryde.view.response.CommonResponse;
@@ -265,7 +267,7 @@ public class UserTransformer {
 	}
 	
 	
-	public UserResponse verifyLogInUser(UserRequest userRequest) throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
+	public UserResponse verifyLogInUser(LoginRequest userRequest) throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
 		
 		StringBuffer errorMsg = new StringBuffer("");
 		
@@ -278,13 +280,20 @@ public class UserTransformer {
 				errorMsg = errorMsg.append(ErrorMessages.EMAIL_MANDATORY);
 			}
 		}		
-		else if(!ValidationUtil.isValidString(userRequest.getMobileNumber())) {
-			errorMsg = errorMsg.append(ErrorMessages.MOBILE_MANDATORY);
+		else {
+			if(!ValidationUtil.isValidString(userRequest.getMobileNumber())) {
+				errorMsg = errorMsg.append(ErrorMessages.MOBILE_MANDATORY);
+			}
+			if(!ValidationUtil.isValidString(userRequest.getVersionNumber()) || 
+					!ValidationUtil.isValidString(userRequest.getMobileOS())) {
+				errorMsg = errorMsg.append("\n"+ErrorMessages.APP_VERSION_ERROR);
+			}
 		}		
 		
 		if(!ValidationUtil.isValidString(userRequest.getPassword())) {
 			errorMsg = errorMsg.append(ErrorMessages.PASSWORD_MANDATORY);
 		}
+		
 		
 		if(ValidationUtil.isValidString(errorMsg.toString())){
 			// Throw error
@@ -300,7 +309,13 @@ public class UserTransformer {
 			userType.setType(userRequest.getUserType());
 			user.setUserType(userType);
 			user.setIsOverride(userRequest.getOverrideSessionToken());
-			User newUser = userService.verifyLogInUser(user);
+			
+			AppVersion appVersion = new AppVersion();
+			appVersion.setAppMobileOS(userRequest.getMobileOS());
+			appVersion.setVersionNumber(userRequest.getVersionNumber());
+			appVersion.setVersionName(userRequest.getVersionName());
+						
+			User newUser = userService.verifyLogInUser(user,appVersion);
 			return setUserResponse(newUser,false,true);
 		}		
 	}

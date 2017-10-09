@@ -10,6 +10,7 @@ import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.dao.UserDAO;
+import com.trivecta.zipryde.model.entity.AppVersion;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
 import com.trivecta.zipryde.model.entity.OtpVerification;
 import com.trivecta.zipryde.model.entity.User;
@@ -49,8 +50,8 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Transactional
-	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
-		return userDAO.verifyLogInUser(user);
+	public User verifyLogInUser(User user,AppVersion newAppVersion) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
+		return userDAO.verifyLogInUser(user,newAppVersion);
 	}
 	
 	@Transactional

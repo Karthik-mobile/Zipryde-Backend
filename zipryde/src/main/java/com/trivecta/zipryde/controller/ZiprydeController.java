@@ -35,6 +35,7 @@ import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.ConfigurationRequest;
 import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
+import com.trivecta.zipryde.view.request.LoginRequest;
 import com.trivecta.zipryde.view.request.LostItemRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.PaymentRequest;
@@ -99,7 +100,7 @@ public class ZiprydeController {
 	/** ------------------- USER ------------------------ */
 	
 	@RequestMapping(value = "/verifyLogInUser")
-	public @ResponseBody UserResponse verifyLogInUser(@RequestBody UserRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
+	public @ResponseBody UserResponse verifyLogInUser(@RequestBody LoginRequest userRequest)  throws MandatoryValidationException, NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
 		return userTransformer.verifyLogInUser(userRequest);
 	}
 	

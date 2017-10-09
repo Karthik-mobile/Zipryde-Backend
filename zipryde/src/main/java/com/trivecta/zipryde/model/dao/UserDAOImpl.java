@@ -22,6 +22,7 @@ import com.trivecta.zipryde.framework.exception.NoResultEntityException;
 import com.trivecta.zipryde.framework.exception.SessionExpiredException;
 import com.trivecta.zipryde.framework.exception.UserAlreadyLoggedInException;
 import com.trivecta.zipryde.framework.exception.UserValidationException;
+import com.trivecta.zipryde.model.entity.AppVersion;
 import com.trivecta.zipryde.model.entity.Booking;
 import com.trivecta.zipryde.model.entity.DriverProfile;
 import com.trivecta.zipryde.model.entity.DriverVehicleAssociation;
@@ -53,6 +54,9 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Autowired
 	TwilioSMSDAO twilioSMSDAO;
+	
+	@Autowired
+	ZiprydeConfigurationDAO ziprydeConfigurationDAO;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -147,7 +151,7 @@ public class UserDAOImpl implements UserDAO {
 		return newUser;
 	}
 	
-	public User verifyLogInUser(User user) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
+	public User verifyLogInUser(User user,AppVersion newAppVersion) throws NoResultEntityException, UserValidationException, UserAlreadyLoggedInException {
 		User newUser = null;
 		if(USERTYPE.WEB_ADMIN.equalsIgnoreCase(user.getUserType().getType())) {
 			newUser = getUserByEmailIdPsswdAndUserType(user.getEmailId(),user.getUserType().getType(),user.getPassword());
@@ -156,6 +160,13 @@ public class UserDAOImpl implements UserDAO {
 			}
 		}
 		else {
+			AppVersion appVersion = ziprydeConfigurationDAO.getAppVersionByMobileOSVersionName(newAppVersion.getAppMobileOS(),newAppVersion.getVersionName());
+			
+			if(appVersion == null || (appVersion.getIsEnableValidation() == 1 &&
+					Double.compare(Double.valueOf(newAppVersion.getVersionNumber()),Double.valueOf(appVersion.getVersionNumber())) < 0)) {
+				throw new UserValidationException(ErrorMessages.APP_VERSION_ERROR);		
+			}		
+			
 			Session session = this.sessionFactory.getCurrentSession();
 			newUser =  getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
 			

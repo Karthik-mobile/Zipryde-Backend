@@ -118,4 +118,6 @@ public interface ErrorMessages {
 	
 	static String FROM_TO_LOC_NOT_IN_LIMIT = "From and To Location is not in limit"; 
 	
+	static String APP_VERSION_ERROR = "Your app version has upgraded. Please install the newer one";
+	
 }
