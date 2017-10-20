@@ -14,5 +14,5 @@ public interface ZiprydeConfigurationDAO {
 	public ZiprydeMstr getZiprydeMstrByType(String type);
 	public String  getZiprydeMstrValueByType(String type);
 	public AppVersion getAppVersionByMobileOS(String appMobileOs);
-	public AppVersion getAppVersionByMobileOSVersionName(String appMobileOs,String versionName);
+	public AppVersion getAppVersionByMobileOSAppName(String appMobileOs,String appName);
 }

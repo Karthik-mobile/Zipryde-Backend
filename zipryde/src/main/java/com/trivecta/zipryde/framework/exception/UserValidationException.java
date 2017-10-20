@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value=HttpStatus.UNAUTHORIZED)
 public class UserValidationException extends Exception{
 
+	String errorCode;
+	
+	String errorMessage;
 	/**
 	 * 
 	 */
@@ -16,25 +19,30 @@ public class UserValidationException extends Exception{
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserValidationException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-		// TODO Auto-generated constructor stub
-	}
-
-	public UserValidationException(String message, Throwable cause) {
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
-
 	public UserValidationException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
-
-	public UserValidationException(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
+	
+	public UserValidationException(String errorCode,String message) {
+		super(message);
+		this.errorCode = errorCode;
+		this.errorMessage = message;		
 	}
 
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 }

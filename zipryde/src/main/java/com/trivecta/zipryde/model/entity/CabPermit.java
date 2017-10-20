@@ -16,7 +16,7 @@ import java.util.Date;
 	@NamedQuery(name="CabPermit.findAvailableVehicle", query="SELECT c.vehicleDetail FROM CabPermit c where "
 			+ "(DATE(c.vehicleDetail.insuranceValidUntil) >= DATE(NOW()) AND DATE(c.permitValidUntil) >= DATE(NOW()))"
 			+ " and c.vehicleDetail.id not in "
-			+ "(SELECT d.vehicleDetail.id FROM DriverVehicleAssociation d where d.toDate is null or DATE(d.toDate) > DATE(NOW()))"),
+			+ "(SELECT d.vehicleDetail.id FROM DriverVehicleAssociation d where d.user.isDeleted =0 and d.toDate is null or DATE(d.toDate) > DATE(NOW()))"),
 
 })
 	

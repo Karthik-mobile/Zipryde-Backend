@@ -119,5 +119,10 @@ public interface ErrorMessages {
 	static String FROM_TO_LOC_NOT_IN_LIMIT = "From and To Location is not in limit"; 
 	
 	static String APP_VERSION_ERROR = "Your app version has upgraded. Please install the newer one";
+
+
+	static String MAKE_ALREADY_EXISTS = "Make already exists with same name";
+	
+	static String MODEL_ALREADY_EXISTS = "Model already exists with same name for the given Make";
 	
 }

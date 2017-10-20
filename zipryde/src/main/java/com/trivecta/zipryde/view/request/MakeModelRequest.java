@@ -1,23 +1,34 @@
-package com.trivecta.zipryde.view.response;
+package com.trivecta.zipryde.view.request;
 
-public class MakeModelResponse {
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-	private Integer makeModelId;
-	
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class MakeModelRequest {
+
+	private Integer makeModelId;	
+
 	private Integer makeId;
-	
-	private Integer isEnable;
 
+	private Integer isEnable;
+	
 	private String make;
 	
 	private String model;
-
+	
 	public Integer getMakeModelId() {
 		return makeModelId;
 	}
 
 	public void setMakeModelId(Integer makeModelId) {
 		this.makeModelId = makeModelId;
+	}
+
+	public Integer getMakeId() {
+		return makeId;
+	}
+
+	public void setMakeId(Integer makeId) {
+		this.makeId = makeId;
 	}
 
 	public String getMake() {
@@ -35,15 +46,6 @@ public class MakeModelResponse {
 	public void setModel(String model) {
 		this.model = model;
 	}
-	
-	
-	public Integer getMakeId() {
-		return makeId;
-	}
-
-	public void setMakeId(Integer makeId) {
-		this.makeId = makeId;
-	}
 
 	public Integer getIsEnable() {
 		return isEnable;
@@ -52,4 +54,5 @@ public class MakeModelResponse {
 	public void setIsEnable(Integer isEnable) {
 		this.isEnable = isEnable;
 	}
+
 }

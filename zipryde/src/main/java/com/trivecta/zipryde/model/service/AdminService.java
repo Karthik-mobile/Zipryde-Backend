@@ -18,6 +18,8 @@ public interface AdminService {
 
 	public List<Make> getAllMake();
 	
+	public List<Make> getAllEnabledMake();
+	
 	public List<Model> getAllModelByMakeId(int makeId);
 	
 	public List<CabType> getAllCabTypes();
@@ -37,4 +39,14 @@ public interface AdminService {
 	public List<PricingMstr> getAllPricingMstr();
 	
 	public PricingMstr savePricingMstr(PricingMstr pricingMstr);
+	
+	public Make saveMake(Make make) throws UserValidationException;
+	
+	public Model saveModel(Model model) throws UserValidationException;
+	
+	public Make getMakeByMakeId(Integer makeId);
+	
+	public Model getModelByModelId(Integer modelId);
+	
+	public List<Model> getAllModel();
 }

@@ -62,10 +62,14 @@ public class UserDAOImpl implements UserDAO {
 		this.sessionFactory = sessionFactory;
 	}
 	
-	private String generateUniqueOTP() {
-		String alphaNumerics = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+	private String generateUniqueOTP(boolean isSessionToken) {
+		//String alphaNumerics = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+		String alphaNumerics = "01234567890987654321";		
+		if(isSessionToken) {
+			alphaNumerics = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+		}
 		String otp = "";
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 4; i++) {
 			otp += alphaNumerics.charAt((int) (Math.random() * alphaNumerics.length()));
 		}
 		return otp;		
@@ -99,10 +103,10 @@ public class UserDAOImpl implements UserDAO {
 		OtpVerification origOTPVerification = getByMobileNo(otpVerification.getMobileNumber());
 		Session session = this.sessionFactory.getCurrentSession();
 
-		otpVerification.setOtp(generateUniqueOTP());
+		otpVerification.setOtp(generateUniqueOTP(false));
 		
 		Calendar validTime = Calendar.getInstance();
-		validTime.add(Calendar.MINUTE, 2);
+		validTime.add(Calendar.MINUTE, 30);
 		otpVerification.setValidUntil(validTime.getTime());
 		
 		if(origOTPVerification == null) {
@@ -160,19 +164,19 @@ public class UserDAOImpl implements UserDAO {
 			}
 		}
 		else {
-			AppVersion appVersion = ziprydeConfigurationDAO.getAppVersionByMobileOSVersionName(newAppVersion.getAppMobileOS(),newAppVersion.getVersionName());
+			AppVersion appVersion = ziprydeConfigurationDAO.getAppVersionByMobileOSAppName(newAppVersion.getAppMobileOS(),newAppVersion.getAppName());
 			
 			if(appVersion == null || (appVersion.getIsEnableValidation() == 1 &&
-					Double.compare(Double.valueOf(newAppVersion.getVersionNumber()),Double.valueOf(appVersion.getVersionNumber())) < 0)) {
-				throw new UserValidationException(ErrorMessages.APP_VERSION_ERROR);		
+					newAppVersion.getBuildNo() < appVersion.getBuildNo())) {
+				throw new UserValidationException("1001",ErrorMessages.APP_VERSION_ERROR);		
 			}		
 			
 			Session session = this.sessionFactory.getCurrentSession();
 			newUser =  getUserByMobileNoPsswdAndUSerType(user.getMobileNumber(),user.getUserType().getType(),user.getPassword());
 			
-			if(user.getIsOverride() == 0) {
+			/*if(user.getIsOverride() == 0) {
 				validateSessionToken(newUser.getId());
-			}
+			}*/
 			
 			if(newUser.getIsEnable() == 0 ) {
 				throw new UserValidationException(ErrorMessages.ACCOUNT_DEACTIVATED);				
@@ -375,7 +379,7 @@ public class UserDAOImpl implements UserDAO {
 		userSession.setIsActive(isActive);
 		String otp = null;
 		if(generateSessionToken){
-			otp = generateUniqueOTP() + userId;
+			otp = generateUniqueOTP(true) + userId;
 			userSession.setSessionToken(Utility.encryptWithMD5(otp));
 			Calendar validTime = Calendar.getInstance();
 			validTime.add(Calendar.HOUR, 24);

@@ -313,8 +313,8 @@ public class UserTransformer {
 			AppVersion appVersion = new AppVersion();
 			appVersion.setAppMobileOS(userRequest.getMobileOS());
 			appVersion.setVersionNumber(userRequest.getVersionNumber());
-			appVersion.setVersionName(userRequest.getVersionName());
-						
+			appVersion.setAppName(userRequest.getAppName());
+			appVersion.setBuildNo(userRequest.getBuildNo());	
 			User newUser = userService.verifyLogInUser(user,appVersion);
 			return setUserResponse(newUser,false,true);
 		}		

@@ -37,6 +37,7 @@ import com.trivecta.zipryde.view.request.DriverVehicleAssociationRequest;
 import com.trivecta.zipryde.view.request.GeoLocationRequest;
 import com.trivecta.zipryde.view.request.LoginRequest;
 import com.trivecta.zipryde.view.request.LostItemRequest;
+import com.trivecta.zipryde.view.request.MakeModelRequest;
 import com.trivecta.zipryde.view.request.OTPRequest;
 import com.trivecta.zipryde.view.request.PaymentRequest;
 import com.trivecta.zipryde.view.request.PricingMstrRequest;
@@ -368,6 +369,16 @@ public class ZiprydeController {
 		return makeModelList;
 	}
 	
+
+	@RequestMapping(value = "/getAllEnabledMake")
+	public @ResponseBody List<MakeModelResponse> getAllEnabledMake(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<MakeModelResponse> makeModelList = new ArrayList<MakeModelResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			makeModelList = adminTransformer.getAllEnabledMake();
+		}
+		return makeModelList;
+	}
+	
 	@RequestMapping(value = "/getAllModelByMakeId")
 	public @ResponseBody List<MakeModelResponse> getAllModelByMakeId(@RequestHeader(value="access-token") String token,@RequestBody CommonRequest commonRequest) throws SessionExpiredException {
 		List<MakeModelResponse> makeModelList = new ArrayList<MakeModelResponse>();
@@ -376,6 +387,34 @@ public class ZiprydeController {
 		}
 		return makeModelList;
 	}
+	
+	@RequestMapping(value = "/saveMake")
+	public @ResponseBody MakeModelResponse saveMake(@RequestHeader(value="access-token") String token,@RequestBody MakeModelRequest makeModelRequest) throws SessionExpiredException, UserValidationException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			MakeModelResponse makeModel =  adminTransformer.saveMake(makeModelRequest);
+			return makeModel;
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/saveModel")
+	public @ResponseBody MakeModelResponse saveModel(@RequestHeader(value="access-token") String token,@RequestBody MakeModelRequest makeModelRequest) throws SessionExpiredException, UserValidationException {
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			MakeModelResponse makeModel =  adminTransformer.saveModel(makeModelRequest);
+			return makeModel;
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/getAllModel")
+	public List<MakeModelResponse> getAllModel(@RequestHeader(value="access-token") String token) throws SessionExpiredException {
+		List<MakeModelResponse> makeModelList = new ArrayList<MakeModelResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			makeModelList =  adminTransformer.getAllModel();
+		}
+		return makeModelList;
+	}
+	
 	
 	/** ------------------- NYOP & PRICING  ------------------------ 
 	 * @throws SessionExpiredException */

@@ -84,4 +84,35 @@ public class AdminServiceImpl implements AdminService {
 	public PricingMstr savePricingMstr(PricingMstr pricingMstr){
 		return pricingDAO.savePricingMstr(pricingMstr);
 	}
+	
+
+	@Transactional
+	public Make saveMake(Make make) throws UserValidationException{
+		return adminDAO.saveMake(make);
+	}
+
+	@Transactional
+	public Model saveModel(Model model) throws UserValidationException{
+		return adminDAO.saveModel(model);
+	}
+
+	@Transactional
+	public Make getMakeByMakeId(Integer makeId) {
+		return adminDAO.getMakeByMakeId(makeId);
+	}
+
+	@Transactional
+	public Model getModelByModelId(Integer modelId) {
+		return adminDAO.getModelByModelId(modelId);
+	}
+
+	@Transactional
+	public List<Make> getAllEnabledMake() {
+		return adminDAO.getAllEnabledMake();
+	}
+	
+	@Transactional
+	public List<Model> getAllModel() {
+		return adminDAO.getAllModel();
+	}
 }

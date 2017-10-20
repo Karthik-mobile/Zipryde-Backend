@@ -112,12 +112,12 @@ public class ZiprydeConfigurationDAOImpl implements ZiprydeConfigurationDAO{
 		return appVersion;
 	}
 	
-	public AppVersion getAppVersionByMobileOSVersionName(String appMobileOs,String versionName) {
+	public AppVersion getAppVersionByMobileOSAppName(String appMobileOs,String appName) {
 		Session session = this.sessionFactory.getCurrentSession();
 		AppVersion appVersion = null;
 		try {
-			appVersion =  (AppVersion)session.getNamedQuery("AppVersion.findByMobileOSVersionName")
-					.setParameter("appMobileOS", appMobileOs).setParameter("versionName", versionName).getSingleResult();
+			appVersion =  (AppVersion)session.getNamedQuery("AppVersion.findByMobileOSAppName")
+					.setParameter("appMobileOS", appMobileOs).setParameter("appName", appName).getSingleResult();
 		}
 		catch(NoResultException e){
 			//No Result

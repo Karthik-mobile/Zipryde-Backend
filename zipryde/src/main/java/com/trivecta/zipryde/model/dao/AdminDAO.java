@@ -2,6 +2,7 @@ package com.trivecta.zipryde.model.dao;
 
 import java.util.List;
 
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Make;
 import com.trivecta.zipryde.model.entity.Model;
@@ -13,6 +14,8 @@ public interface AdminDAO {
 
 	public List<Make> getAllMake();
 	
+	public List<Make> getAllEnabledMake();
+	
 	public List<Model> getAllModelByMakeId(int makeId);
 	
 	public List<CabType> getAllCabTypes();
@@ -21,5 +24,15 @@ public interface AdminDAO {
 	
 	public List<Nyop> getAllNyopList();
 	
-	public Status findByStatus(String status);
+	public Status findByStatus(String status);	
+
+	public Make saveMake(Make make) throws UserValidationException;
+	
+	public Model saveModel(Model model) throws UserValidationException;
+	
+	public Make getMakeByMakeId(Integer makeId);
+	
+	public Model getModelByModelId(Integer modelId);
+	
+	public List<Model> getAllModel();
 }

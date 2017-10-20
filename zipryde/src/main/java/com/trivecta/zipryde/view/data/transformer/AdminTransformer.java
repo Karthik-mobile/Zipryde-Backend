@@ -24,6 +24,7 @@ import com.trivecta.zipryde.model.service.AdminService;
 import com.trivecta.zipryde.model.service.ZiprydeConfigService;
 import com.trivecta.zipryde.view.request.CommonRequest;
 import com.trivecta.zipryde.view.request.ConfigurationRequest;
+import com.trivecta.zipryde.view.request.MakeModelRequest;
 import com.trivecta.zipryde.view.request.PricingMstrRequest;
 import com.trivecta.zipryde.view.response.CabTypeResponse;
 import com.trivecta.zipryde.view.response.ConfigurationResponse;
@@ -91,6 +92,20 @@ public class AdminTransformer {
 			}
 		}
 		return makeModelResponseList;
+	}	
+
+	public List<MakeModelResponse> getAllEnabledMake() {
+		List<MakeModelResponse> makeModelResponseList = 
+				new ArrayList<MakeModelResponse>();
+		
+		List<Make> makeList = adminService.getAllEnabledMake();
+		
+		if(makeList != null && makeList.size() > 0) {
+			for(Make make : makeList) {
+				makeModelResponseList.add(setMake(make));
+			}
+		}
+		return makeModelResponseList;
 	}
 	
 	public List<MakeModelResponse> getAllModelByMakeId(CommonRequest commonRequest) {
@@ -112,6 +127,60 @@ public class AdminTransformer {
 		return makeModelResponseList;
 	}
 	
+
+	public MakeModelResponse saveMake(MakeModelRequest makeModelRequest) throws UserValidationException {
+		Make make = new Make();
+		make.setId(makeModelRequest.getMakeId());
+		if(makeModelRequest.getIsEnable() == null) {
+			makeModelRequest.setIsEnable(1);
+		}
+		make.setIsEnable(makeModelRequest.getIsEnable());
+		make.setMake(makeModelRequest.getMake());
+		make = adminService.saveMake(make);
+		return setMake(make);
+	}
+	
+	public MakeModelResponse saveModel(MakeModelRequest makeModelRequest) throws UserValidationException {
+		Model model = new Model();
+		model.setId(makeModelRequest.getMakeModelId());
+		if(makeModelRequest.getIsEnable() == null) {
+			makeModelRequest.setIsEnable(1);
+		}
+		model.setIsEnable(makeModelRequest.getIsEnable());
+		model.setModel(makeModelRequest.getModel());
+		
+		Make make = new Make();
+		make.setId(makeModelRequest.getMakeId());
+		model.setMake(make);
+		
+		model = adminService.saveModel(model);
+		return setModel(model,true);		
+	}	
+	
+	public MakeModelResponse getMakeByMakeId(MakeModelRequest makeModelRequest) {
+		Make make = adminService.getMakeByMakeId(makeModelRequest.getMakeId());
+		return setMake(make);
+	}
+	
+	public MakeModelResponse getModelByModelId(MakeModelRequest makeModelRequest) {
+		Model model = adminService.getModelByModelId(makeModelRequest.getMakeModelId());
+		return setModel(model,true);
+	}
+	
+	public List<MakeModelResponse> getAllModel() {
+		List<MakeModelResponse> makeModelResponseList = 
+				new ArrayList<MakeModelResponse>();
+		
+		List<Model> modelList = adminService.getAllModel();
+		
+		if(modelList != null && modelList.size() > 0) {
+			for(Model model : modelList) {
+				makeModelResponseList.add(setModel(model,true));
+			}
+		}
+		return makeModelResponseList;
+	}
+
 	public  List<NYOPResponse> getAllNYOPList() {
 		List<NYOPResponse> nyopRespList = new ArrayList<NYOPResponse>();
 		
@@ -244,6 +313,28 @@ public class AdminTransformer {
 		return configurationResponseList;
 	}
 	
+
+	private MakeModelResponse setModel(Model model,boolean setMake) {
+		MakeModelResponse makeModelResponse = new MakeModelResponse();
+		makeModelResponse.setModel(model.getModel());
+		makeModelResponse.setMakeModelId(model.getId());
+		makeModelResponse.setIsEnable(model.getIsEnable());
+		if(setMake) {
+			makeModelResponse.setMake(model.getMake().getMake());
+			makeModelResponse.setMakeId(model.getMake().getId());
+		}
+		return makeModelResponse;
+	}
+	
+	private MakeModelResponse setMake(Make make) {
+		MakeModelResponse makeModelResponse = new MakeModelResponse();
+		makeModelResponse.setMakeModelId(make.getId());
+		makeModelResponse.setMakeId(make.getId());
+		makeModelResponse.setMake(make.getMake());
+		makeModelResponse.setIsEnable(make.getIsEnable());
+		return makeModelResponse;		
+	}
+		
 	private ConfigurationResponse setConfigurationResponse(ZiprydeConfiguration ziprydeConfiguration) {
 		ConfigurationResponse configurationResponse= new ConfigurationResponse();
 		configurationResponse.setId(ziprydeConfiguration.getId());

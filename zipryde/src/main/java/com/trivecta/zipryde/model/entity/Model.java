@@ -12,8 +12,9 @@ import java.util.List;
 @Entity
 @Table(name="MODEL")
 @NamedQueries({
-	@NamedQuery(name="Model.findAll", query="SELECT m FROM Model m where m.isEnable = 1"),
-	@NamedQuery(name="Model.findByMakeId", query="SELECT m FROM Model m where m.isEnable =1 and  m.make.id = :makeId")
+	@NamedQuery(name="Model.findAll", query="SELECT m FROM Model m"),
+	@NamedQuery(name="Model.findByMakeId", query="SELECT m FROM Model m where m.isEnable =1 and m.make.id = :makeId"),
+	@NamedQuery(name="Model.findByMakeIdAndModelName", query="SELECT m FROM Model m where m.make.id = :makeId and m.model = :model")
 })
 public class Model implements Serializable {
 	private static final long serialVersionUID = 1L;
