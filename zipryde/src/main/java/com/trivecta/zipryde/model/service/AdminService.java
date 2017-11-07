@@ -28,7 +28,7 @@ public interface AdminService {
 	
 	public List<Nyop> getAllNyopList();
 	
-	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson);
+	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(BigDecimal NoOfMiles, int cabTypeId,int noOfPerson) throws UserValidationException;
 	
 	public List<PricingType> getAllEnabledPricingType();
 	

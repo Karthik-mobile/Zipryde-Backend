@@ -81,7 +81,7 @@ public class BookingDAOImpl implements BookingDAO{
 		return "CRN-"+crn;		
 	}
 	
-	public Booking createBooking(Booking booking){
+	public Booking createBooking(Booking booking) throws UserValidationException{
 		Session session = this.sessionFactory.getCurrentSession();
 		Integer isFutureBooking = 0;
 		
@@ -447,6 +447,18 @@ public class BookingDAOImpl implements BookingDAO{
 		Session session = this.sessionFactory.getCurrentSession();
 		 List<Booking> bookingList = session.getNamedQuery("Booking.findByBookingDateNotInRequested").
 				 setParameter("bookingDate", bookingDate).getResultList();
+		 if(bookingList != null && bookingList.size() >0){
+			 for(Booking booking : bookingList){
+				 fetchLazyInitialisation(booking);
+			 }
+		 }
+		 return bookingList;
+	}
+	
+	public List<Booking> getAllBookingNotInRequested() {
+		Session session = this.sessionFactory.getCurrentSession();
+		 List<Booking> bookingList = session.getNamedQuery("Booking.findAllBookingNotInRequested").
+				 getResultList();
 		 if(bookingList != null && bookingList.size() >0){
 			 for(Booking booking : bookingList){
 				 fetchLazyInitialisation(booking);

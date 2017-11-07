@@ -201,7 +201,12 @@ public class PaymentTransformer {
 		commissionResponse.setCommissionAmount(commission.getCommisionAmount().doubleValue());
 		commissionResponse.setDriverName(commission.getUser().getFirstName());
 		commissionResponse.setStatus(commission.getStatus());
-		commissionResponse.setNoOfMiles(commission.getNoOfMiles());
+		if(commission.getNoOfMiles() != null) {
+			commissionResponse.setNoOfMiles(commission.getNoOfMiles().toString());
+		}
+		else {
+			commissionResponse.setNoOfMiles("0");
+		}
 		commissionResponse.setNoOfTrips(commission.getNoOfTrips());
 		return commissionResponse;
 	}

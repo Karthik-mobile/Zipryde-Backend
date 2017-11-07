@@ -13,8 +13,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.trivecta.zipryde.constants.ErrorMessages;
 import com.trivecta.zipryde.constants.ZipRydeConstants;
 import com.trivecta.zipryde.constants.ZipRydeConstants.PRICINGTYPE;
+import com.trivecta.zipryde.constants.ZipRydeConstants.ZIPRYDE_CONFIGURATION;
+import com.trivecta.zipryde.framework.exception.UserValidationException;
 import com.trivecta.zipryde.model.entity.CabType;
 import com.trivecta.zipryde.model.entity.Nyop;
 import com.trivecta.zipryde.model.entity.PricingMstr;
@@ -29,6 +32,9 @@ public class PricingDAOImpl implements PricingDAO {
 	@Autowired
 	private AdminDAO adminDAO;
 	
+	@Autowired
+	ZiprydeConfigurationDAO ziprydeConfigurationDAO;
+	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -40,7 +46,15 @@ public class PricingDAOImpl implements PricingDAO {
 		return pricingMstrList;
 	}
 	
-	public BigDecimal calculatePricingByTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) {
+	public BigDecimal calculatePricingByTypeDistanceAndPerson(BigDecimal NoOfMiles, int cabTypeId,int noOfPerson) throws UserValidationException {
+		
+		String enableLocLimit = ziprydeConfigurationDAO.getZiprydeMstrValueByType(ZIPRYDE_CONFIGURATION.ENABLE_LOC_LIMIT);
+		String maxDistanceLimit = ziprydeConfigurationDAO.getZiprydeMstrValueByType(ZIPRYDE_CONFIGURATION.GEO_DISTNACE_SEARCH_LIMIT);
+
+		if("Y".equalsIgnoreCase(enableLocLimit) && NoOfMiles.compareTo(new BigDecimal(maxDistanceLimit)) > 0) {
+			throw new UserValidationException(ErrorMessages.FROM_TO_LOC_NOT_IN_LIMIT+maxDistanceLimit+" miles");
+		}
+		
 		Session session = this.sessionFactory.getCurrentSession();
 
 		List<PricingMstr> pricingMstrList = session.getNamedQuery("PricingMstr.findByCabTypeIdAndIsEnable")
@@ -50,7 +64,7 @@ public class PricingDAOImpl implements PricingDAO {
 		if(pricingMstrList != null && pricingMstrList.size() > 0) {
 			for(PricingMstr pricingMstr : pricingMstrList) {
 				if(ZipRydeConstants.PRICINGTYPE.DISTANCE.equalsIgnoreCase(pricingMstr.getPricingType().getType())){
-					BigDecimal distancePrice = pricingMstr.getPricePerUnit().multiply(new BigDecimal(NoOfMiles));
+					BigDecimal distancePrice = pricingMstr.getPricePerUnit().multiply(NoOfMiles);
 					price = price.add(distancePrice);
 				}
 				else if(ZipRydeConstants.PRICINGTYPE.PERSON.equalsIgnoreCase(pricingMstr.getPricingType().getType())){
@@ -65,7 +79,7 @@ public class PricingDAOImpl implements PricingDAO {
 		return price;
 	}
 	
-	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) {
+	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(BigDecimal NoOfMiles, int cabTypeId,int noOfPerson) throws UserValidationException {
 		
 		Map<Integer,BigDecimal> priceMap = new HashMap<Integer, BigDecimal>();
 		

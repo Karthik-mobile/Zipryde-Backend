@@ -1,5 +1,7 @@
 package com.trivecta.zipryde.view.request;
 
+import java.math.BigDecimal;
+
 public class GeoLocationRequest {
 	
 	private String fromLatitude;
@@ -10,7 +12,7 @@ public class GeoLocationRequest {
 	
 	private String toLongitude;
 		
-	private Number distanceInMiles;
+	private String distanceInMiles;
 
 	private Integer userId;
 	
@@ -48,11 +50,11 @@ public class GeoLocationRequest {
 		this.toLongitude = toLongitude;
 	}
 
-	public Number getDistanceInMiles() {
+	public String getDistanceInMiles() {
 		return distanceInMiles;
 	}
 
-	public void setDistanceInMiles(Number distanceInMiles) {
+	public void setDistanceInMiles(String distanceInMiles) {
 		this.distanceInMiles = distanceInMiles;
 	}
 

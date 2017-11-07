@@ -20,6 +20,7 @@ import java.util.List;
 	@NamedQuery(name="Booking.findByBookingDate", query="SELECT b FROM Booking b where DATE(b.bookingDateTime) = :bookingDate ORDER BY b.id DESC"),
 	@NamedQuery(name="Booking.countByBookingDate", query="SELECT count(b) FROM Booking b where DATE(b.bookingDateTime) = :bookingDate"),
 	@NamedQuery(name="Booking.countByBookingDateAndDriverId", query="SELECT count(b) FROM Booking b where DATE(b.bookingDateTime) = :bookingDate and b.bookingStatus.status != 'CANCELLED' and b.driver.id=:driverId"),
+	@NamedQuery(name="Booking.findAllBookingNotInRequested", query="SELECT b FROM Booking b where b.bookingStatus.status NOT IN ('REQUESTED','UNANSWERED') ORDER BY b.bookingDateTime DESC"),
 	@NamedQuery(name="Booking.findByBookingDateNotInRequested", query="SELECT b FROM Booking b where b.bookingStatus.status NOT IN ('REQUESTED','UNANSWERED') and DATE(b.bookingDateTime) = :bookingDate ORDER BY b.id DESC"),
 	@NamedQuery(name="Booking.countByBookingDateNotInRequested", query="SELECT count(b) FROM Booking b where b.bookingStatus.status NOT IN ('REQUESTED','UNANSWERED') and DATE(b.bookingDateTime) = :bookingDate"),
 	@NamedQuery(name="Booking.findByDriverId", query="SELECT b FROM Booking b where b.driver.id=:driverId and b.bookingStatus.status != 'ACCEPTED' ORDER BY b.bookingDateTime DESC"),
@@ -49,7 +50,7 @@ public class Booking implements Serializable {
 
 	private String crnNumber;
 
-	private Integer distanceInMiles;
+	private BigDecimal distanceInMiles;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date endDateTime;
@@ -173,11 +174,11 @@ public class Booking implements Serializable {
 		this.crnNumber = crnNumber;
 	}
 
-	public Integer getDistanceInMiles() {
+	public BigDecimal getDistanceInMiles() {
 		return this.distanceInMiles;
 	}
 
-	public void setDistanceInMiles(Integer distanceInMiles) {
+	public void setDistanceInMiles(BigDecimal distanceInMiles) {
 		this.distanceInMiles = distanceInMiles;
 	}
 

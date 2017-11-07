@@ -56,7 +56,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Transactional
-	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(int NoOfMiles, int cabTypeId,int noOfPerson) {
+	public Map<Integer,BigDecimal> getAllNYOPByCabTypeDistanceAndPerson(BigDecimal NoOfMiles, int cabTypeId,int noOfPerson) throws UserValidationException {
 		return pricingDAO.getAllNYOPByCabTypeDistanceAndPerson(NoOfMiles, cabTypeId,noOfPerson);
 	}
 	

@@ -114,11 +114,12 @@ public class CommissionDAOImpl implements CommissionDAO{
 			}
 			
 			User user = (User)session.find(User.class, booking.getDriver().getId());
-			commission.setNoOfMiles(commission.getNoOfMiles() + booking.getDistanceInMiles());
+			commission.setNoOfMiles(commission.getNoOfMiles().add(booking.getDistanceInMiles()));
 			commission.setNoOfTrips(commission.getNoOfTrips() + 1);
 			Double commissionAmount = calculateCommissionAmount(booking.getAcceptedPrice(),commissionMstr.getCommisionPercentage());
 			commission.setCommisionAmount(BigDecimal.valueOf(commission.getCommisionAmount().doubleValue() + commissionAmount));
-			if(commission.getNoOfMiles() >= commissionMstr.getNoOfMiles() || commission.getNoOfTrips() >= commissionMstr.getNoOfTrips()) {
+			if(commission.getNoOfMiles().compareTo(new BigDecimal(commissionMstr.getNoOfMiles())) >= 0  || 
+					commission.getNoOfTrips() >= commissionMstr.getNoOfTrips()) {
 				commission.setCalculatedDate(new Date());
 				commission.setStatus(PAYMENT.PENDING);
 				//If Commission is Pending disable DRIVER
@@ -136,7 +137,7 @@ public class CommissionDAOImpl implements CommissionDAO{
 	private Commission getNewCommissionObject() {
 		Commission commission = new Commission();
 		commission.setCommisionAmount(BigDecimal.ZERO);
-		commission.setNoOfMiles(0);
+		commission.setNoOfMiles(BigDecimal.ZERO);
 		commission.setNoOfTrips(0);
 		return commission;
 	}

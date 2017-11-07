@@ -429,7 +429,7 @@ public class ZiprydeController {
 	
 	@RequestMapping(value = "/getAllNYOPByCabTypeDistAndNoOfPassenger")
 	public @ResponseBody List<NYOPResponse> getAllNYOPByCabTypeDistAndNoOfPassenger(@RequestHeader(value="access-token") String token,
-			@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException {
+			@RequestBody CommonRequest commonRequest) throws MandatoryValidationException, SessionExpiredException, UserValidationException {
 		List<NYOPResponse> nyopList = new ArrayList<NYOPResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			nyopList=  adminTransformer.getAllNYOPByCabTypeDistAndNoOfPassenger(commonRequest);
@@ -486,10 +486,11 @@ public class ZiprydeController {
 	}
 	
 	/** ------------------- BOOKING  ------------------------ 
-	 * @throws SessionExpiredException */
+	 * @throws SessionExpiredException 
+	 * @throws UserValidationException */
 	@RequestMapping(value = "/requestBooking")
 	public @ResponseBody BookingResponse requestBooking(@RequestHeader(value="access-token") String token,
-			@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException, SessionExpiredException {
+			@RequestBody BookingRequest bookingRequest) throws ParseException, MandatoryValidationException, SessionExpiredException, UserValidationException {
 		BookingResponse bookingResponse = new BookingResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponse =bookingTranssformer.createBooking(bookingRequest); 
@@ -544,6 +545,15 @@ public class ZiprydeController {
 		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			bookingResponseList = bookingTranssformer.getBookingByDateNotInRequested(bookingRequest);
+		}
+		return bookingResponseList;
+	}
+	
+	@RequestMapping(value = "/getAllBookingNotInRequested")
+	public @ResponseBody List<BookingResponse> getAllBookingNotInRequested(@RequestHeader(value="access-token") String token) throws ParseException, SessionExpiredException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+		if(headerValidationTransformer.validHeaderAccessToken(token)) {
+			bookingResponseList = bookingTranssformer.getAllBookingNotInRequested();
 		}
 		return bookingResponseList;
 	}

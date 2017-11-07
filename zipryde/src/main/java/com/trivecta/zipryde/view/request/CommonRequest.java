@@ -22,7 +22,7 @@ public class CommonRequest {
 	
 	private String userType;
 	
-	private Number distanceInMiles;
+	private String distanceInMiles;
 	
 	private Number cabTypeId;
 	
@@ -54,11 +54,11 @@ public class CommonRequest {
 		this.userType = userType;
 	}
 
-	public Number getDistanceInMiles() {
+	public String getDistanceInMiles() {
 		return distanceInMiles;
 	}
 
-	public void setDistanceInMiles(Number distanceInMiles) {
+	public void setDistanceInMiles(String distanceInMiles) {
 		this.distanceInMiles = distanceInMiles;
 	}
 

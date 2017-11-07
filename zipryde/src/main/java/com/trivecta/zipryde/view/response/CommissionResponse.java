@@ -21,7 +21,7 @@ public class CommissionResponse {
 	@JsonProperty("status")
 	private String status;
 	@JsonProperty("noOfMiles")
-	private Integer noOfMiles;
+	private String noOfMiles;
 	@JsonProperty("noOfTrips")
 	private Integer noOfTrips;
 
@@ -73,11 +73,11 @@ public class CommissionResponse {
 		this.status = status;
 	}
 
-	public Integer getNoOfMiles() {
+	public String getNoOfMiles() {
 		return noOfMiles;
 	}
 
-	public void setNoOfMiles(Integer noOfMiles) {
+	public void setNoOfMiles(String noOfMiles) {
 		this.noOfMiles = noOfMiles;
 	}
 

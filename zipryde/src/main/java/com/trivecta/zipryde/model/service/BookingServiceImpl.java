@@ -20,7 +20,7 @@ public class BookingServiceImpl implements BookingService{
 	BookingDAO bookingDAO;
 	
 	@Transactional
-	public Booking createBooking(Booking booking) {
+	public Booking createBooking(Booking booking) throws UserValidationException {
 		return bookingDAO.createBooking(booking);
 	}
 	
@@ -92,6 +92,11 @@ public class BookingServiceImpl implements BookingService{
 	@Transactional
 	public List<Booking> getBookingByDateNotInRequested(Date bookingDate){
 		return bookingDAO.getBookingByDateNotInRequested(bookingDate);
+	}
+	
+	@Transactional
+	public List<Booking> getAllBookingNotInRequested(){
+		return bookingDAO.getAllBookingNotInRequested();
 	}
 	
 	@Transactional

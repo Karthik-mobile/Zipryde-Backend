@@ -30,7 +30,7 @@ public class Commission implements Serializable {
 
 	private BigDecimal commisionAmount;
 
-	private Integer noOfMiles;
+	private BigDecimal noOfMiles;
 
 	private Integer noOfTrips;
 
@@ -71,11 +71,11 @@ public class Commission implements Serializable {
 		this.commisionAmount = commisionAmount;
 	}
 
-	public Integer getNoOfMiles() {
+	public BigDecimal getNoOfMiles() {
 		return this.noOfMiles;
 	}
 
-	public void setNoOfMiles(Integer noOfMiles) {
+	public void setNoOfMiles(BigDecimal noOfMiles) {
 		this.noOfMiles = noOfMiles;
 	}
 

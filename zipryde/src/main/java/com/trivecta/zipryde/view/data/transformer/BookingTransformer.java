@@ -57,7 +57,7 @@ public class BookingTransformer {
 
 	private org.apache.log4j.Logger logger = Logger.getLogger(ZiprydeController.class);
 	
-	public BookingResponse createBooking(BookingRequest bookingRequest) throws ParseException, MandatoryValidationException {
+	public BookingResponse createBooking(BookingRequest bookingRequest) throws ParseException, MandatoryValidationException, UserValidationException {
 		
 		StringBuffer errorMsg = new StringBuffer();
 		
@@ -128,7 +128,7 @@ public class BookingTransformer {
 			booking.setFromLongitude(new BigDecimal(geoLocationRequest.getFromLongitude()));
 			booking.setToLatitude(new BigDecimal(geoLocationRequest.getToLatitude()));
 			booking.setToLongitude(new BigDecimal(geoLocationRequest.getToLongitude()));
-			booking.setDistanceInMiles(geoLocationRequest.getDistanceInMiles().intValue());
+			booking.setDistanceInMiles(new BigDecimal(geoLocationRequest.getDistanceInMiles()));
 			
 			User customer  = new User();
 			customer.setId(bookingRequest.getCustomerId().intValue());
@@ -240,7 +240,7 @@ public class BookingTransformer {
 		GeoLocationRequest geoLocationRequest = bookingRequest.getGeoLocationRequest();
 		booking.setToLatitude(new BigDecimal(geoLocationRequest.getToLatitude()));
 		booking.setToLongitude(new BigDecimal(geoLocationRequest.getToLongitude()));
-		booking.setDistanceInMiles(geoLocationRequest.getDistanceInMiles().intValue());
+		booking.setDistanceInMiles(new BigDecimal(geoLocationRequest.getDistanceInMiles()));
 		
 		DateFormat endDate = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 		booking.setEndDateTime(endDate.parse(bookingRequest.getStartDateTime()));
@@ -480,6 +480,19 @@ public class BookingTransformer {
 		}
 		
 		List<Booking> bookingList = bookingService.getBookingByDateNotInRequested(searchDate);
+		
+		if(bookingList != null && bookingList.size() > 0) {
+			for(Booking booking : bookingList) {
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+			}
+		}
+		return bookingResponseList;		
+	}
+	
+	public List<BookingResponse> getAllBookingNotInRequested() throws ParseException {
+		List<BookingResponse> bookingResponseList = new ArrayList<BookingResponse>();
+	
+		List<Booking> bookingList = bookingService.getAllBookingNotInRequested();
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {

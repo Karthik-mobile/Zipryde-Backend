@@ -196,7 +196,7 @@ public class AdminTransformer {
 		return nyopRespList;
 	}
 	
-	public List<NYOPResponse> getAllNYOPByCabTypeDistAndNoOfPassenger(CommonRequest commonRequest) throws MandatoryValidationException{
+	public List<NYOPResponse> getAllNYOPByCabTypeDistAndNoOfPassenger(CommonRequest commonRequest) throws MandatoryValidationException, UserValidationException{
 		
 		if(commonRequest.getDistanceInMiles() != null && commonRequest.getCabTypeId() != null && 
 				commonRequest.getNoOfPassengers() != null) {
@@ -209,7 +209,7 @@ public class AdminTransformer {
 			
 			Map<Integer,BigDecimal> nyopPricingList =
 					adminService.getAllNYOPByCabTypeDistanceAndPerson(
-							commonRequest.getDistanceInMiles().intValue(), 
+							new BigDecimal(commonRequest.getDistanceInMiles()), 
 							commonRequest.getCabTypeId().intValue() ,
 							commonRequest.getNoOfPassengers().intValue());
 			

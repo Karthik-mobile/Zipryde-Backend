@@ -12,7 +12,7 @@ import com.trivecta.zipryde.model.entity.Payment;
 
 public interface BookingDAO {
 	
-	public Booking createBooking(Booking booking);
+	public Booking createBooking(Booking booking) throws UserValidationException;
 	
 	public Booking updateBookingDriverStatus(Booking booking) throws UserValidationException;
 	
@@ -41,6 +41,8 @@ public interface BookingDAO {
 	public Integer getBookingCountByDateNotInRequested(Date bookingDate);
 	
 	public List<Booking> getBookingByDateNotInRequested(Date bookingDate);
+	
+	public List<Booking> getAllBookingNotInRequested() ;
 	
 	public Integer getBookingCountByDateAndDriverId(Date bookingDate,Integer driverId);
 	
