@@ -382,7 +382,8 @@ public class UserDAOImpl implements UserDAO {
 			otp = generateUniqueOTP(true) + userId;
 			userSession.setSessionToken(Utility.encryptWithMD5(otp));
 			Calendar validTime = Calendar.getInstance();
-			validTime.add(Calendar.HOUR, 24);
+			//validTime.add(Calendar.HOUR, 24);
+			validTime.add(Calendar.YEAR, 50);
 			userSession.setValidUntil(validTime.getTime());
 			userSession.setIsOverride(1);
 		}		
@@ -675,6 +676,7 @@ public class UserDAOImpl implements UserDAO {
 		if(origUserSession != null) {
 			origUserSession.setIsActive(userSession.getIsActive());	
 			if(userSession.getIsOverride() == 1) {
+				origUserSession.setLogInDateTime(new Date());
 				origUserSession.setSessionToken(userSession.getSessionToken());
 				origUserSession.setValidUntil(userSession.getValidUntil());
 			}
