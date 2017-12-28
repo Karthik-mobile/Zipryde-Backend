@@ -30,6 +30,7 @@ import com.trivecta.zipryde.model.entity.LostItem;
 import com.trivecta.zipryde.model.entity.Payment;
 import com.trivecta.zipryde.model.entity.Status;
 import com.trivecta.zipryde.model.entity.User;
+import com.trivecta.zipryde.model.entity.VehicleDetail;
 import com.trivecta.zipryde.model.service.BookingService;
 import com.trivecta.zipryde.model.service.PaymentService;
 import com.trivecta.zipryde.mongodb.MongoDbClient;
@@ -160,7 +161,7 @@ public class BookingTransformer {
 				booking.setNoOfPassengers(1);
 			}
 			Booking newBooking = bookingService.createBooking(booking);		
-			BookingResponse bookingResponse = setBookingResponseFromBooking(newBooking,false);		
+			BookingResponse bookingResponse = setBookingResponseFromBooking(newBooking,false,false);		
 			return bookingResponse;
 		}	
 	}
@@ -198,7 +199,7 @@ public class BookingTransformer {
 				booking.setTollAmount(new BigDecimal(bookingRequest.getTollAmount()));
 			
 			Booking updatedBooking = bookingService.updateBookingDriverStatus(booking);
-			return setBookingResponseFromBooking(updatedBooking,false);
+			return setBookingResponseFromBooking(updatedBooking,false,false);
 		}
 	}
 	
@@ -227,7 +228,7 @@ public class BookingTransformer {
 				booking.setTipAmount(new BigDecimal(bookingRequest.getTipAmount()));
 			
 			Booking updatedBooking = bookingService.updateBookingStatus(booking,null);
-			return setBookingResponseFromBooking(updatedBooking,false);
+			return setBookingResponseFromBooking(updatedBooking,false,false);
 		}
 	}
 		
@@ -257,7 +258,7 @@ public class BookingTransformer {
 		}
 		else {
 			Booking booking = bookingService.getBookingById(bookingRequest.getBookingId().intValue());
-			return setBookingResponseFromBooking(booking,true);
+			return setBookingResponseFromBooking(booking,true,true);
 		}
 	}
 	
@@ -273,7 +274,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 			}
 		}
 		return bookingResponseList;		
@@ -290,7 +291,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 			}
 		}
 		return bookingResponseList;		
@@ -315,7 +316,7 @@ public class BookingTransformer {
 			
 			if(bookingList != null && bookingList.size() > 0) {
 				for(Booking booking : bookingList) {
-					bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+					bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 				}
 			}
 			return bookingResponseList;
@@ -341,7 +342,7 @@ public class BookingTransformer {
 			
 			if(bookingList != null && bookingList.size() > 0) {
 				for(Booking booking : bookingList) {
-					bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+					bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 				}
 			}
 			return bookingResponseList;		
@@ -363,7 +364,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,true);
+				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,true,false);
 				bookingResponse.setPageNo(bookingRequest.getPageNo());
 				bookingResponseList.add(bookingResponse);
 			}
@@ -385,7 +386,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,true);
+				BookingResponse bookingResponse= setBookingResponseFromBooking(booking,true,false);
 				bookingResponse.setPageNo(bookingRequest.getPageNo());
 				bookingResponseList.add(bookingResponse);
 			}
@@ -404,7 +405,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 			}
 		}
 		return bookingResponseList;		
@@ -421,7 +422,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 			}
 		}
 		return bookingResponseList;		
@@ -483,7 +484,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 			}
 		}
 		return bookingResponseList;		
@@ -496,7 +497,7 @@ public class BookingTransformer {
 		
 		if(bookingList != null && bookingList.size() > 0) {
 			for(Booking booking : bookingList) {
-				bookingResponseList.add(setBookingResponseFromBooking(booking,false));
+				bookingResponseList.add(setBookingResponseFromBooking(booking,false,false));
 			}
 		}
 		return bookingResponseList;		
@@ -560,7 +561,7 @@ public class BookingTransformer {
 		return callMaskingResponse;		
 	}
 	
-	public BookingResponse setBookingResponseFromBooking(Booking booking,boolean loadImages) {
+	public BookingResponse setBookingResponseFromBooking(Booking booking,boolean loadImages,boolean loadVehicle) {
 		BookingResponse bookingResponse = new BookingResponse();
 		
 		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
@@ -571,12 +572,24 @@ public class BookingTransformer {
 		//bookingResponse.setCustomerMobileNumber(booking.getRider().getMobileNumber());
 		if(booking.getDriver() != null) {
 			bookingResponse.setDriverId(booking.getDriver().getId());
-			bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
+			/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+			//bookingResponse.setDriverName(booking.getDriver().getFirstName()+" "+booking.getDriver().getLastName());
+			bookingResponse.setDriverName(booking.getDriver().getFirstName());
 			//bookingResponse.setDriverMobileNumber(booking.getDriver().getMobileNumber());
 			if(booking.getDriver().getDriverProfile() != null) {
 				bookingResponse.setVehicleNumber(booking.getDriver().getDriverProfile().getVehicleNumber());
 				if(booking.getDriver().getDriverProfile().getDriverProfileImage() != null)
 					bookingResponse.setDriverImage(DatatypeConverter.printBase64Binary(booking.getDriver().getDriverProfile().getDriverProfileImage()));
+			}
+			/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+			if(loadVehicle) {
+				if(booking.getDriver().getDriverVehicleAssociations() != null && booking.getDriver().getDriverVehicleAssociations().size() > 0) {
+					VehicleDetail vehicleDetail = booking.getDriver().getDriverVehicleAssociations().get(0).getVehicleDetail();
+					bookingResponse.setCabImage(DatatypeConverter.printBase64Binary(vehicleDetail.getProfileImage()));
+					bookingResponse.setMake(vehicleDetail.getModel().getMake().getMake());
+					bookingResponse.setModel(vehicleDetail.getModel().getModel());
+					bookingResponse.setLicensePlateNumber(vehicleDetail.getLicensePlateNo());
+				}				
 			}
 		}
 		

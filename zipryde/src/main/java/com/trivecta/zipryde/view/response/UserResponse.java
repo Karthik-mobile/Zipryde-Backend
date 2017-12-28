@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({ "userId", "userType", "firstName", "lastName", "mobileNumber", "alternateNumber", "emailId",
 		"driverProfileId", "licenseNo", "licenseIssuedOn", "licenseValidUntil","defaultPercentageAccepted", "isOnline", "isEnable",
 		"cancellationCount","statusCode", "status", "comments", "restriction", "vehicleNumber","bookingId","accessToken",
+		"licensePlateNumber,insuranceCompany","insuranceValidUntil","insuranceNo","make","model",
 		"licenseFrontImage", "licenseBackImage", "userImage" })
 
 public class UserResponse {
@@ -90,6 +91,19 @@ public class UserResponse {
 	
 	@JsonProperty("accessToken")
 	private String accessToken;
+	
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	private String licensePlateNumber;
+	
+	private String insuranceCompany;
+	
+	private String insuranceNo;
+	
+	private String insuranceValidUntil;
+	
+	private String make;
+	
+	private String model;
 
 	public Number getUserId() {
 		return userId;
@@ -289,6 +303,54 @@ public class UserResponse {
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
+	}
+
+	public String getInsuranceCompany() {
+		return insuranceCompany;
+	}
+
+	public void setInsuranceCompany(String insuranceCompany) {
+		this.insuranceCompany = insuranceCompany;
+	}
+
+	public String getInsuranceNo() {
+		return insuranceNo;
+	}
+
+	public void setInsuranceNo(String insuranceNo) {
+		this.insuranceNo = insuranceNo;
+	}
+
+	public String getInsuranceValidUntil() {
+		return insuranceValidUntil;
+	}
+
+	public void setInsuranceValidUntil(String insuranceValidUntil) {
+		this.insuranceValidUntil = insuranceValidUntil;
+	}
+
+	public String getMake() {
+		return make;
+	}
+
+	public void setMake(String make) {
+		this.make = make;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public String getLicensePlateNumber() {
+		return licensePlateNumber;
+	}
+
+	public void setLicensePlateNumber(String licensePlateNumber) {
+		this.licensePlateNumber = licensePlateNumber;
 	}
 
 }

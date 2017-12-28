@@ -23,7 +23,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"vehicleNumber",
 	"status",
 	"comments",
-	"cabPermitResponse"
+	"cabPermitResponse",
+	"cabImage"
 })
 public class CabResponse {
 	
@@ -64,9 +65,11 @@ public class CabResponse {
 	private String status;
 
 	private String comments;
-
 	
 	private CabPermitResponse  cabPermitResponse;
+	
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	private String cabImage;
 
 	public Number getCabId() {
 		return cabId;
@@ -218,6 +221,14 @@ public class CabResponse {
 
 	public void setVehicleNumber(String vehicleNumber) {
 		this.vehicleNumber = vehicleNumber;
+	}
+
+	public String getCabImage() {
+		return cabImage;
+	}
+
+	public void setCabImage(String cabImage) {
+		this.cabImage = cabImage;
 	}
 	
 }

@@ -92,6 +92,10 @@ public class VehicleDetail implements Serializable {
 	private String vin;
 	
 	private String vehicleNumber;
+	
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	@Lob
+	private byte[] profileImage;
 
 	public VehicleDetail() {
 	}
@@ -314,5 +318,13 @@ public class VehicleDetail implements Serializable {
 
 	public void setVehicleNumber(String vehicleNumber) {
 		this.vehicleNumber = vehicleNumber;
+	}
+
+	public byte[] getProfileImage() {
+		return profileImage;
+	}
+
+	public void setProfileImage(byte[] profileImage) {
+		this.profileImage = profileImage;
 	}
 }

@@ -313,10 +313,11 @@ public class ZiprydeController {
 	
 	/** ----------------- VEHICLE  --------------------- 
 	 * @throws SessionExpiredException */
-	
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	/* changed @RequestBody to @ModelAttribute*/
 	@RequestMapping(value = "/saveVehicle")
 	public @ResponseBody CabResponse saveVehicle(@RequestHeader(value="access-token") String token,
-			@RequestBody CabRequest cabRequest) throws ParseException, MandatoryValidationException, UserValidationException, SessionExpiredException{
+			@ModelAttribute CabRequest cabRequest) throws ParseException, MandatoryValidationException, UserValidationException, SessionExpiredException{
 		CabResponse cabResponse = new CabResponse();
 		if(headerValidationTransformer.validHeaderAccessToken(token)) {
 			cabResponse = vehicleTransformer.saveVehicle(cabRequest);

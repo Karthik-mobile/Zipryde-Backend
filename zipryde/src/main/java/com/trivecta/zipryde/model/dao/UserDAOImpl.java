@@ -488,6 +488,13 @@ public class UserDAOImpl implements UserDAO {
 		Session session = this.sessionFactory.getCurrentSession();
 		User user = session.find(User.class, userId);
 		fetchLazyInitialisation(user);
+		/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+		if(user.getDriverProfile() != null) {
+			List<DriverVehicleAssociation> associations = new ArrayList<DriverVehicleAssociation>();
+			DriverVehicleAssociation association = getAssociationByDriverIdAndVehicleNumber(user.getId(),user.getDriverProfile().getVehicleNumber());
+			associations.add(association);
+			user.setDriverVehicleAssociations(associations);
+		}
 		return user;
 	}
 
@@ -732,6 +739,21 @@ public class UserDAOImpl implements UserDAO {
 				user.getCommissions().size();
 			}			
 		}		
+	}
+	
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	public DriverVehicleAssociation getAssociationByDriverIdAndVehicleNumber(Integer driverId,String vehicleNumber) {
+		Session session = this.sessionFactory.getCurrentSession();
+		DriverVehicleAssociation driverVehicleAssoc =  null;
+		try {
+			driverVehicleAssoc = 
+					(DriverVehicleAssociation)session.getNamedQuery("DriverVehicleAssociation.findActiveByUserIdAndVehcileNo")
+					.setParameter("userId", driverId).setParameter("vehicleNumber", vehicleNumber).getSingleResult();
+		}
+		catch(NoResultException e){
+			//no vehicle found for that driver  
+		}
+		return driverVehicleAssoc;		
 	}
 	
 	public List<DriverVehicleAssociation> getDriverVehcileAssociationByDriverIds(List<Integer> userIdList) {

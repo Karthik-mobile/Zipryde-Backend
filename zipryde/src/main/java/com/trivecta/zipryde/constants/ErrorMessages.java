@@ -123,6 +123,10 @@ public interface ErrorMessages {
 
 	static String MAKE_ALREADY_EXISTS = "Make already exists with same name";
 	
-	static String MODEL_ALREADY_EXISTS = "Model already exists with same name for the given Make";
+	static String MODEL_ALREADY_EXISTS = "Model already exists with same name for the given Make";	
+
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	static String NO_OF_PASSENGER_EXCEEDS_CAPACITY = "No Of Passengers exceeds the given seating capacity of the selected cab";
+	
 	
 }

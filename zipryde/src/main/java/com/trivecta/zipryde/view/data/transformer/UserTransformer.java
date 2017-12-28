@@ -242,7 +242,7 @@ public class UserTransformer {
 				user.setDriverProfile(driverProfile);			
 			}
 			User savedUser = userService.saveUser(user);
-			return setUserResponse(savedUser,true,false);
+			return setUserResponse(savedUser,true,false,false);
 		}		
 	}
 	
@@ -252,7 +252,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user,false,false));
+				userResponseList.add(setUserResponse(user,false,false,false));
 			}
 		}
 		return userResponseList;
@@ -263,7 +263,7 @@ public class UserTransformer {
 			throw new MandatoryValidationException(ErrorMessages.USER_ID_REQUIRED);
 		}
 		User user = userService.getUserByUserId(commonRequest.getUserId().intValue());
-		return setUserResponse(user,true,false);
+		return setUserResponse(user,true,false,true);
 	}
 	
 	
@@ -316,7 +316,7 @@ public class UserTransformer {
 			appVersion.setAppName(userRequest.getAppName());
 			appVersion.setBuildNo(userRequest.getBuildNo());	
 			User newUser = userService.verifyLogInUser(user,appVersion);
-			return setUserResponse(newUser,false,true);
+			return setUserResponse(newUser,false,true,false);
 		}		
 	}
 	
@@ -360,7 +360,7 @@ public class UserTransformer {
 			userType.setType(userRequest.getUserType());
 			user.setUserType(userType);
 			User newUser = userService.updatePasswordByUserAndType(user);
-			return setUserResponse(newUser,false,false);
+			return setUserResponse(newUser,false,false,false);
 		}
 	}
 	
@@ -385,7 +385,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user,false,false));
+				userResponseList.add(setUserResponse(user,false,false,false));
 			}
 		}
 		return userResponseList;
@@ -397,7 +397,7 @@ public class UserTransformer {
 		
 		if(userList != null && userList.size() > 0) {
 			for(User user : userList) {
-				userResponseList.add(setUserResponse(user,false,false));
+				userResponseList.add(setUserResponse(user,false,false,false));
 			}
 		}
 		return userResponseList;
@@ -513,8 +513,9 @@ public class UserTransformer {
 		return driverVehicleResp;
 	}
 	
-	private UserResponse setUserResponse(User user,boolean loadImage,boolean setAccessToken) {
-		UserResponse userResponse = new UserResponse();
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	private UserResponse setUserResponse(User user,boolean loadImage,boolean setAccessToken,boolean loadVehicleInfo) {
+			UserResponse userResponse = new UserResponse();
 		
 		userResponse.setUserId(user.getId());
 		userResponse.setFirstName(user.getFirstName());
@@ -566,6 +567,19 @@ public class UserTransformer {
 				}
 				if(user.getDriverProfile().getDriverProfileImage() != null) {
 					userResponse.setUserImage(DatatypeConverter.printBase64Binary(user.getDriverProfile().getDriverProfileImage()));
+				}
+			}
+			
+			/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+			if(loadVehicleInfo) {
+				if(user.getDriverVehicleAssociations() != null && user.getDriverVehicleAssociations().size() > 0) {
+					VehicleDetail vehicle = user.getDriverVehicleAssociations().get(0).getVehicleDetail();
+					userResponse.setLicensePlateNumber(vehicle.getLicensePlateNo());
+					userResponse.setInsuranceCompany(vehicle.getInsuranceCompany());					
+					userResponse.setInsuranceNo(vehicle.getInsuranceNo());
+					userResponse.setInsuranceValidUntil(dateFormat.format(vehicle.getInsuranceValidUntil()));
+					userResponse.setMake(vehicle.getModel().getModel());
+					userResponse.setModel(vehicle.getModel().getMake().getMake());
 				}
 			}
 		}			

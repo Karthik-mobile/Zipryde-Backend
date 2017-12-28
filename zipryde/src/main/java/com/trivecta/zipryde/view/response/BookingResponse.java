@@ -10,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"cabTypeId",
 	"cabType",
 	"vehicleNumber",
+	"make",
+	"model",
+	"licensePlateNumber",
 	"customerId",
 	"customerName",
 	"customerMobileNumber",
@@ -35,7 +38,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"noOfPassengers",
 	"pageNo",
 	"tollAmount",
-	"tipAmount"
+	"tipAmount",
+	"cabImage"
 })
 
 public class BookingResponse {
@@ -128,7 +132,16 @@ public class BookingResponse {
 	private Double tollAmount;
 	
 	@JsonProperty("tipAmount")
-	private Double tipAmount;	
+	private Double tipAmount;
+	
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	private String make;
+	
+	private String model;
+
+	private String licensePlateNumber;
+	
+	private String cabImage;
 		
 	public Number getBookingId() {
 		return bookingId;
@@ -370,5 +383,35 @@ public class BookingResponse {
 		this.tipAmount = tipAmount;
 	}
 
+	public String getMake() {
+		return make;
+	}
 
+	public void setMake(String make) {
+		this.make = make;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public String getLicensePlateNumber() {
+		return licensePlateNumber;
+	}
+
+	public void setLicensePlateNumber(String licensePlateNumber) {
+		this.licensePlateNumber = licensePlateNumber;
+	}
+
+	public String getCabImage() {
+		return cabImage;
+	}
+
+	public void setCabImage(String cabImage) {
+		this.cabImage = cabImage;
+	}
 }

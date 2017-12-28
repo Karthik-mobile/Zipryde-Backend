@@ -171,6 +171,8 @@ public class VehicleDAOImpl implements VehicleDAO{
 			origVehicle.setLicensePlateNo(vehicleDetail.getLicensePlateNo());
 			origVehicle.setVehicleNumber(vehicleDetail.getVehicleNumber());
 			origVehicle.setModifiedDate(new Date());
+			/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+			origVehicle.setProfileImage(vehicleDetail.getProfileImage());
 			session.merge(origVehicle);
 			
 			if(cabPermit != null && cabPermit.getId() != null) {

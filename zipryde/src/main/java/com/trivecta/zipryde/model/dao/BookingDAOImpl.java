@@ -3,6 +3,7 @@ package com.trivecta.zipryde.model.dao;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -418,6 +419,14 @@ public class BookingDAOImpl implements BookingDAO{
 		Session session = this.sessionFactory.getCurrentSession();
 		Booking origBooking  = session.find(Booking.class, bookingId);
 		fetchLazyInitialisation(origBooking);
+		/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+		if(origBooking.getDriver() != null) {
+			DriverVehicleAssociation association = 
+				userDAO.getAssociationByDriverIdAndVehicleNumber(origBooking.getDriver().getId(), origBooking.getDriver().getDriverProfile().getVehicleNumber());
+			List<DriverVehicleAssociation> asociationList = new ArrayList<DriverVehicleAssociation>();
+			asociationList.add(association);
+			origBooking.getDriver().setDriverVehicleAssociations(asociationList);
+		}	
 		return origBooking;
 	}
 	

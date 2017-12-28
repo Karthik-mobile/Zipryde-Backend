@@ -1,11 +1,14 @@
 package com.trivecta.zipryde.view.data.transformer;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -122,9 +125,18 @@ public class VehicleTransformer {
 			}						
 			vehicleDetail.setVin(cabRequest.getVin());
 			vehicleDetail.setVehicleNumber(cabRequest.getVehicleNumber());
+			/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+			if(cabRequest.getCabImage() != null) {
+				try {
+					vehicleDetail.setProfileImage(cabRequest.getCabImage().getBytes());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}		
 			VehicleDetail newVehicleDetail = vehicleService.saveVehicle(vehicleDetail, cabPermit);
 			
-			return setCabResponseFromVehicleDetail(newVehicleDetail);
+			return setCabResponseFromVehicleDetail(newVehicleDetail,true);
 		}
 	}
 	
@@ -135,7 +147,7 @@ public class VehicleTransformer {
 		 
 		 if(vehicleList != null && vehicleList.size() > 0) {
 			 for(VehicleDetail vehicleDetail : vehicleList) {
-				 cabList.add(setCabResponseFromVehicleDetail(vehicleDetail));
+				 cabList.add(setCabResponseFromVehicleDetail(vehicleDetail,false));
 			 }
 		 }
 		 return cabList;
@@ -148,7 +160,7 @@ public class VehicleTransformer {
 		 
 		 if(vehicleList != null && vehicleList.size() > 0) {
 			 for(VehicleDetail vehicleDetail : vehicleList) {
-				 cabList.add(setCabResponseFromVehicleDetail(vehicleDetail));
+				 cabList.add(setCabResponseFromVehicleDetail(vehicleDetail,false));
 			 }
 		 }
 		 return cabList;
@@ -160,11 +172,11 @@ public class VehicleTransformer {
 		}
 		else {
 			VehicleDetail vehicleDetail = vehicleService.getVehicleDetailById(commonRequest.getCabId().intValue());
-			return setCabResponseFromVehicleDetail(vehicleDetail);
+			return setCabResponseFromVehicleDetail(vehicleDetail,true);
 		}	
 	}
 	
-	private CabResponse setCabResponseFromVehicleDetail(VehicleDetail vehicleDetail) {
+	private CabResponse setCabResponseFromVehicleDetail(VehicleDetail vehicleDetail,boolean loadImage) {
 		CabResponse cabResponse = new CabResponse();
 		
 		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
@@ -205,6 +217,10 @@ public class VehicleTransformer {
 		cabResponse.setYearOfManufactured(dateFormat.format(vehicleDetail.getManufacturedYear()));
 		cabResponse.setStatus(vehicleDetail.getStatus().getStatusValue());
 		cabResponse.setComments(vehicleDetail.getComments());
+		/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+		if(loadImage && vehicleDetail.getProfileImage() != null) {
+			cabResponse.setCabImage(DatatypeConverter.printBase64Binary(vehicleDetail.getProfileImage()));
+		}
 		return cabResponse;
 	}
 }

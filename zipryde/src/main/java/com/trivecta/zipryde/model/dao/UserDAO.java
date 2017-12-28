@@ -62,4 +62,7 @@ public interface UserDAO {
 	public UserSession getUserSessionByUserId(int userId);
 	
 	public Integer getUserIdFromAccessToken(String accessToken) throws UserValidationException;
+	
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	public DriverVehicleAssociation getAssociationByDriverIdAndVehicleNumber(Integer driverId,String vehicleNumber);
 }

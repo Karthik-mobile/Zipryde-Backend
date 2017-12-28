@@ -1,6 +1,8 @@
 
 package com.trivecta.zipryde.view.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -65,6 +67,9 @@ public class CabRequest {
 	
 	private CabPermitRequest  cabPermitRequest;
 
+	/* MAIL Changes : ZipRyde App Changes to be compliant with TX State Requirements */
+	MultipartFile cabImage;
+	
 	public Number getCabId() {
 		return cabId;
 	}
@@ -208,6 +213,14 @@ public class CabRequest {
 
 	public void setVehicleNumber(String vehicleNumber) {
 		this.vehicleNumber = vehicleNumber;
+	}
+
+	public MultipartFile getCabImage() {
+		return cabImage;
+	}
+
+	public void setCabImage(MultipartFile cabImage) {
+		this.cabImage = cabImage;
 	}
 	
 }
